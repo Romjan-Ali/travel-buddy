@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TravelType {
+  SOLO
+  FAMILY
+  FRIENDS
+  COUPLE
+  BUSINESS
+}
+
+model User {
+  id         String  @id @default(cuid())
+  email      String  @unique
+  password   String
+  role       Role    @default(USER)
+  isVerified Boolean @default(false)
+  isActive   Boolean @default(true)
+
+  // Profile relation
+  profile Profile?
+
+  // Relations
+  travelPlans      TravelPlan[]
+  reviewsGiven     Review[]       @relation("ReviewAuthor")
+  reviewsReceived  Review[]       @relation("ReviewSubject")
+  subscriptions    Subscription[]
+  matchesInitiated Match[]        @relation("MatchInitiator")
+  matchesReceived  Match[]        @relation("MatchReceiver")
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Profile {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  fullName         String
+  bio              String?
+  profileImage     String?
+  dateOfBirth      DateTime?
+  travelInterests  String[] // hiking, food, photography, etc.
+  visitedCountries String[]
+  currentLocation  String?
+  phoneNumber      String?
+  socialLinks      String[] // Instagram, Facebook, etc.
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+model TravelPlan {
+  id          String     @id @default(cuid())
+  destination String
+  startDate   DateTime
+  endDate     DateTime
+  budget      String // e.g., "$500-1000", "Budget", "Luxury"
+  travelType  TravelType
+  description String?
+  isPublic    Boolean    @default(true)
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  matches   Match[]
+
+  @@map("travel_plans")
+}
+
+model Review {
+  id      String  @id @default(cuid())
+  rating  Int // 1-5 stars
+  comment String?
+
+  // Relations
+  authorId     String
+  subjectId    String
+  author       User    @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  subject      User    @relation("ReviewSubject", fields: [subjectId], references: [id], onDelete: Cascade)
+  travelPlanId String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([authorId, subjectId, travelPlanId])
+  @@map("reviews")
+}
+
+model Match {
+  id     String @id @default(cuid())
+  status String @default("PENDING") // PENDING, ACCEPTED, REJECTED
+
+  // Relations
+  initiatorId  String
+  receiverId   String
+  travelPlanId String?
+  initiator    User        @relation("MatchInitiator", fields: [initiatorId], references: [id], onDelete: Cascade)
+  receiver     User        @relation("MatchReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  travelPlan   TravelPlan? @relation(fields: [travelPlanId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([initiatorId, receiverId, travelPlanId])
+  @@map("matches")
+}
+
+model Subscription {
+  id                 String   @id @default(cuid())
+  stripeSubId        String?  @unique
+  status             String // active, canceled, past_due
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
