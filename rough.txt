@@ -1,0 +1,15 @@
+authenticated user
+
+{
+    "email": "user.email.1@gmail.com",
+    "password": "w3password"
+}
+
+
+
+admin user
+
+{
+    "email": "admin@travelbuddy.com",
+    "password": "admin123"
+}
