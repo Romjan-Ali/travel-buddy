@@ -4,7 +4,7 @@ import { sendResponse } from '../utils/helpers';
 export class AppError extends Error {
   constructor(
     public statusCode: number,
-    public message: string,
+    public override message: string,
     public isOperational: boolean = true
   ) {
     super(message);
@@ -23,9 +23,7 @@ export const errorHandler = (
     return;
   }
 
-  // Log unexpected errors
   console.error('Unexpected error:', error);
-
   sendResponse(res, 500, 'Internal server error', undefined, 'Something went wrong');
 };
 

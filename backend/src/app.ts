@@ -9,7 +9,9 @@ import dotenv from 'dotenv';
 import { errorHandler, notFound } from './middleware/errorHandler';
 
 // Import routes (to be created)
-// import authRoutes from './modules/auth/auth.routes';
+import authRoutes from './modules/auth/auth.routes';
+import userRoutes from './modules/users/user.routes';
+import travelPlanRoutes from './modules/travel-plans/travelPlan.routes';
 
 // Load environment variables
 dotenv.config();
@@ -50,7 +52,9 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/travel-plans', travelPlanRoutes);
 
 // 404 handler
 app.use(notFound);
