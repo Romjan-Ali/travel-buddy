@@ -1,5 +1,5 @@
-import { Response } from 'express';
-import { AuthRequest } from '../../utils/types';
+import { type Response } from 'express';
+import type { AuthRequest } from '../../utils/types';
 import { uploadService } from './upload.service';
 import { sendResponse } from '../../utils/helpers';
 
@@ -8,8 +8,12 @@ export const uploadController = {
     if (!req.file) {
       return sendResponse(res, 400, 'No file provided');
     }
+        const userId = req.user?.id
+        if (!userId) {
+          return sendResponse(res, 401, 'Unauthorized')
+        }
 
-    const result = await uploadService.uploadProfileImage(req.user.id, req.file);
+    const result = await uploadService.uploadProfileImage(userId, req.file);
     sendResponse(res, 200, 'Profile image uploaded successfully', result);
   },
 
@@ -20,8 +24,12 @@ export const uploadController = {
 
     const files = req.files as Express.Multer.File[];
     const { travelPlanId } = req.body;
+        const userId = req.user?.id
+    if (!userId) {
+      return sendResponse(res, 401, 'Unauthorized')
+    }
     
-    const result = await uploadService.uploadTripPhotos(req.user.id, files, travelPlanId);
+    const result = await uploadService.uploadTripPhotos(userId, files, travelPlanId);
     sendResponse(res, 200, 'Photos uploaded successfully', result);
   },
 
