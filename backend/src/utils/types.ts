@@ -55,6 +55,10 @@ export const reviewSchema = z.object({
   }),
 })
 
+export const reviewUpdateSchema = z.object({
+  body: reviewSchema.shape.body.partial()
+})
+
 // Types
 export type RegisterInput = z.infer<typeof registerSchema>['body']
 export type LoginInput = z.infer<typeof loginSchema>['body']

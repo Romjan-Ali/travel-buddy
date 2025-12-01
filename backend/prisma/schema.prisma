@@ -87,6 +87,7 @@ model TravelPlan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   matches   Match[]
+  reviews   Review[]
 
   @@map("travel_plans")
 }
@@ -99,9 +100,10 @@ model Review {
   // Relations
   authorId     String
   subjectId    String
-  author       User    @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
-  subject      User    @relation("ReviewSubject", fields: [subjectId], references: [id], onDelete: Cascade)
   travelPlanId String?
+  author       User        @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  subject      User        @relation("ReviewSubject", fields: [subjectId], references: [id], onDelete: Cascade)
+  travelPlan   TravelPlan? @relation(fields: [travelPlanId], references: [id])
 
   // Timestamps
   createdAt DateTime @default(now())

@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { ReviewInput } from '../../utils/types';
+import type { ReviewInput } from '../../utils/types';
 import { AppError } from '../../middleware/errorHandler';
 
 export const reviewService = {
@@ -95,7 +95,7 @@ export const reviewService = {
     return review;
   },
 
-  async getUserReviews(userId: string, type: 'given' | 'received' = 'received', page: number = 1, limit: number = 10) {
+async getUserReviews(userId: string, type: 'given' | 'received' = 'received', page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit;
     const where = type === 'given' ? { authorId: userId } : { subjectId: userId };
 
@@ -105,6 +105,8 @@ export const reviewService = {
         include: {
           author: {
             select: {
+              id: true,
+              email: true,
               profile: {
                 select: {
                   fullName: true,
@@ -115,6 +117,8 @@ export const reviewService = {
           },
           subject: {
             select: {
+              id: true,
+              email: true,
               profile: {
                 select: {
                   fullName: true,
@@ -124,9 +128,11 @@ export const reviewService = {
           },
           travelPlan: {
             select: {
+              id: true,
               destination: true,
               startDate: true,
               endDate: true,
+              travelType: true,
             },
           },
         },
@@ -139,6 +145,8 @@ export const reviewService = {
 
     // Calculate average rating for received reviews
     let averageRating = 0;
+    let totalReviews = 0;
+    
     if (type === 'received') {
       const ratings = await prisma.review.aggregate({
         where: { subjectId: userId },
@@ -146,11 +154,13 @@ export const reviewService = {
         _count: { rating: true },
       });
       averageRating = ratings._avg.rating || 0;
+      totalReviews = ratings._count.rating || 0;
     }
 
     return {
       reviews,
       averageRating: Math.round(averageRating * 10) / 10,
+      totalReviews,
       pagination: {
         page,
         limit,
