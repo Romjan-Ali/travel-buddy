@@ -55,6 +55,11 @@ export type Profile = Prisma.ProfileModel
  */
 export type TravelPlan = Prisma.TravelPlanModel
 /**
+ * Model TripPhoto
+ * 
+ */
+export type TripPhoto = Prisma.TripPhotoModel
+/**
  * Model Review
  * 
  */

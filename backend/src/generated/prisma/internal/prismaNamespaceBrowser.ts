@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Profile: 'Profile',
   TravelPlan: 'TravelPlan',
+  TripPhoto: 'TripPhoto',
   Review: 'Review',
   Match: 'Match',
   Subscription: 'Subscription'
@@ -123,6 +124,21 @@ export const TravelPlanScalarFieldEnum = {
 } as const
 
 export type TravelPlanScalarFieldEnum = (typeof TravelPlanScalarFieldEnum)[keyof typeof TravelPlanScalarFieldEnum]
+
+
+export const TripPhotoScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  caption: 'caption',
+  orderIndex: 'orderIndex',
+  isPrimary: 'isPrimary',
+  travelPlanId: 'travelPlanId',
+  uploadedById: 'uploadedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TripPhotoScalarFieldEnum = (typeof TripPhotoScalarFieldEnum)[keyof typeof TripPhotoScalarFieldEnum]
 
 
 export const ReviewScalarFieldEnum = {

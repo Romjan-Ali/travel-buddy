@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   Profile: 'Profile',
   TravelPlan: 'TravelPlan',
+  TripPhoto: 'TripPhoto',
   Review: 'Review',
   Match: 'Match',
   Subscription: 'Subscription'
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "profile" | "travelPlan" | "review" | "match" | "subscription"
+    modelProps: "user" | "profile" | "travelPlan" | "tripPhoto" | "review" | "match" | "subscription"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TravelPlanCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TravelPlanCountAggregateOutputType> | number
+        }
+      }
+    }
+    TripPhoto: {
+      payload: Prisma.$TripPhotoPayload<ExtArgs>
+      fields: Prisma.TripPhotoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TripPhotoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TripPhotoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>
+        }
+        findFirst: {
+          args: Prisma.TripPhotoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TripPhotoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>
+        }
+        findMany: {
+          args: Prisma.TripPhotoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>[]
+        }
+        create: {
+          args: Prisma.TripPhotoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>
+        }
+        createMany: {
+          args: Prisma.TripPhotoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TripPhotoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>[]
+        }
+        delete: {
+          args: Prisma.TripPhotoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>
+        }
+        update: {
+          args: Prisma.TripPhotoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>
+        }
+        deleteMany: {
+          args: Prisma.TripPhotoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TripPhotoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TripPhotoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>[]
+        }
+        upsert: {
+          args: Prisma.TripPhotoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripPhotoPayload>
+        }
+        aggregate: {
+          args: Prisma.TripPhotoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTripPhoto>
+        }
+        groupBy: {
+          args: Prisma.TripPhotoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TripPhotoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TripPhotoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TripPhotoCountAggregateOutputType> | number
         }
       }
     }
@@ -942,6 +1017,21 @@ export const TravelPlanScalarFieldEnum = {
 export type TravelPlanScalarFieldEnum = (typeof TravelPlanScalarFieldEnum)[keyof typeof TravelPlanScalarFieldEnum]
 
 
+export const TripPhotoScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  caption: 'caption',
+  orderIndex: 'orderIndex',
+  isPrimary: 'isPrimary',
+  travelPlanId: 'travelPlanId',
+  uploadedById: 'uploadedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TripPhotoScalarFieldEnum = (typeof TripPhotoScalarFieldEnum)[keyof typeof TripPhotoScalarFieldEnum]
+
+
 export const ReviewScalarFieldEnum = {
   id: 'id',
   rating: 'rating',
@@ -1185,6 +1275,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   profile?: Prisma.ProfileOmit
   travelPlan?: Prisma.TravelPlanOmit
+  tripPhoto?: Prisma.TripPhotoOmit
   review?: Prisma.ReviewOmit
   match?: Prisma.MatchOmit
   subscription?: Prisma.SubscriptionOmit
