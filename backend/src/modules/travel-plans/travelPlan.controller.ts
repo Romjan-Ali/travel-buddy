@@ -1,3 +1,4 @@
+// backend/src/modules/travel-plans/travelPlan.controller.ts
 import { type Response } from 'express'
 import type { AuthRequest } from '../../utils/types'
 import { travelPlanService } from './travelPlan.service'

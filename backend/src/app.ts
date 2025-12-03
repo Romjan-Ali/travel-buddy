@@ -1,9 +1,11 @@
+// backend/src/app.ts
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
+import morgan from 'morgan'
 
 // Import middleware
 import { errorHandler, notFound } from './middleware/errorHandler'
@@ -25,6 +27,9 @@ const app = express()
 
 // Security middleware
 app.use(helmet())
+
+// Request logger middleware
+app.use(morgan('combined'))
 
 // CORS configuration
 app.use(
