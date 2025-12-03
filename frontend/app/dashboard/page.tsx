@@ -59,7 +59,7 @@ interface Match {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user } = useProtectedRoute()
   const [upcomingPlans, setUpcomingPlans] = useState<TravelPlan[]>([])
   const [recentMatches, setRecentMatches] = useState<Match[]>([])
   const [isLoading, setIsLoading] = useState(true)

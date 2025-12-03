@@ -64,8 +64,8 @@ export default function TravelPlansPage() {
   const fetchTravelPlans = async () => {
     setIsLoading(true)
     try {
-      const data = await travelPlanAPI.getMyPlans()
-      setTravelPlans(data.plans || [])
+      const result = await travelPlanAPI.getMyPlans()
+      setTravelPlans(result.data.plans || [])
     } catch (error) {
       toast.error('Failed to load travel plans')
       console.error('Travel plans error:', error)

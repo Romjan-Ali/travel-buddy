@@ -46,9 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = async () => {
     console.log('Checking auth for pathname:', pathname)
     try {
-      const data = await authAPI.getMe()
-      console.log('Auth check data:', data)
-      setUser(data.user)
+      const result = await authAPI.getMe()
+      setUser(result.data.user)
     } catch (error) {
       setUser(null)
     } finally {
