@@ -1,4 +1,3 @@
-// frontend/app/explore/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -22,8 +21,19 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import { useAuth } from '@/lib/auth-context'
-import { travelPlanAPI } from '@/lib/api'
+import { travelPlanAPI, matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {
   Search,
@@ -37,6 +47,10 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
+  Send,
+  UserPlus,
+  CheckCircle,
+  Clock,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
@@ -64,11 +78,161 @@ interface TravelPlan {
   }
 }
 
+interface MatchRequestDialogProps {
+  travelPlan: TravelPlan
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  onSuccess: () => void
+}
+
+function MatchRequestDialog({
+  travelPlan,
+  isOpen,
+  onOpenChange,
+  onSuccess,
+}: MatchRequestDialogProps) {
+  const { user } = useAuth()
+  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async () => {
+    if (!user) {
+      toast.error('Please login to send match requests')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      await matchAPI.create({
+        receiverId: travelPlan.user.id,
+        travelPlanId: travelPlan.id,
+        message:
+          message || `I'd like to join your trip to ${travelPlan.destination}`,
+      })
+
+      toast.success('Match request sent successfully!')
+      onSuccess()
+      onOpenChange(false)
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send match request')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const getDefaultMessage = () => {
+    return `Hi ${
+      travelPlan.user.profile?.fullName || 'there'
+    }! I'm interested in joining your trip to ${
+      travelPlan.destination
+    } from ${formatDate(travelPlan.startDate)} to ${formatDate(
+      travelPlan.endDate
+    )}. Looking forward to connecting!`
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            Request to Join
+          </DialogTitle>
+          <DialogDescription>
+            Send a match request to{' '}
+            {travelPlan.user.profile?.fullName || 'this traveler'}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          {/* Travel Plan Summary */}
+          <div className="p-3 border rounded-lg bg-muted/30">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-primary" />
+              <span className="font-semibold">{travelPlan.destination}</span>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {formatDate(travelPlan.startDate)} -{' '}
+                {formatDate(travelPlan.endDate)}
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {travelPlan.travelType}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Message Input */}
+          <div className="space-y-2">
+            <Label htmlFor="message">Your Message</Label>
+            <Textarea
+              id="message"
+              placeholder={getDefaultMessage()}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="min-h-[120px]"
+              disabled={isLoading}
+            />
+            <p className="text-xs text-muted-foreground">
+              Introduce yourself and explain why you'd be a good travel
+              companion
+            </p>
+          </div>
+
+          {/* Tips */}
+          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h4 className="font-semibold text-sm mb-1 flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              Tips for a great request:
+            </h4>
+            <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+              <li>• Mention shared interests from their profile</li>
+              <li>• Be clear about your travel style and preferences</li>
+              <li>• Suggest a time to chat before committing</li>
+              <li>• Keep it friendly and respectful</li>
+            </ul>
+          </div>
+        </div>
+
+        <DialogFooter className="sm:justify-between">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading || !user}
+            className="gap-2"
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4" />
+                Send Request
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export default function ExplorePage() {
   const searchParams = useSearchParams()
   const { user } = useAuth()
   const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<TravelPlan | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [filters, setFilters] = useState({
     destination: searchParams.get('destination') || '',
     travelType: searchParams.get('travelType') || '',
@@ -77,12 +241,19 @@ export default function ExplorePage() {
   })
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-
-  console.log('travel plans:', travelPlans)
+  const [sentRequests, setSentRequests] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchTravelPlans()
   }, [filters, page])
+
+  useEffect(() => {
+    // Load sent match requests from localStorage or API
+    const savedRequests = localStorage.getItem('sentMatchRequests')
+    if (savedRequests) {
+      setSentRequests(new Set(JSON.parse(savedRequests)))
+    }
+  }, [])
 
   const fetchTravelPlans = async () => {
     setIsLoading(true)
@@ -92,10 +263,8 @@ export default function ExplorePage() {
       )
 
       const result = await travelPlanAPI.search(activeFilters, page, 9)
-      const data = result.data
-
-      setTravelPlans(data.plans || [])
-      setTotalPages(data.pagination?.pages || 1)
+      setTravelPlans(result.data?.plans || [])
+      setTotalPages(result.data?.pagination?.pages || 1)
     } catch (error) {
       toast.error('Failed to load travel plans')
       console.error('Explore error:', error)
@@ -123,6 +292,41 @@ export default function ExplorePage() {
       endDate: '',
     })
     setPage(1)
+  }
+
+  const handleRequestClick = (plan: TravelPlan) => {
+    if (!user) {
+      toast.error('Please login to send match requests')
+      return
+    }
+
+    // Check if user is viewing their own plan
+    if (user.id === plan.user.id) {
+      toast.error('You cannot send a match request to your own travel plan')
+      return
+    }
+
+    setSelectedPlan(plan)
+    setIsDialogOpen(true)
+  }
+
+  const handleMatchSuccess = () => {
+    if (selectedPlan) {
+      // Add to sent requests
+      const updatedRequests = new Set([...sentRequests, selectedPlan.id])
+      setSentRequests(updatedRequests)
+      localStorage.setItem(
+        'sentMatchRequests',
+        JSON.stringify([...updatedRequests])
+      )
+
+      // Refresh the list to update match counts
+      fetchTravelPlans()
+    }
+  }
+
+  const isRequestSent = (planId: string) => {
+    return sentRequests.has(planId)
   }
 
   const travelTypes = ['SOLO', 'FAMILY', 'FRIENDS', 'COUPLE', 'BUSINESS']
@@ -278,97 +482,135 @@ export default function ExplorePage() {
         ) : travelPlans.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {travelPlans.map((plan) => (
-                <Card key={plan.id} className="card-hover group">
-                  <CardContent className="p-6">
-                    {/* Destination & Host */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="font-bold text-lg mb-1">
-                          {plan.destination}
-                        </h3>
-                        <div className="flex items-center gap-2 mb-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage
-                              src={plan.user.profile?.profileImage}
-                            />
-                            <AvatarFallback>
-                              {plan.user.profile?.fullName
-                                ?.charAt(0)
-                                .toUpperCase() || 'T'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">
-                              {plan.user.profile?.fullName || 'Traveler'}
-                            </p>
-                            {plan.user.averageRating && (
-                              <div className="flex items-center gap-1">
-                                <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                <span className="text-xs">
-                                  {plan.user.averageRating.toFixed(1)} (
-                                  {plan.user.reviewCount})
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+              {travelPlans.map((plan) => {
+                const isSent = isRequestSent(plan.id)
+                const isOwnPlan = user?.id === plan.user.id
+
+                return (
+                  <Card key={plan.id} className="card-hover group relative">
+                    {isSent && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className="bg-green-500 text-white">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Request Sent
+                        </Badge>
                       </div>
-                      <Badge>{plan.travelType}</Badge>
-                    </div>
-
-                    {/* Dates */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        {formatDate(plan.startDate)} -{' '}
-                        {formatDate(plan.endDate)}
-                      </span>
-                    </div>
-
-                    {/* Budget */}
-                    <div className="mb-4">
-                      <Badge variant="outline" className="text-sm">
-                        Budget: {plan.budget}
-                      </Badge>
-                    </div>
-
-                    {/* Description */}
-                    {plan.description && (
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {plan.description}
-                      </p>
                     )}
 
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-sm mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{plan._count.matches} matches</span>
-                        </div>
-                        {plan.user.profile?.currentLocation && (
-                          <div className="flex items-center gap-1">
-                            <Globe className="h-4 w-4" />
-                            <span>{plan.user.profile.currentLocation}</span>
+                    <CardContent className="p-6">
+                      {/* Destination & Host */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="font-bold text-lg mb-1">
+                            {plan.destination}
+                          </h3>
+                          <div className="flex items-center gap-2 mb-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage
+                                src={plan.user.profile?.profileImage}
+                              />
+                              <AvatarFallback>
+                                {plan.user.profile?.fullName
+                                  ?.charAt(0)
+                                  .toUpperCase() || 'T'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium">
+                                {plan.user.profile?.fullName || 'Traveler'}
+                              </p>
+                              {plan.user.averageRating && (
+                                <div className="flex items-center gap-1">
+                                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                                  <span className="text-xs">
+                                    {plan.user.averageRating.toFixed(1)} (
+                                    {plan.user.reviewCount})
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
+                        </div>
+                        <Badge>{plan.travelType}</Badge>
+                      </div>
+
+                      {/* Dates */}
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          {formatDate(plan.startDate)} -{' '}
+                          {formatDate(plan.endDate)}
+                        </span>
+                      </div>
+
+                      {/* Budget */}
+                      <div className="mb-4">
+                        <Badge variant="outline" className="text-sm">
+                          Budget: {plan.budget}
+                        </Badge>
+                      </div>
+
+                      {/* Description */}
+                      {plan.description && (
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                          {plan.description}
+                        </p>
+                      )}
+
+                      {/* Stats */}
+                      <div className="flex items-center justify-between text-sm mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1">
+                            <Users className="h-4 w-4" />
+                            <span>{plan._count.matches} matches</span>
+                          </div>
+                          {plan.user.profile?.currentLocation && (
+                            <div className="flex items-center gap-1">
+                              <Globe className="h-4 w-4" />
+                              <span>{plan.user.profile.currentLocation}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2">
+                        {isOwnPlan ? (
+                          <Button variant="outline" className="flex-1" disabled>
+                            Your Plan
+                          </Button>
+                        ) : isSent ? (
+                          <Button
+                            variant="outline"
+                            className="flex-1 gap-2"
+                            disabled
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                            Request Sent
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              className="flex-1 gap-2"
+                              onClick={() => handleRequestClick(plan)}
+                            >
+                              <UserPlus className="h-4 w-4" />
+                              Request to Join
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="px-3"
+                            >
+                              <Heart className="h-4 w-4" />
+                            </Button>
+                          </>
                         )}
                       </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-2">
-                      <Button className="flex-1 gap-2" size="sm">
-                        <MessageSquare className="h-4 w-4" />
-                        Request to Join
-                      </Button>
-                      <Button variant="outline" size="sm" className="px-3">
-                        <Heart className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
 
             {/* Pagination */}
@@ -480,6 +722,16 @@ export default function ExplorePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Match Request Dialog */}
+      {selectedPlan && (
+        <MatchRequestDialog
+          travelPlan={selectedPlan}
+          isOpen={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          onSuccess={handleMatchSuccess}
+        />
+      )}
     </div>
   )
 }

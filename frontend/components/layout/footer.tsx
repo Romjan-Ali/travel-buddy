@@ -5,7 +5,7 @@ import { Plane, Facebook, Twitter, Instagram, Globe } from 'lucide-react'
 export function Footer() {
   return (
     <footer className="border-t bg-background">
-      <div className="container py-12">
+      <div className="container mx-auto py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="space-y-4">

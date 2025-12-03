@@ -45,7 +45,7 @@ export function proxy(request: NextRequest) {
     const userRole = decodeToken(token)
     
     // If token doesn't contain role or user is not admin
-    if (!userRole || userRole !== 'admin') {
+    if (!userRole || userRole !== 'ADMIN') {
       if (isApiRoute) {
         return NextResponse.json(
           { error: 'Forbidden', message: 'Admin access required' },
@@ -61,7 +61,7 @@ export function proxy(request: NextRequest) {
     
     // User is admin - add admin headers for downstream use
     const response = NextResponse.next()
-    response.headers.set('x-user-role', 'admin')
+    response.headers.set('x-user-role', 'ADMIN')
     return response
   }
 

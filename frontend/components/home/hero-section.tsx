@@ -93,7 +93,7 @@ export function HeroSection() {
                 </div>
               </div>
             </div>
-            <div className="absolute -top-6 -right-6 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg max-w-xs">
+            <div className="absolute -top-6 -right-3 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg max-w-xs">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                   <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
