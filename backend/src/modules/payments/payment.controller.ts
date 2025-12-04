@@ -42,6 +42,8 @@ export const paymentController = {
     const sig = req.headers['stripe-signature']
     const event = req.body
 
+    console.log('Received Stripe webhook event:', event)
+
     try {
       await paymentService.handleWebhook(event)
       sendResponse(res, 200, 'Webhook processed successfully')

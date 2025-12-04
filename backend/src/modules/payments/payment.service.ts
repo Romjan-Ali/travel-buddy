@@ -46,8 +46,6 @@ export const paymentService = {
       },
     });
 
-    console.log( 'session:', session );
-
     return {
       sessionId: session.id,
       url: session.url,
@@ -191,6 +189,7 @@ export const paymentService = {
 
   // Private helper methods (now properly part of the object)
   async _handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+    
     const { userId } = session.metadata || {};
     const subscriptionId = session.subscription as string;
 
@@ -202,6 +201,8 @@ export const paymentService = {
     if (subscriptionId) {
       // Get subscription details from Stripe
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+      console.log('Fetched Stripe subscription:', subscription);
       
       await prisma.subscription.create({
         data: {
