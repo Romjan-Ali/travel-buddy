@@ -80,8 +80,8 @@ export function SubscriptionPlans({ currentPlan = 'free' }: SubscriptionPlansPro
       // In a real implementation, you would use Stripe price IDs
       // For now, we'll use mock price IDs
       const priceId = planId === 'premium' 
-        ? 'price_premium_monthly' 
-        : 'price_premium_yearly'
+        ? 'price_1SaHXbLaGyGdTIttfCY7mwaP' 
+        : 'price_1SaI29LaGyGdTItteNpIsNMc'
       
       const result = await paymentAPI.createSubscription(priceId)
       

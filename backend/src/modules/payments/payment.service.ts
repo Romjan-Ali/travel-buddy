@@ -1,6 +1,8 @@
+// backend/src/modules/payments/payment.service.ts
 import { stripe } from '../../config/stripe';
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../middleware/errorHandler';
+import Stripe from 'stripe';
 
 export const paymentService = {
   async createSubscription(userId: string, priceId: string) {
@@ -43,6 +45,8 @@ export const paymentService = {
         userId,
       },
     });
+
+    console.log( 'session:', session );
 
     return {
       sessionId: session.id,
@@ -91,90 +95,29 @@ export const paymentService = {
     };
   },
 
-  async handleWebhook(event: any) {
+  async handleWebhook(event: Stripe.Event) {
     // Handle Stripe webhook events
     switch (event.type) {
       case 'checkout.session.completed':
-        await this.handleCheckoutCompleted(event.data.object);
+        await this._handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
       
       case 'customer.subscription.updated':
-        await this.handleSubscriptionUpdated(event.data.object);
+        await this._handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
         break;
       
       case 'customer.subscription.deleted':
-        await this.handleSubscriptionDeleted(event.data.object);
+        await this._handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
       
       case 'invoice.payment_succeeded':
-        await this.handleInvoicePaid(event.data.object);
+        await this._handleInvoicePaid(event.data.object as Stripe.Invoice);
         break;
       
       case 'invoice.payment_failed':
-        await this.handleInvoiceFailed(event.data.object);
+        await this._handleInvoiceFailed(event.data.object as Stripe.Invoice);
         break;
     }
-  },
-
-  private async handleCheckoutCompleted(session: any) {
-    const { userId } = session.metadata;
-    const subscriptionId = session.subscription;
-
-    if (subscriptionId) {
-      // Get subscription details from Stripe
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      
-      await prisma.subscription.create({
-        data: {
-          userId,
-          stripeSubId: subscriptionId,
-          status: subscription.status,
-          currentPeriodStart: new Date(subscription.current_period_start * 1000),
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        },
-      });
-
-      // Update user verification status
-      await prisma.user.update({
-        where: { id: userId },
-        data: { isVerified: true },
-      });
-    }
-  },
-
-  private async handleSubscriptionUpdated(subscription: any) {
-    await prisma.subscription.updateMany({
-      where: { stripeSubId: subscription.id },
-      data: {
-        status: subscription.status,
-        currentPeriodStart: new Date(subscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      },
-    });
-  },
-
-  private async handleSubscriptionDeleted(subscription: any) {
-    await prisma.subscription.updateMany({
-      where: { stripeSubId: subscription.id },
-      data: {
-        status: 'canceled',
-      },
-    });
-  },
-
-  private async handleInvoicePaid(invoice: any) {
-    // Handle successful invoice payment
-    console.log(`Invoice ${invoice.id} paid for subscription ${invoice.subscription}`);
-  },
-
-  private async handleInvoiceFailed(invoice: any) {
-    // Handle failed invoice payment
-    console.log(`Invoice ${invoice.id} payment failed for subscription ${invoice.subscription}`);
-    
-    await prisma.subscription.updateMany({
-      where: { stripeSubId: invoice.subscription },
-      data: { status: 'past_due' },
-    });
   },
 
   async getUserSubscription(userId: string) {
@@ -244,5 +187,81 @@ export const paymentService = {
     });
 
     return { message: 'Subscription will be canceled at the end of the billing period' };
+  },
+
+  // Private helper methods (now properly part of the object)
+  async _handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+    const { userId } = session.metadata || {};
+    const subscriptionId = session.subscription as string;
+
+    if (!userId) {
+      console.error('No userId in session metadata');
+      return;
+    }
+
+    if (subscriptionId) {
+      // Get subscription details from Stripe
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      
+      await prisma.subscription.create({
+        data: {
+          userId,
+          stripeSubId: subscriptionId,
+          status: subscription.status,
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        },
+      });
+
+      // Update user verification status
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isVerified: true },
+      });
+    }
+  },
+
+  async _handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+    await prisma.subscription.updateMany({
+      where: { stripeSubId: subscription.id },
+      data: {
+        status: subscription.status,
+        currentPeriodStart: new Date(subscription.current_period_start * 1000),
+        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      },
+    });
+  },
+
+  async _handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+    await prisma.subscription.updateMany({
+      where: { stripeSubId: subscription.id },
+      data: {
+        status: 'canceled',
+      },
+    });
+  },
+
+  async _handleInvoicePaid(invoice: Stripe.Invoice) {
+    // Handle successful invoice payment
+    console.log(`Invoice ${invoice.id} paid for subscription ${invoice.subscription}`);
+    
+    if (invoice.subscription) {
+      await prisma.subscription.updateMany({
+        where: { stripeSubId: invoice.subscription as string },
+        data: { status: 'active' },
+      });
+    }
+  },
+
+  async _handleInvoiceFailed(invoice: Stripe.Invoice) {
+    // Handle failed invoice payment
+    console.log(`Invoice ${invoice.id} payment failed for subscription ${invoice.subscription}`);
+    
+    if (invoice.subscription) {
+      await prisma.subscription.updateMany({
+        where: { stripeSubId: invoice.subscription as string },
+        data: { status: 'past_due' },
+      });
+    }
   },
 };

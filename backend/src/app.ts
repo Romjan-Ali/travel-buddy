@@ -16,7 +16,7 @@ import userRoutes from './modules/users/user.routes'
 import travelPlanRoutes from './modules/travel-plans/travelPlan.routes'
 import reviewRoutes from './modules/reviews/review.routes'
 import matchRoutes from './modules/matches/match.routes'
-// import paymentRoutes from './modules/payments/payment.routes'
+import paymentRoutes from './modules/payments/payment.routes'
 import adminRoutes from './modules/admin/admin.routes'
 import uploadRoutes from './modules/upload/upload.routes'
 
@@ -67,7 +67,7 @@ app.use('/api/users', userRoutes)
 app.use('/api/travel-plans', travelPlanRoutes)
 app.use('/api/reviews', reviewRoutes)
 app.use('/api/matches', matchRoutes)
-// app.use('/api/payments', paymentRoutes)
+app.use('/api/payments', paymentRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
 

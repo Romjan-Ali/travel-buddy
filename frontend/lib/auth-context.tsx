@@ -58,8 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      const data = await authAPI.login({ email, password })
-      setUser(data.user)
+      const result = await authAPI.login({ email, password })
+      setUser(result.data.user)
       toast.success('Login successful!')
       router.push('/dashboard')
     } catch (error: any) {
