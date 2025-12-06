@@ -3,6 +3,8 @@ import {
   deleteFromCloudinary,
   uploadToCloudinary,
 } from '../../config/cloudinary'
+import { uploadToImgBB } from '../../config/imgbb'
+import sharp from 'sharp'
 import { prisma } from '../../lib/prisma'
 import { AppError } from '../../middleware/errorHandler'
 
@@ -24,10 +26,19 @@ export const uploadService = {
     }
 
     // Upload to Cloudinary
+    /*     
     const uploadResult = await uploadToCloudinary(
       file.buffer,
       'travel-buddy/profiles'
     )
+    */
+
+    const resizedBuffer = await sharp(file.buffer)
+      .resize(500, 500, { fit: 'inside' })
+      .webp({ quality: 80 })
+      .toBuffer()
+
+    const uploadResult = await uploadToImgBB(resizedBuffer)
 
     // Get user to check if profile exists
     const user = await prisma.user.findUnique({
@@ -180,9 +191,17 @@ export const uploadService = {
     })
 
     // Upload files to Cloudinary
-    const uploadPromises = files.map((file) =>
+    /* const uploadPromises = files.map((file) =>
       uploadToCloudinary(file.buffer, `travel-buddy/trips/${userId}`)
-    )
+    ) */
+
+    const uploadPromises = files.map(async (file) => {
+      const resizedBuffer = await sharp(file.buffer)
+        .resize(800, 800, { fit: 'inside' })
+        .webp({ quality: 80 })
+        .toBuffer()
+      return uploadToImgBB(resizedBuffer)
+    })
 
     const uploadedUrls = await Promise.all(uploadPromises)
 
@@ -214,7 +233,7 @@ export const uploadService = {
       urls: uploadedUrls,
       count: uploadedUrls.length,
     }
-  },  
+  },
 
   async deleteImage(currentUserId: string, imageUrl: string) {
     // First, check if the image belongs to a user profile

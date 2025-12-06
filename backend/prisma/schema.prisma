@@ -20,6 +20,12 @@ enum TravelType {
   BUSINESS
 }
 
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 model User {
   id         String  @id @default(cuid())
   email      String  @unique
@@ -38,6 +44,10 @@ model User {
   subscriptions    Subscription[]
   matchesInitiated Match[]        @relation("MatchInitiator")
   matchesReceived  Match[]        @relation("MatchReceiver")
+
+  // Message Relations
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 
   // Timestamps
   createdAt  DateTime    @default(now())
@@ -139,7 +149,7 @@ model Review {
 
 model Match {
   id     String @id @default(cuid())
-  status String @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  status MatchStatus @default(PENDING) // PENDING, ACCEPTED, REJECTED
 
   // Relations
   initiatorId  String
@@ -148,6 +158,9 @@ model Match {
   initiator    User        @relation("MatchInitiator", fields: [initiatorId], references: [id], onDelete: Cascade)
   receiver     User        @relation("MatchReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
   travelPlan   TravelPlan? @relation(fields: [travelPlanId], references: [id])
+
+  // Messages relation
+  messages Message[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -173,4 +186,30 @@ model Subscription {
   updatedAt DateTime @updatedAt
 
   @@map("subscriptions")
+}
+
+model Message {
+  id         String  @id @default(cuid())
+  content    String  @db.Text
+  senderId   String
+  receiverId String
+  matchId    String?
+  read       Boolean @default(false)
+  deleted    Boolean @default(false)
+  deletedAt  DateTime?
+
+  // Relations
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User   @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  match    Match? @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([senderId, receiverId])
+  @@index([receiverId, read])
+  @@index([matchId])
+  @@index([createdAt])
+  @@map("messages")
 }

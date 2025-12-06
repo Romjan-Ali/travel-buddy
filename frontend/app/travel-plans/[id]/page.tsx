@@ -1,0 +1,197 @@
+// frontend/app/travel-plans/[id]/page.tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/lib/auth-context'
+import { travelPlanAPI, matchAPI } from '@/lib/api'
+import { toast } from 'sonner'
+import { ArrowLeft } from 'lucide-react'
+import { TravelPlanHeader } from './components/TravelPlanHeader'
+import { TravelPlanStats } from './components/TravelPlanStats'
+import { TravelPlanTabs } from './components/TravelPlanTabs'
+import { TravelPlanSidebar } from './components/TravelPlanSidebar'
+import { MatchRequestDialog } from './components/MatchRequestDialog'
+import { TravelPlanReviews } from './components/TravelPlanReviews'
+
+export default function TravelPlanDetailsPage() {
+  const params = useParams()
+  const router = useRouter()
+  const { user } = useAuth()
+  const [travelPlan, setTravelPlan] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false)
+  const [userMatchStatus, setUserMatchStatus] = useState<
+    'PENDING' | 'ACCEPTED' | 'REJECTED' | null
+  >(null)
+
+  const travelPlanId = params.id as string
+
+  useEffect(() => {
+    if (travelPlanId) {
+      fetchTravelPlan()
+      fetchUserMatchStatus()
+    }
+  }, [travelPlanId])
+
+  const fetchTravelPlan = async () => {
+    setIsLoading(true)
+    try {
+      const result = await travelPlanAPI.getById(travelPlanId)
+      setTravelPlan(result.data?.travelPlan || null)
+    } catch (error) {
+      toast.error('Failed to load travel plan details')
+      console.error('Travel plan details error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchUserMatchStatus = async () => {
+    if (!user) return
+
+    try {
+      const matchesResult = await matchAPI.getMyMatches({
+        type: 'sent',
+        page: 1,
+        limit: 20,
+      })
+
+      const matchForThisPlan = matchesResult.data?.matches?.find(
+        (match: any) => match.travelPlanId === travelPlanId
+      )
+
+      setUserMatchStatus(matchForThisPlan?.status || null)
+    } catch (error) {
+      console.error('Failed to fetch match status:', error)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this travel plan? This action cannot be undone.'
+      )
+    ) {
+      return
+    }
+
+    try {
+      await travelPlanAPI.delete(travelPlanId)
+      toast.success('Travel plan deleted successfully')
+      router.push('/travel-plans')
+    } catch (error) {
+      toast.error('Failed to delete travel plan')
+    }
+  }
+
+  const handleShare = () => {
+    const url = window.location.href
+    navigator.clipboard.writeText(url)
+    toast.success('Link copied to clipboard!')
+  }
+
+  const handleMatchSuccess = () => {
+    toast.success(
+      'Match request sent! The plan owner will review your request.'
+    )
+    fetchTravelPlan()
+    fetchUserMatchStatus()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container py-8">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading travel plan...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!travelPlan) {
+    return (
+      <div className="container py-8">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold mb-4">Travel Plan Not Found</h2>
+          <p className="text-muted-foreground mb-6">
+            The travel plan you're looking for doesn't exist or has been
+            removed.
+          </p>
+          <Button onClick={() => router.push('/travel-plans')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Travel Plans
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const isPlanOwner = user?.id === travelPlan.user.id
+  const startDate = new Date(travelPlan.startDate)
+  const isUpcoming = startDate > new Date()
+
+  return (
+    <div className="container py-8">
+      <Button
+        variant="ghost"
+        className="mb-6 gap-2"
+        onClick={() => router.push('/travel-plans')}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Travel Plans
+      </Button>
+
+      <TravelPlanHeader
+        destination={travelPlan.destination}
+        startDate={travelPlan.startDate}
+        endDate={travelPlan.endDate}
+        travelType={travelPlan.travelType}
+        isPlanOwner={isPlanOwner}
+        userMatchStatus={userMatchStatus}
+        isUpcoming={isUpcoming}
+        onEdit={() => router.push(`/travel-plans/${travelPlanId}/edit`)}
+        onDelete={handleDelete}
+        onShare={handleShare}
+        onRequestToJoin={() => setIsMatchDialogOpen(true)}
+      />
+
+      <TravelPlanStats
+        startDate={travelPlan.startDate}
+        endDate={travelPlan.endDate}
+        budget={travelPlan.budget}
+        matchesCount={travelPlan._count?.matches || 0}
+        isUpcoming={isUpcoming}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        <TravelPlanTabs
+          travelPlan={travelPlan}
+          isPlanOwner={isPlanOwner}
+          userMatchStatus={userMatchStatus}
+          isUpcoming={isUpcoming}
+          travelPlanId={travelPlanId}
+          onRequestToJoin={() => setIsMatchDialogOpen(true)}
+        />
+
+        <TravelPlanSidebar
+          travelPlan={travelPlan}
+          isPlanOwner={isPlanOwner}
+          userMatchStatus={userMatchStatus}
+          isUpcoming={isUpcoming}
+          onShare={handleShare}
+          onRequestToJoin={() => setIsMatchDialogOpen(true)}
+        />
+      </div>
+
+      <MatchRequestDialog
+        travelPlan={travelPlan}
+        isOpen={isMatchDialogOpen}
+        onOpenChange={setIsMatchDialogOpen}
+        onSuccess={handleMatchSuccess}
+      />
+    </div>
+  )
+}

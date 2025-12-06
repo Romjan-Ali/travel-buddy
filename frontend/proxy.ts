@@ -8,14 +8,22 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public routes (no auth required)
-  const publicRoutes = ['/login', '/register', '/', '/about', '/contact', '/api/auth', '/_next']
-  const isPublicRoute = publicRoutes.some(route => 
+  const publicRoutes = [
+    '/login',
+    '/register',
+    '/',
+    '/about',
+    '/contact',
+    '/api/auth',
+    '/_next',
+  ]
+  const isPublicRoute = publicRoutes.some((route) =>
     route === '/' ? pathname === '/' : pathname.startsWith(route)
   )
 
   // Admin routes (require admin role)
   const adminRoutes = ['/admin']
-  const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route))
+  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route))
 
   // API routes protection (optional but recommended)
   const isApiRoute = pathname.startsWith('/api/')
@@ -31,7 +39,7 @@ export function proxy(request: NextRequest) {
         { status: 401 }
       )
     }
-    
+
     // Redirect to login for page routes
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
@@ -42,8 +50,24 @@ export function proxy(request: NextRequest) {
   // 2. Handle admin route access control
   // ============================================
   if (token && isAdminRoute) {
-    const userRole = decodeToken(token)
-    
+    const decodedToken = decodeToken(token) as { role?: string } | null
+
+    if (!decodedToken) {
+      // Invalid token handling
+      if (isApiRoute) {
+        return NextResponse.json(
+          { error: 'Unauthorized', message: 'Invalid token' },
+          { status: 401 }
+        )
+      }
+
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    const userRole = decodedToken.role
+
     // If token doesn't contain role or user is not admin
     if (!userRole || userRole !== 'ADMIN') {
       if (isApiRoute) {
@@ -52,13 +76,13 @@ export function proxy(request: NextRequest) {
           { status: 403 }
         )
       }
-      
+
       // Redirect non-admin users to dashboard or unauthorized page
       const redirectUrl = new URL('/unauthorized', request.url)
       redirectUrl.searchParams.set('reason', 'admin-access-required')
       return NextResponse.redirect(redirectUrl)
     }
-    
+
     // User is admin - add admin headers for downstream use
     const response = NextResponse.next()
     response.headers.set('x-user-role', 'ADMIN')
@@ -70,6 +94,7 @@ export function proxy(request: NextRequest) {
   // ============================================
   if (token && !isPublicRoute) {
     const decodedToken = decodeToken(token) as { role?: string } | null
+
     if (!decodedToken) {
       // Invalid token handling
       if (isApiRoute) {
@@ -78,14 +103,14 @@ export function proxy(request: NextRequest) {
           { status: 401 }
         )
       }
-      
+
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
 
     const userRole = decodedToken.role
-    
+
     // Add user info to headers for server components/API routes
     const response = NextResponse.next()
     if (userRole) {
@@ -98,7 +123,5 @@ export function proxy(request: NextRequest) {
   return NextResponse.next()
 }
 export const config = {
-  matcher: [
-    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico).*)'],
 }

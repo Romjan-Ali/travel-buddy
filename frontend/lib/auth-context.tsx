@@ -1,7 +1,13 @@
 // frontend/lib/auth-context.tsx
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { authAPI } from '@/lib/api'
@@ -26,7 +32,11 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (data: { email: string; password: string; fullName: string }) => Promise<void>
+  register: (data: {
+    email: string
+    password: string
+    fullName: string
+  }) => Promise<void>
   logout: () => Promise<void>
   updateUser: (user: User) => void
 }
@@ -47,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('Checking auth for pathname:', pathname)
     try {
       const result = await authAPI.getMe()
+      console.log('user result in check auth:', result.data.user)
       setUser(result.data.user)
     } catch (error) {
       setUser(null)
@@ -59,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     try {
       const result = await authAPI.login({ email, password })
+      console.log('user result in login auth:', result.data.user)
       setUser(result.data.user)
       toast.success('Login successful!')
       router.push('/dashboard')
@@ -70,7 +82,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const register = async (data: { email: string; password: string; fullName: string }) => {
+  const register = async (data: {
+    email: string
+    password: string
+    fullName: string
+  }) => {
     setIsLoading(true)
     try {
       const response = await authAPI.register(data)
@@ -130,7 +146,12 @@ export function useProtectedRoute() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!isLoading && !user && pathname !== '/login' && pathname !== '/register') {
+    if (
+      !isLoading &&
+      !user &&
+      pathname !== '/login' &&
+      pathname !== '/register'
+    ) {
       router.push('/login')
     }
   }, [user, isLoading, pathname, router])

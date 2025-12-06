@@ -26,3 +26,12 @@ export const TravelType = {
 } as const
 
 export type TravelType = (typeof TravelType)[keyof typeof TravelType]
+
+
+export const MatchStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type MatchStatus = (typeof MatchStatus)[keyof typeof MatchStatus]

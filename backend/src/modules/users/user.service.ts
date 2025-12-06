@@ -1,3 +1,4 @@
+// backend/src/modules/users/user.service.ts
 import { prisma } from '../../lib/prisma';
 import type { ProfileInput } from '../../utils/types';
 import { AppError } from '../../middleware/errorHandler';

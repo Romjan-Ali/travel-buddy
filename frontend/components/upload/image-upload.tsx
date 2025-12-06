@@ -1,3 +1,4 @@
+// frontend/components/upload/image-upload.tsx
 'use client'
 
 import { useState, useRef } from 'react'

@@ -26,7 +26,7 @@ export type AggregateMatch = {
 
 export type MatchMinAggregateOutputType = {
   id: string | null
-  status: string | null
+  status: $Enums.MatchStatus | null
   initiatorId: string | null
   receiverId: string | null
   travelPlanId: string | null
@@ -36,7 +36,7 @@ export type MatchMinAggregateOutputType = {
 
 export type MatchMaxAggregateOutputType = {
   id: string | null
-  status: string | null
+  status: $Enums.MatchStatus | null
   initiatorId: string | null
   receiverId: string | null
   travelPlanId: string | null
@@ -161,7 +161,7 @@ export type MatchGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type MatchGroupByOutputType = {
   id: string
-  status: string
+  status: $Enums.MatchStatus
   initiatorId: string
   receiverId: string
   travelPlanId: string | null
@@ -192,7 +192,7 @@ export type MatchWhereInput = {
   OR?: Prisma.MatchWhereInput[]
   NOT?: Prisma.MatchWhereInput | Prisma.MatchWhereInput[]
   id?: Prisma.StringFilter<"Match"> | string
-  status?: Prisma.StringFilter<"Match"> | string
+  status?: Prisma.EnumMatchStatusFilter<"Match"> | $Enums.MatchStatus
   initiatorId?: Prisma.StringFilter<"Match"> | string
   receiverId?: Prisma.StringFilter<"Match"> | string
   travelPlanId?: Prisma.StringNullableFilter<"Match"> | string | null
@@ -201,6 +201,7 @@ export type MatchWhereInput = {
   initiator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   receiver?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   travelPlan?: Prisma.XOR<Prisma.TravelPlanNullableScalarRelationFilter, Prisma.TravelPlanWhereInput> | null
+  messages?: Prisma.MessageListRelationFilter
 }
 
 export type MatchOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type MatchOrderByWithRelationInput = {
   initiator?: Prisma.UserOrderByWithRelationInput
   receiver?: Prisma.UserOrderByWithRelationInput
   travelPlan?: Prisma.TravelPlanOrderByWithRelationInput
+  messages?: Prisma.MessageOrderByRelationAggregateInput
 }
 
 export type MatchWhereUniqueInput = Prisma.AtLeast<{
@@ -222,7 +224,7 @@ export type MatchWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MatchWhereInput | Prisma.MatchWhereInput[]
   OR?: Prisma.MatchWhereInput[]
   NOT?: Prisma.MatchWhereInput | Prisma.MatchWhereInput[]
-  status?: Prisma.StringFilter<"Match"> | string
+  status?: Prisma.EnumMatchStatusFilter<"Match"> | $Enums.MatchStatus
   initiatorId?: Prisma.StringFilter<"Match"> | string
   receiverId?: Prisma.StringFilter<"Match"> | string
   travelPlanId?: Prisma.StringNullableFilter<"Match"> | string | null
@@ -231,6 +233,7 @@ export type MatchWhereUniqueInput = Prisma.AtLeast<{
   initiator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   receiver?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   travelPlan?: Prisma.XOR<Prisma.TravelPlanNullableScalarRelationFilter, Prisma.TravelPlanWhereInput> | null
+  messages?: Prisma.MessageListRelationFilter
 }, "id" | "initiatorId_receiverId_travelPlanId">
 
 export type MatchOrderByWithAggregationInput = {
@@ -251,7 +254,7 @@ export type MatchScalarWhereWithAggregatesInput = {
   OR?: Prisma.MatchScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MatchScalarWhereWithAggregatesInput | Prisma.MatchScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Match"> | string
-  status?: Prisma.StringWithAggregatesFilter<"Match"> | string
+  status?: Prisma.EnumMatchStatusWithAggregatesFilter<"Match"> | $Enums.MatchStatus
   initiatorId?: Prisma.StringWithAggregatesFilter<"Match"> | string
   receiverId?: Prisma.StringWithAggregatesFilter<"Match"> | string
   travelPlanId?: Prisma.StringNullableWithAggregatesFilter<"Match"> | string | null
@@ -261,47 +264,51 @@ export type MatchScalarWhereWithAggregatesInput = {
 
 export type MatchCreateInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   initiator: Prisma.UserCreateNestedOneWithoutMatchesInitiatedInput
   receiver: Prisma.UserCreateNestedOneWithoutMatchesReceivedInput
   travelPlan?: Prisma.TravelPlanCreateNestedOneWithoutMatchesInput
+  messages?: Prisma.MessageCreateNestedManyWithoutMatchInput
 }
 
 export type MatchUncheckedCreateInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   initiatorId: string
   receiverId: string
   travelPlanId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutMatchInput
 }
 
 export type MatchUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   initiator?: Prisma.UserUpdateOneRequiredWithoutMatchesInitiatedNestedInput
   receiver?: Prisma.UserUpdateOneRequiredWithoutMatchesReceivedNestedInput
   travelPlan?: Prisma.TravelPlanUpdateOneWithoutMatchesNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
   receiverId?: Prisma.StringFieldUpdateOperationsInput | string
   travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchCreateManyInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   initiatorId: string
   receiverId: string
   travelPlanId?: string | null
@@ -311,14 +318,14 @@ export type MatchCreateManyInput = {
 
 export type MatchUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MatchUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
   receiverId?: Prisma.StringFieldUpdateOperationsInput | string
   travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -370,6 +377,11 @@ export type MatchMinOrderByAggregateInput = {
   travelPlanId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type MatchNullableScalarRelationFilter = {
+  is?: Prisma.MatchWhereInput | null
+  isNot?: Prisma.MatchWhereInput | null
 }
 
 export type MatchCreateNestedManyWithoutInitiatorInput = {
@@ -498,22 +510,44 @@ export type MatchUncheckedUpdateManyWithoutTravelPlanNestedInput = {
   deleteMany?: Prisma.MatchScalarWhereInput | Prisma.MatchScalarWhereInput[]
 }
 
+export type EnumMatchStatusFieldUpdateOperationsInput = {
+  set?: $Enums.MatchStatus
+}
+
+export type MatchCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.MatchCreateWithoutMessagesInput, Prisma.MatchUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.MatchCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.MatchWhereUniqueInput
+}
+
+export type MatchUpdateOneWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.MatchCreateWithoutMessagesInput, Prisma.MatchUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.MatchCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.MatchUpsertWithoutMessagesInput
+  disconnect?: Prisma.MatchWhereInput | boolean
+  delete?: Prisma.MatchWhereInput | boolean
+  connect?: Prisma.MatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MatchUpdateToOneWithWhereWithoutMessagesInput, Prisma.MatchUpdateWithoutMessagesInput>, Prisma.MatchUncheckedUpdateWithoutMessagesInput>
+}
+
 export type MatchCreateWithoutInitiatorInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   receiver: Prisma.UserCreateNestedOneWithoutMatchesReceivedInput
   travelPlan?: Prisma.TravelPlanCreateNestedOneWithoutMatchesInput
+  messages?: Prisma.MessageCreateNestedManyWithoutMatchInput
 }
 
 export type MatchUncheckedCreateWithoutInitiatorInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   receiverId: string
   travelPlanId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutMatchInput
 }
 
 export type MatchCreateOrConnectWithoutInitiatorInput = {
@@ -528,20 +562,22 @@ export type MatchCreateManyInitiatorInputEnvelope = {
 
 export type MatchCreateWithoutReceiverInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   initiator: Prisma.UserCreateNestedOneWithoutMatchesInitiatedInput
   travelPlan?: Prisma.TravelPlanCreateNestedOneWithoutMatchesInput
+  messages?: Prisma.MessageCreateNestedManyWithoutMatchInput
 }
 
 export type MatchUncheckedCreateWithoutReceiverInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   initiatorId: string
   travelPlanId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutMatchInput
 }
 
 export type MatchCreateOrConnectWithoutReceiverInput = {
@@ -575,7 +611,7 @@ export type MatchScalarWhereInput = {
   OR?: Prisma.MatchScalarWhereInput[]
   NOT?: Prisma.MatchScalarWhereInput | Prisma.MatchScalarWhereInput[]
   id?: Prisma.StringFilter<"Match"> | string
-  status?: Prisma.StringFilter<"Match"> | string
+  status?: Prisma.EnumMatchStatusFilter<"Match"> | $Enums.MatchStatus
   initiatorId?: Prisma.StringFilter<"Match"> | string
   receiverId?: Prisma.StringFilter<"Match"> | string
   travelPlanId?: Prisma.StringNullableFilter<"Match"> | string | null
@@ -601,20 +637,22 @@ export type MatchUpdateManyWithWhereWithoutReceiverInput = {
 
 export type MatchCreateWithoutTravelPlanInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   initiator: Prisma.UserCreateNestedOneWithoutMatchesInitiatedInput
   receiver: Prisma.UserCreateNestedOneWithoutMatchesReceivedInput
+  messages?: Prisma.MessageCreateNestedManyWithoutMatchInput
 }
 
 export type MatchUncheckedCreateWithoutTravelPlanInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   initiatorId: string
   receiverId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutMatchInput
 }
 
 export type MatchCreateOrConnectWithoutTravelPlanInput = {
@@ -643,9 +681,65 @@ export type MatchUpdateManyWithWhereWithoutTravelPlanInput = {
   data: Prisma.XOR<Prisma.MatchUpdateManyMutationInput, Prisma.MatchUncheckedUpdateManyWithoutTravelPlanInput>
 }
 
+export type MatchCreateWithoutMessagesInput = {
+  id?: string
+  status?: $Enums.MatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  initiator: Prisma.UserCreateNestedOneWithoutMatchesInitiatedInput
+  receiver: Prisma.UserCreateNestedOneWithoutMatchesReceivedInput
+  travelPlan?: Prisma.TravelPlanCreateNestedOneWithoutMatchesInput
+}
+
+export type MatchUncheckedCreateWithoutMessagesInput = {
+  id?: string
+  status?: $Enums.MatchStatus
+  initiatorId: string
+  receiverId: string
+  travelPlanId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MatchCreateOrConnectWithoutMessagesInput = {
+  where: Prisma.MatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.MatchCreateWithoutMessagesInput, Prisma.MatchUncheckedCreateWithoutMessagesInput>
+}
+
+export type MatchUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.MatchUpdateWithoutMessagesInput, Prisma.MatchUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.MatchCreateWithoutMessagesInput, Prisma.MatchUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.MatchWhereInput
+}
+
+export type MatchUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.MatchWhereInput
+  data: Prisma.XOR<Prisma.MatchUpdateWithoutMessagesInput, Prisma.MatchUncheckedUpdateWithoutMessagesInput>
+}
+
+export type MatchUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  initiator?: Prisma.UserUpdateOneRequiredWithoutMatchesInitiatedNestedInput
+  receiver?: Prisma.UserUpdateOneRequiredWithoutMatchesReceivedNestedInput
+  travelPlan?: Prisma.TravelPlanUpdateOneWithoutMatchesNestedInput
+}
+
+export type MatchUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
+  initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverId?: Prisma.StringFieldUpdateOperationsInput | string
+  travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type MatchCreateManyInitiatorInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   receiverId: string
   travelPlanId?: string | null
   createdAt?: Date | string
@@ -654,7 +748,7 @@ export type MatchCreateManyInitiatorInput = {
 
 export type MatchCreateManyReceiverInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   initiatorId: string
   travelPlanId?: string | null
   createdAt?: Date | string
@@ -663,25 +757,27 @@ export type MatchCreateManyReceiverInput = {
 
 export type MatchUpdateWithoutInitiatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receiver?: Prisma.UserUpdateOneRequiredWithoutMatchesReceivedNestedInput
   travelPlan?: Prisma.TravelPlanUpdateOneWithoutMatchesNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateWithoutInitiatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   receiverId?: Prisma.StringFieldUpdateOperationsInput | string
   travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateManyWithoutInitiatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   receiverId?: Prisma.StringFieldUpdateOperationsInput | string
   travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -690,25 +786,27 @@ export type MatchUncheckedUpdateManyWithoutInitiatorInput = {
 
 export type MatchUpdateWithoutReceiverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   initiator?: Prisma.UserUpdateOneRequiredWithoutMatchesInitiatedNestedInput
   travelPlan?: Prisma.TravelPlanUpdateOneWithoutMatchesNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateWithoutReceiverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
   travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateManyWithoutReceiverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
   travelPlanId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -717,7 +815,7 @@ export type MatchUncheckedUpdateManyWithoutReceiverInput = {
 
 export type MatchCreateManyTravelPlanInput = {
   id?: string
-  status?: string
+  status?: $Enums.MatchStatus
   initiatorId: string
   receiverId: string
   createdAt?: Date | string
@@ -726,31 +824,62 @@ export type MatchCreateManyTravelPlanInput = {
 
 export type MatchUpdateWithoutTravelPlanInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   initiator?: Prisma.UserUpdateOneRequiredWithoutMatchesInitiatedNestedInput
   receiver?: Prisma.UserUpdateOneRequiredWithoutMatchesReceivedNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateWithoutTravelPlanInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
   receiverId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutMatchNestedInput
 }
 
 export type MatchUncheckedUpdateManyWithoutTravelPlanInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMatchStatusFieldUpdateOperationsInput | $Enums.MatchStatus
   initiatorId?: Prisma.StringFieldUpdateOperationsInput | string
   receiverId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type MatchCountOutputType
+ */
+
+export type MatchCountOutputType = {
+  messages: number
+}
+
+export type MatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  messages?: boolean | MatchCountOutputTypeCountMessagesArgs
+}
+
+/**
+ * MatchCountOutputType without action
+ */
+export type MatchCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MatchCountOutputType
+   */
+  select?: Prisma.MatchCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * MatchCountOutputType without action
+ */
+export type MatchCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageWhereInput
+}
 
 
 export type MatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -764,6 +893,8 @@ export type MatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   initiator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receiver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   travelPlan?: boolean | Prisma.Match$travelPlanArgs<ExtArgs>
+  messages?: boolean | Prisma.Match$messagesArgs<ExtArgs>
+  _count?: boolean | Prisma.MatchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["match"]>
 
 export type MatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -807,6 +938,8 @@ export type MatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   initiator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receiver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   travelPlan?: boolean | Prisma.Match$travelPlanArgs<ExtArgs>
+  messages?: boolean | Prisma.Match$messagesArgs<ExtArgs>
+  _count?: boolean | Prisma.MatchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MatchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   initiator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -825,10 +958,11 @@ export type $MatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     initiator: Prisma.$UserPayload<ExtArgs>
     receiver: Prisma.$UserPayload<ExtArgs>
     travelPlan: Prisma.$TravelPlanPayload<ExtArgs> | null
+    messages: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    status: string
+    status: $Enums.MatchStatus
     initiatorId: string
     receiverId: string
     travelPlanId: string | null
@@ -1231,6 +1365,7 @@ export interface Prisma__MatchClient<T, Null = never, ExtArgs extends runtime.Ty
   initiator<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   receiver<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   travelPlan<T extends Prisma.Match$travelPlanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Match$travelPlanArgs<ExtArgs>>): Prisma.Prisma__TravelPlanClient<runtime.Types.Result.GetResult<Prisma.$TravelPlanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  messages<T extends Prisma.Match$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Match$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1261,7 +1396,7 @@ export interface Prisma__MatchClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface MatchFieldRefs {
   readonly id: Prisma.FieldRef<"Match", 'String'>
-  readonly status: Prisma.FieldRef<"Match", 'String'>
+  readonly status: Prisma.FieldRef<"Match", 'MatchStatus'>
   readonly initiatorId: Prisma.FieldRef<"Match", 'String'>
   readonly receiverId: Prisma.FieldRef<"Match", 'String'>
   readonly travelPlanId: Prisma.FieldRef<"Match", 'String'>
@@ -1679,6 +1814,30 @@ export type Match$travelPlanArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.TravelPlanInclude<ExtArgs> | null
   where?: Prisma.TravelPlanWhereInput
+}
+
+/**
+ * Match.messages
+ */
+export type Match$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Message
+   */
+  select?: Prisma.MessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Message
+   */
+  omit?: Prisma.MessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null
+  where?: Prisma.MessageWhereInput
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
+  cursor?: Prisma.MessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
 }
 
 /**

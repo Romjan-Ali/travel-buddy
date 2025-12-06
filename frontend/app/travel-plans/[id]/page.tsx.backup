@@ -1,0 +1,1133 @@
+// frontend/app/travel-plans/[id]/page.tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { travelPlanAPI, matchAPI, reviewAPI } from '@/lib/api'
+import { toast } from 'sonner'
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  Users,
+  Star,
+  DollarSign,
+  Globe,
+  MessageSquare,
+  Edit,
+  Trash2,
+  Share2,
+  Heart,
+  UserPlus,
+  CheckCircle,
+  Clock,
+  Briefcase,
+  ChevronRight,
+  MoreVertical,
+  XCircle, // Added
+} from 'lucide-react'
+import { formatDate, calculateDaysBetween } from '@/lib/utils'
+
+interface TravelPlan {
+  id: string
+  destination: string
+  startDate: string
+  endDate: string
+  travelType: string
+  budget: string
+  description?: string
+  isPublic: boolean
+  createdAt: string
+  updatedAt: string
+  user: {
+    id: string
+    email: string
+    profile?: {
+      fullName: string
+      profileImage?: string
+      bio?: string
+      currentLocation?: string
+      travelInterests?: string[]
+      visitedCountries?: string[]
+    }
+    reviewsReceived?: Array<{
+      rating: number
+      comment?: string
+    }>
+    _count?: {
+      travelPlans: number
+      reviewsReceived: number
+    }
+  }
+  matches?: Array<{
+    id: string
+    status: string
+    initiator?: {
+      profile?: {
+        fullName: string
+        profileImage?: string
+      }
+    }
+  }>
+  _count?: {
+    matches: number
+  }
+}
+
+interface MatchRequestDialogProps {
+  travelPlan: TravelPlan
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  onSuccess: () => void
+}
+
+function MatchRequestDialog({
+  travelPlan,
+  isOpen,
+  onOpenChange,
+  onSuccess,
+}: MatchRequestDialogProps) {
+  const { user } = useAuth()
+  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async () => {
+    if (!user) {
+      toast.error('Please login to send match requests')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      await matchAPI.create({
+        receiverId: travelPlan.user.id,
+        travelPlanId: travelPlan.id,
+        message:
+          message || `I'd like to join your trip to ${travelPlan.destination}`,
+      })
+
+      toast.success('Match request sent successfully!')
+      onSuccess()
+      onOpenChange(false)
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send match request')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const getDefaultMessage = () => {
+    return `Hi ${
+      travelPlan.user.profile?.fullName || 'there'
+    }! I'm interested in joining your trip to ${
+      travelPlan.destination
+    } from ${formatDate(travelPlan.startDate)} to ${formatDate(
+      travelPlan.endDate
+    )}. Looking forward to connecting!`
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            Request to Join
+          </DialogTitle>
+          <DialogDescription>
+            Send a match request to{' '}
+            {travelPlan.user.profile?.fullName || 'this traveler'}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          {/* Travel Plan Summary */}
+          <div className="p-3 border rounded-lg bg-muted/30">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-primary" />
+              <span className="font-semibold">{travelPlan.destination}</span>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {formatDate(travelPlan.startDate)} -{' '}
+                {formatDate(travelPlan.endDate)}
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {travelPlan.travelType}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Message Input */}
+          <div className="space-y-2">
+            <Label htmlFor="message">Your Message</Label>
+            <Textarea
+              id="message"
+              placeholder={getDefaultMessage()}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="min-h-[120px]"
+              disabled={isLoading}
+            />
+            <p className="text-xs text-muted-foreground">
+              Introduce yourself and explain why you'd be a good travel
+              companion
+            </p>
+          </div>
+
+          {/* Tips */}
+          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h4 className="font-semibold text-sm mb-1 flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              Tips for a great request:
+            </h4>
+            <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+              <li>• Mention shared interests from their profile</li>
+              <li>• Be clear about your travel style and preferences</li>
+              <li>• Suggest a time to chat before committing</li>
+              <li>• Keep it friendly and respectful</li>
+            </ul>
+          </div>
+        </div>
+
+        <DialogFooter className="sm:justify-between">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading || !user}
+            className="gap-2"
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                Sending...
+              </>
+            ) : (
+              <>
+                <MessageSquare className="h-4 w-4" />
+                Send Request
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default function TravelPlanDetailsPage() {
+  const params = useParams()
+  const router = useRouter()
+  const { user } = useAuth()
+  const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('details')
+  const [userMatchStatus, setUserMatchStatus] = useState<
+    'PENDING' | 'ACCEPTED' | 'REJECTED' | null
+  >(null)
+
+  const travelPlanId = params.id as string
+
+  useEffect(() => {
+    if (travelPlanId) {
+      fetchTravelPlan()
+      fetchUserMatchStatus()
+    }
+  }, [travelPlanId])
+
+  const fetchTravelPlan = async () => {
+    setIsLoading(true)
+    try {
+      const result = await travelPlanAPI.getById(travelPlanId)
+      setTravelPlan(result.data?.travelPlan || null)
+    } catch (error) {
+      toast.error('Failed to load travel plan details')
+      console.error('Travel plan details error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchUserMatchStatus = async () => {
+    if (!user) return
+
+    try {
+      const matchesResult = await matchAPI.getMyMatches({
+        type: 'sent',
+        page: 1,
+        limit: 20,
+      })
+
+      // Find match for this specific travel plan
+      const matchForThisPlan = matchesResult.data?.matches?.find(
+        (match: any) => match.travelPlanId === travelPlanId
+      )
+
+      if (matchForThisPlan) {
+        setUserMatchStatus(matchForThisPlan.status)
+      } else {
+        setUserMatchStatus(null)
+      }
+    } catch (error) {
+      console.error('Failed to fetch match status:', error)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this travel plan? This action cannot be undone.'
+      )
+    ) {
+      return
+    }
+
+    try {
+      await travelPlanAPI.delete(travelPlanId)
+      toast.success('Travel plan deleted successfully')
+      router.push('/travel-plans')
+    } catch (error) {
+      toast.error('Failed to delete travel plan')
+    }
+  }
+
+  const handleShare = () => {
+    const url = window.location.href
+    navigator.clipboard.writeText(url)
+    toast.success('Link copied to clipboard!')
+  }
+
+  const handleMatchSuccess = () => {
+    toast.success(
+      'Match request sent! The plan owner will review your request.'
+    )
+    fetchTravelPlan() // Refresh to update match count
+    fetchUserMatchStatus() // Refresh user's match status
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container py-8">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading travel plan...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!travelPlan) {
+    return (
+      <div className="container py-8">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold mb-4">Travel Plan Not Found</h2>
+          <p className="text-muted-foreground mb-6">
+            The travel plan you're looking for doesn't exist or has been
+            removed.
+          </p>
+          <Button onClick={() => router.push('/travel-plans')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Travel Plans
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const isPlanOwner = user?.id === travelPlan.user.id
+  const startDate = new Date(travelPlan.startDate)
+  const endDate = new Date(travelPlan.endDate)
+  const daysBetween = calculateDaysBetween(startDate, endDate)
+  const isUpcoming = startDate > new Date()
+
+  // Calculate average rating for the plan owner
+  const averageRating = travelPlan.user.reviewsReceived?.length
+    ? travelPlan.user.reviewsReceived.reduce(
+        (sum, review) => sum + review.rating,
+        0
+      ) / travelPlan.user.reviewsReceived.length
+    : 0
+
+  return (
+    <div className="container py-8">
+      {/* Back Button */}
+      <Button
+        variant="ghost"
+        className="mb-6 gap-2"
+        onClick={() => router.push('/travel-plans')}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Travel Plans
+      </Button>
+
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              {travelPlan.destination}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span>
+                  {formatDate(travelPlan.startDate)} -{' '}
+                  {formatDate(travelPlan.endDate)}
+                </span>
+                <span className="text-sm">({daysBetween} days)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={isUpcoming ? 'default' : 'secondary'}>
+                  {isUpcoming ? 'Upcoming' : 'Completed'}
+                </Badge>
+                <Badge variant="outline">{travelPlan.travelType}</Badge>
+                {/* User match status badge */}
+                {!isPlanOwner && userMatchStatus === 'PENDING' && (
+                  <Badge
+                    variant="outline"
+                    className="bg-yellow-50 text-yellow-700 border-yellow-200"
+                  >
+                    <Clock className="h-3 w-3 mr-1" />
+                    Request Pending
+                  </Badge>
+                )}
+                {!isPlanOwner && userMatchStatus === 'ACCEPTED' && (
+                  <Badge
+                    variant="outline"
+                    className="bg-green-50 text-green-700 border-green-200"
+                  >
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Request Accepted
+                  </Badge>
+                )}
+                {!isPlanOwner && userMatchStatus === 'REJECTED' && (
+                  <Badge
+                    variant="outline"
+                    className="bg-red-50 text-red-700 border-red-200"
+                  >
+                    <XCircle className="h-3 w-3 mr-1" />
+                    Request Declined
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            {isPlanOwner ? (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/travel-plans/${travelPlanId}/edit`)
+                  }
+                  className="gap-2"
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleDelete}
+                  className="gap-2 text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={handleShare}
+                  className="gap-2"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Share
+                </Button>
+                <Button
+                  onClick={() => setIsMatchDialogOpen(true)}
+                  className="gap-2"
+                  disabled={
+                    !isUpcoming ||
+                    userMatchStatus === 'PENDING' ||
+                    userMatchStatus === 'ACCEPTED'
+                  }
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {userMatchStatus === 'PENDING'
+                    ? 'Request Pending'
+                    : userMatchStatus === 'ACCEPTED'
+                    ? 'Request Accepted'
+                    : userMatchStatus === 'REJECTED'
+                    ? 'Request to Join'
+                    : 'Request to Join'}
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Duration</p>
+                  <p className="text-xl font-bold">{daysBetween} days</p>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Budget</p>
+                  <p className="text-xl font-bold">{travelPlan.budget}</p>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Matches</p>
+                  <p className="text-xl font-bold">
+                    {travelPlan._count?.matches || 0}
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="text-xl font-bold">
+                    {isUpcoming ? 'Active' : 'Completed'}
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  {isUpcoming ? (
+                    <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  ) : (
+                    <CheckCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2">
+          <Tabs defaultValue="details" onValueChange={setActiveTab}>
+            <TabsList className="grid grid-cols-3 mb-6">
+              <TabsTrigger value="details">Details</TabsTrigger>
+              <TabsTrigger value="matches">
+                Matches ({travelPlan._count?.matches || 0})
+              </TabsTrigger>
+              <TabsTrigger value="organizer">Organizer</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="details">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Trip Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Description */}
+                  <div>
+                    <h3 className="font-semibold mb-2">About This Trip</h3>
+                    <p className="text-muted-foreground">
+                      {travelPlan.description || 'No description provided.'}
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  {/* Trip Info */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h3 className="font-semibold mb-3">Trip Information</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">
+                              Destination
+                            </p>
+                            <p className="font-medium">
+                              {travelPlan.destination}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">
+                              Dates
+                            </p>
+                            <p className="font-medium">
+                              {formatDate(travelPlan.startDate)} -{' '}
+                              {formatDate(travelPlan.endDate)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Briefcase className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">
+                              Travel Type
+                            </p>
+                            <p className="font-medium">
+                              {travelPlan.travelType}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">
+                              Budget
+                            </p>
+                            <p className="font-medium">{travelPlan.budget}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold mb-3">Quick Facts</h3>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-muted/30 rounded-lg">
+                          <p className="text-sm font-medium">Trip Duration</p>
+                          <p className="text-xl font-bold">
+                            {daysBetween} days
+                          </p>
+                        </div>
+                        <div className="p-3 bg-muted/30 rounded-lg">
+                          <p className="text-sm font-medium">Status</p>
+                          <p className="text-xl font-bold">
+                            {isUpcoming ? 'Planning Phase' : 'Completed'}
+                          </p>
+                        </div>
+                        <div className="p-3 bg-muted/30 rounded-lg">
+                          <p className="text-sm font-medium">Visibility</p>
+                          <p className="text-xl font-bold">
+                            {travelPlan.isPublic ? 'Public' : 'Private'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-4">
+                    {isPlanOwner ? (
+                      <>
+                        <Link href={`/travel-plans/${travelPlanId}/matches`}>
+                          <Button className="gap-2">
+                            <Users className="h-4 w-4" />
+                            View Match Requests
+                          </Button>
+                        </Link>
+                        <Button variant="outline" className="gap-2">
+                          <Share2 className="h-4 w-4" />
+                          Share Plan
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={() => setIsMatchDialogOpen(true)}
+                          className="gap-2"
+                          disabled={
+                            !isUpcoming ||
+                            userMatchStatus === 'PENDING' ||
+                            userMatchStatus === 'ACCEPTED'
+                          }
+                        >
+                          <UserPlus className="h-4 w-4" />
+                          {userMatchStatus === 'PENDING'
+                            ? 'Request Pending'
+                            : userMatchStatus === 'ACCEPTED'
+                            ? 'Request Accepted'
+                            : userMatchStatus === 'REJECTED'
+                            ? 'Request to Join'
+                            : 'Request to Join'}
+                        </Button>
+                        <Button variant="outline" className="gap-2">
+                          <MessageSquare className="h-4 w-4" />
+                          Message Organizer
+                        </Button>
+                        <Button variant="outline" className="gap-2">
+                          <Heart className="h-4 w-4" />
+                          Save Plan
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="matches">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Match Requests</CardTitle>
+                  <CardDescription>
+                    Travelers interested in joining this trip
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {travelPlan.matches && travelPlan.matches.length > 0 ? (
+                    <div className="space-y-4">
+                      {travelPlan.matches.slice(0, 5).map((match) => (
+                        <div
+                          key={match.id}
+                          className="flex items-center justify-between p-4 border rounded-lg"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <AvatarImage
+                                src={match.initiator?.profile?.profileImage}
+                              />
+                              <AvatarFallback>
+                                {match.initiator?.profile?.fullName
+                                  ?.charAt(0)
+                                  .toUpperCase() || 'T'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">
+                                {match.initiator?.profile?.fullName ||
+                                  'Traveler'}
+                              </p>
+                              <Badge
+                                variant={
+                                  match.status === 'ACCEPTED'
+                                    ? 'default'
+                                    : match.status === 'REJECTED'
+                                    ? 'destructive'
+                                    : 'outline'
+                                }
+                              >
+                                {match.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="sm">
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+
+                      {travelPlan.matches.length > 5 && (
+                        <div className="text-center">
+                          <Link href={`/travel-plans/${travelPlanId}/matches`}>
+                            <Button variant="outline">
+                              View All {travelPlan.matches.length} Matches
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="h-16 w-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
+                        <Users className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">
+                        No match requests yet
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {isPlanOwner
+                          ? 'Share your travel plan to receive match requests'
+                          : 'Be the first to request joining this travel plan'}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="organizer">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Trip Organizer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col md:flex-row items-start gap-6">
+                    <Avatar className="h-24 w-24">
+                      <AvatarImage
+                        src={travelPlan.user.profile?.profileImage}
+                      />
+                      <AvatarFallback className="text-2xl">
+                        {travelPlan.user.profile?.fullName
+                          ?.charAt(0)
+                          .toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-2xl font-bold mb-1">
+                            {travelPlan.user.profile?.fullName || 'Traveler'}
+                          </h3>
+                          {travelPlan.user.profile?.currentLocation && (
+                            <div className="flex items-center gap-1 text-muted-foreground mb-2">
+                              <MapPin className="h-4 w-4" />
+                              <span>
+                                {travelPlan.user.profile.currentLocation}
+                              </span>
+                            </div>
+                          )}
+
+                          {/*Rating  */}
+                          {averageRating > 0 && (
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="flex items-center gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-4 w-4 ${
+                                      i < Math.floor(averageRating)
+                                        ? 'text-yellow-500 fill-yellow-500'
+                                        : 'text-gray-300'
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <span className="font-medium">
+                                {averageRating.toFixed(1)}
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                ({travelPlan.user._count?.reviewsReceived ?? 0}{' '}
+                                reviews)
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <Link href={`/profile/${travelPlan.user.id}`}>
+                          <Button variant="outline" size="sm">
+                            View Full Profile
+                          </Button>
+                        </Link>
+                      </div>
+
+                      {/* Bio */}
+                      {travelPlan.user.profile?.bio && (
+                        <p className="text-muted-foreground mb-4">
+                          {travelPlan.user.profile.bio}
+                        </p>
+                      )}
+
+                      {/* Stats */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="text-center p-3 bg-muted/30 rounded-lg">
+                          <div className="text-xl font-bold">
+                            {travelPlan.user._count?.travelPlans || 0}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Trips
+                          </div>
+                        </div>
+                        <div className="text-center p-3 bg-muted/30 rounded-lg">
+                          <div className="text-xl font-bold">
+                            {travelPlan.user._count?.reviewsReceived || 0}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Reviews
+                          </div>
+                        </div>
+                        <div className="text-center p-3 bg-muted/30 rounded-lg">
+                          <div className="text-xl font-bold">
+                            {travelPlan.user.profile?.visitedCountries
+                              ?.length || 0}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Countries
+                          </div>
+                        </div>
+                        <div className="text-center p-3 bg-muted/30 rounded-lg">
+                          <div className="text-xl font-bold">98%</div>
+                          <div className="text-sm text-muted-foreground">
+                            Response Rate
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Interests */}
+                      {travelPlan.user.profile?.travelInterests &&
+                        travelPlan.user.profile.travelInterests.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-2">
+                              Travel Interests
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {travelPlan.user.profile.travelInterests.map(
+                                (interest, index) => (
+                                  <Badge key={index} variant="secondary">
+                                    {interest}
+                                  </Badge>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <div className="flex gap-3 w-full">
+                    <Button className="flex-1 gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Message
+                    </Button>
+                    {!isPlanOwner && (
+                      <Button variant="outline" className="flex-1 gap-2">
+                        <UserPlus className="h-4 w-4" />
+                        Connect
+                      </Button>
+                    )}
+                  </div>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Sidebar */}
+        <div>
+          {/* Quick Actions */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {isPlanOwner ? (
+                <>
+                  <Link href={`/travel-plans/${travelPlanId}/matches`}>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start gap-2"
+                    >
+                      <Users className="h-4 w-4" />
+                      View Match Requests
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit Travel Plan
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    Share with Friends
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => setIsMatchDialogOpen(true)}
+                    disabled={
+                      !isUpcoming ||
+                      userMatchStatus === 'PENDING' ||
+                      userMatchStatus === 'ACCEPTED'
+                    }
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    {userMatchStatus === 'PENDING'
+                      ? 'Request Pending'
+                      : userMatchStatus === 'ACCEPTED'
+                      ? 'Request Accepted'
+                      : userMatchStatus === 'REJECTED'
+                      ? 'Request to Join'
+                      : 'Request to Join'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    Message Organizer
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                  >
+                    <Heart className="h-4 w-4" />
+                    Save for Later
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Trip Timeline */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Trip Timeline</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Calendar className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Departure</p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(travelPlan.startDate)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Destination</p>
+                    <p className="text-sm text-muted-foreground">
+                      {travelPlan.destination}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Calendar className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Return</p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(travelPlan.endDate)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Trip Status
+                  </p>
+                  <Badge
+                    variant={isUpcoming ? 'default' : 'secondary'}
+                    className="text-sm"
+                  >
+                    {isUpcoming ? 'Upcoming' : 'Completed'}
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {isUpcoming
+                      ? `${daysBetween} days until departure`
+                      : 'Trip completed successfully'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Share Options */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Share This Trip</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" className="gap-2">
+                  <span className="text-blue-500">f</span>
+                  Facebook
+                </Button>
+                <Button variant="outline" className="gap-2">
+                  <span className="text-blue-400">t</span>
+                  Twitter
+                </Button>
+                <Button variant="outline" className="gap-2">
+                  <span className="text-red-500">in</span>
+                  LinkedIn
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleShare}
+                  className="gap-2"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Copy Link
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Match Request Dialog */}
+      <MatchRequestDialog
+        travelPlan={travelPlan}
+        isOpen={isMatchDialogOpen}
+        onOpenChange={setIsMatchDialogOpen}
+        onSuccess={handleMatchSuccess}
+      />
+    </div>
+  )
+}

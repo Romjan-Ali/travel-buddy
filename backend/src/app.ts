@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
+import { createServer } from 'http'
+import { socketService } from './modules/messages/socket.service'
 
 // Import middleware
 import { errorHandler, notFound } from './middleware/errorHandler'
@@ -24,6 +26,11 @@ import uploadRoutes from './modules/upload/upload.routes'
 dotenv.config()
 
 const app = express()
+
+const server = createServer(app)
+
+// Initialize WebSocket
+socketService.initialize(server)
 
 // Security middleware
 app.use(helmet())
@@ -83,6 +90,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
   console.log(`📊 Environment: ${process.env.NODE_ENV}`)
   console.log(`🔗 Client URL: ${process.env.CLIENT_URL}`)
+  console.log(`🔌 WebSocket enabled`)
 })
 
 export default app

@@ -1,7 +1,9 @@
+// frontend/app/explore/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import {
   Card,
   CardContent,
@@ -51,6 +53,7 @@ import {
   UserPlus,
   CheckCircle,
   Clock,
+  XCircle, // Added
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
@@ -76,6 +79,14 @@ interface TravelPlan {
   _count: {
     matches: number
   }
+}
+
+interface Match {
+  id: string
+  travelPlanId: string
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+  createdAt: string
+  receiverId: string
 }
 
 interface MatchRequestDialogProps {
@@ -241,18 +252,35 @@ export default function ExplorePage() {
   })
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [sentRequests, setSentRequests] = useState<Set<string>>(new Set())
+  const [sentRequestPlanIds, setSentRequestPlanIds] = useState<Set<string>>(new Set())
+  const [sentMatchRequests, setSentMatchRequests] = useState<Match[]>([])
 
   useEffect(() => {
     fetchTravelPlans()
   }, [filters, page])
 
   useEffect(() => {
-    // Load sent match requests from localStorage or API
-    const savedRequests = localStorage.getItem('sentMatchRequests')
-    if (savedRequests) {
-      setSentRequests(new Set(JSON.parse(savedRequests)))
+    // Load sent match requests from API
+    const fetchMatchRequests = async () => {
+      try {
+        const sentMatchRequestsData = await matchAPI.getMyMatches({
+          type: 'sent',
+          page: 1,
+          limit: 20,
+        })
+
+        const sentMatchRequestsPlanIds = sentMatchRequestsData.data.matches.map(
+          (v: Match) => v.travelPlanId
+        ) || []
+
+        setSentRequestPlanIds(new Set(sentMatchRequestsPlanIds))
+        setSentMatchRequests(sentMatchRequestsData.data.matches || [])
+      } catch (error) {
+        console.error('Failed to fetch match requests:', error)
+      }
     }
+
+    fetchMatchRequests()
   }, [])
 
   const fetchTravelPlans = async () => {
@@ -310,23 +338,36 @@ export default function ExplorePage() {
     setIsDialogOpen(true)
   }
 
-  const handleMatchSuccess = () => {
+  const handleMatchSuccess = async () => {
     if (selectedPlan) {
-      // Add to sent requests
-      const updatedRequests = new Set([...sentRequests, selectedPlan.id])
-      setSentRequests(updatedRequests)
-      localStorage.setItem(
-        'sentMatchRequests',
-        JSON.stringify([...updatedRequests])
-      )
+      // Refresh match requests to get updated status
+      try {
+        const sentMatchRequestsData = await matchAPI.getMyMatches({
+          type: 'sent',
+          page: 1,
+          limit: 20,
+        })
+        
+        const sentMatchRequestsPlanIds = sentMatchRequestsData.data.matches.map(
+          (v: Match) => v.travelPlanId
+        ) || []
 
-      // Refresh the list to update match counts
+        setSentRequestPlanIds(new Set(sentMatchRequestsPlanIds))
+        setSentMatchRequests(sentMatchRequestsData.data.matches || [])
+      } catch (error) {
+        console.error('Failed to refresh match requests:', error)
+      }
+
+      // Refresh travel plans
       fetchTravelPlans()
     }
   }
 
-  const isRequestSent = (planId: string) => {
-    return sentRequests.has(planId)
+  const getMatchStatus = (planId: string): 'PENDING' | 'ACCEPTED' | 'REJECTED' | null => {
+    const match = sentMatchRequests.find(
+      (match) => match.travelPlanId === planId
+    )
+    return match?.status || null
   }
 
   const travelTypes = ['SOLO', 'FAMILY', 'FRIENDS', 'COUPLE', 'BUSINESS']
@@ -378,7 +419,6 @@ export default function ExplorePage() {
                     <SelectValue placeholder="Any type" />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* <SelectItem value="">Any type</SelectItem> */}
                     {travelTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type.charAt(0) + type.slice(1).toLowerCase()}
@@ -483,132 +523,173 @@ export default function ExplorePage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {travelPlans.map((plan) => {
-                const isSent = isRequestSent(plan.id)
+                const matchStatus = getMatchStatus(plan.id)
                 const isOwnPlan = user?.id === plan.user.id
 
                 return (
-                  <Card key={plan.id} className="card-hover group relative">
-                    {isSent && (
-                      <div className="absolute top-4 right-4 z-10">
-                        <Badge className="bg-green-500 text-white">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Request Sent
-                        </Badge>
-                      </div>
-                    )}
-
-                    <CardContent className="p-6">
-                      {/* Destination & Host */}
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="font-bold text-lg mb-1">
-                            {plan.destination}
-                          </h3>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage
-                                src={plan.user.profile?.profileImage}
-                              />
-                              <AvatarFallback>
-                                {plan.user.profile?.fullName
-                                  ?.charAt(0)
-                                  .toUpperCase() || 'T'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-medium">
-                                {plan.user.profile?.fullName || 'Traveler'}
-                              </p>
-                              {plan.user.averageRating && (
-                                <div className="flex items-center gap-1">
-                                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                  <span className="text-xs">
-                                    {plan.user.averageRating.toFixed(1)} (
-                                    {plan.user.reviewCount})
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                  <Link href={`/travel-plans/${plan.id}`} key={plan.id}>
+                    <Card className="card-hover group relative cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
+                      {/* Status Badge */}
+                      {matchStatus === 'ACCEPTED' && (
+                        <div className="absolute top-4 right-4 z-10">
+                          <Badge className="bg-green-600 text-white">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Accepted
+                          </Badge>
                         </div>
-                        <Badge>{plan.travelType}</Badge>
-                      </div>
-
-                      {/* Dates */}
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                        <Calendar className="h-4 w-4" />
-                        <span>
-                          {formatDate(plan.startDate)} -{' '}
-                          {formatDate(plan.endDate)}
-                        </span>
-                      </div>
-
-                      {/* Budget */}
-                      <div className="mb-4">
-                        <Badge variant="outline" className="text-sm">
-                          Budget: {plan.budget}
-                        </Badge>
-                      </div>
-
-                      {/* Description */}
-                      {plan.description && (
-                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                          {plan.description}
-                        </p>
+                      )}
+                      {matchStatus === 'PENDING' && (
+                        <div className="absolute top-4 right-4 z-10">
+                          <Badge className="bg-yellow-500 text-white">
+                            <Clock className="h-3 w-3 mr-1" />
+                            Pending
+                          </Badge>
+                        </div>
+                      )}
+                      {matchStatus === 'REJECTED' && (
+                        <div className="absolute top-4 right-4 z-10">
+                          <Badge className="bg-red-500 text-white">
+                            <XCircle className="h-3 w-3 mr-1" />
+                            Declined
+                          </Badge>
+                        </div>
                       )}
 
-                      {/* Stats */}
-                      <div className="flex items-center justify-between text-sm mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-1">
-                            <Users className="h-4 w-4" />
-                            <span>{plan._count.matches} matches</span>
-                          </div>
-                          {plan.user.profile?.currentLocation && (
-                            <div className="flex items-center gap-1">
-                              <Globe className="h-4 w-4" />
-                              <span>{plan.user.profile.currentLocation}</span>
+                      <CardContent className="p-6">
+                        {/* Destination & Host */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <h3 className="font-bold text-lg mb-1">
+                              {plan.destination}
+                            </h3>
+                            <div className="flex items-center gap-2 mb-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage
+                                  src={plan.user.profile?.profileImage}
+                                />
+                                <AvatarFallback>
+                                  {plan.user.profile?.fullName
+                                    ?.charAt(0)
+                                    .toUpperCase() || 'T'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {plan.user.profile?.fullName || 'Traveler'}
+                                </p>
+                                {plan.user.averageRating && (
+                                  <div className="flex items-center gap-1">
+                                    <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-xs">
+                                      {plan.user.averageRating.toFixed(1)} (
+                                      {plan.user.reviewCount})
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          )}
+                          </div>
+                          <Badge>{plan.travelType}</Badge>
                         </div>
-                      </div>
 
-                      {/* Actions */}
-                      <div className="flex gap-2">
-                        {isOwnPlan ? (
-                          <Button variant="outline" className="flex-1" disabled>
-                            Your Plan
-                          </Button>
-                        ) : isSent ? (
-                          <Button
-                            variant="outline"
-                            className="flex-1 gap-2"
-                            disabled
-                          >
-                            <CheckCircle className="h-4 w-4" />
-                            Request Sent
-                          </Button>
-                        ) : (
-                          <>
-                            <Button
-                              className="flex-1 gap-2"
-                              onClick={() => handleRequestClick(plan)}
-                            >
-                              <UserPlus className="h-4 w-4" />
-                              Request to Join
+                        {/* Dates */}
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            {formatDate(plan.startDate)} -{' '}
+                            {formatDate(plan.endDate)}
+                          </span>
+                        </div>
+
+                        {/* Budget */}
+                        <div className="mb-4">
+                          <Badge variant="outline" className="text-sm">
+                            Budget: {plan.budget}
+                          </Badge>
+                        </div>
+
+                        {/* Description */}
+                        {plan.description && (
+                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                            {plan.description}
+                          </p>
+                        )}
+
+                        {/* Stats */}
+                        <div className="flex items-center justify-between text-sm mb-4">
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <Users className="h-4 w-4" />
+                              <span>{plan._count.matches} requests</span>
+                            </div>
+                            {plan.user.profile?.currentLocation && (
+                              <div className="flex items-center gap-1">
+                                <Globe className="h-4 w-4" />
+                                <span>{plan.user.profile.currentLocation}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                          {isOwnPlan ? (
+                            <Button variant="outline" className="flex-1" disabled>
+                              Your Plan
                             </Button>
+                          ) : matchStatus === 'ACCEPTED' ? (
                             <Button
                               variant="outline"
-                              size="sm"
-                              className="px-3"
+                              className="flex-1 gap-2 bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                              disabled
                             >
-                              <Heart className="h-4 w-4" />
+                              <CheckCircle className="h-4 w-4" />
+                              Accepted
                             </Button>
-                          </>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                          ) : matchStatus === 'PENDING' ? (
+                            <Button
+                              variant="outline"
+                              className="flex-1 gap-2"
+                              disabled
+                            >
+                              <Clock className="h-4 w-4" />
+                              Pending
+                            </Button>
+                          ) : matchStatus === 'REJECTED' ? (
+                            <Button
+                              variant="outline"
+                              className="flex-1 gap-2 bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                              disabled
+                            >
+                              <XCircle className="h-4 w-4" />
+                              Declined
+                            </Button>
+                          ) : (
+                            <>
+                              <Button
+                                className="flex-1 gap-2"
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleRequestClick(plan)
+                                }}
+                              >
+                                <UserPlus className="h-4 w-4" />
+                                Request to Join
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="px-3"
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                <Heart className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 )
               })}
             </div>

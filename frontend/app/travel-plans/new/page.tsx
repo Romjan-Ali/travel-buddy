@@ -1,3 +1,4 @@
+// frontend/app/travel-plans/new/page.tsx
 'use client'
 
 import { useState } from 'react'
@@ -66,7 +67,7 @@ export default function NewTravelPlanPage() {
     try {
       const response = await travelPlanAPI.create(data)
       toast.success('Travel plan created successfully!')
-      router.push(`/travel-plans/${response.travelPlan.id}`)
+      router.push(`/travel-plans/${response.data.travelPlan.id}`)
     } catch (error: any) {
       toast.error(error.message || 'Failed to create travel plan')
       console.error('Create travel plan error:', error)

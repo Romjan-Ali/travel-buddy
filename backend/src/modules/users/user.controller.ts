@@ -1,3 +1,4 @@
+// backend/src/modules/users/user.controller.ts
 import { type Response } from 'express'
 import type { AuthRequest } from '../../utils/types'
 import { userService } from './user.service'

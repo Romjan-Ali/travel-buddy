@@ -151,14 +151,28 @@ export const paymentService = {
     if (subscription.stripeSubId) {
       try {
         const stripeSub = await stripe.subscriptions.retrieve(
-          subscription.stripeSubId
+          subscription.stripeSubId,
+          {
+            expand: ['items.data'],
+          }
         )
+
+        const firstItem = stripeSub.items.data[0]
+
+        if (
+          !firstItem?.current_period_start ||
+          !firstItem?.current_period_end
+        ) {
+          console.error('Subscription item missing period dates')
+          return
+        }
+
         return {
           ...subscription,
           stripeData: {
             status: stripeSub.status,
-            currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
-            currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
+            currentPeriodStart: new Date(firstItem.current_period_start * 1000),
+            currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
             cancelAtPeriodEnd: stripeSub.cancel_at_period_end,
           },
         }
@@ -221,8 +235,6 @@ export const paymentService = {
 
       if (!firstItem?.current_period_start || !firstItem?.current_period_end) {
         console.error('Subscription item missing period dates')
-        // You may need to fall back to calculating the dates
-        // using start_date and the plan's interval, as previously discussed
         return
       }
 
@@ -247,12 +259,19 @@ export const paymentService = {
   },
 
   async _handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+    const firstItem = subscription.items.data[0]
+
+    if (!firstItem?.current_period_start || !firstItem?.current_period_end) {
+      console.error('Subscription item missing period dates')
+      return
+    }
+
     await prisma.subscription.updateMany({
       where: { stripeSubId: subscription.id },
       data: {
         status: subscription.status,
-        currentPeriodStart: new Date(subscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        currentPeriodStart: new Date(firstItem.current_period_start * 1000),
+        currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
       },
     })
   },
@@ -267,30 +286,49 @@ export const paymentService = {
   },
 
   async _handleInvoicePaid(invoice: Stripe.Invoice) {
-    // Handle successful invoice payment
-    console.log(
-      `Invoice ${invoice.id} paid for subscription ${invoice.subscription}`
-    )
-
-    if (invoice.subscription) {
-      await prisma.subscription.updateMany({
-        where: { stripeSubId: invoice.subscription as string },
-        data: { status: 'active' },
-      })
+    if (!invoice.lines.data[0]?.subscription) {
+      console.log('No subscription id found in invoice lines')
+      return
     }
+    const sku = invoice.lines.data.find(
+      (line) => typeof line.subscription === 'string'
+    )
+    const subId = sku?.subscription as string | undefined
+
+    if (!subId) {
+      console.log(
+        'No subscription id found in invoice lines — probably one-time invoice'
+      )
+      return
+    }
+
+    await prisma.subscription.updateMany({
+      where: { stripeSubId: subId },
+      data: { status: 'active' },
+    })
   },
 
   async _handleInvoiceFailed(invoice: Stripe.Invoice) {
     // Handle failed invoice payment
     console.log(
-      `Invoice ${invoice.id} payment failed for subscription ${invoice.subscription}`
+      `Invoice ${invoice.id} payment failed for subscription ${invoice.lines.data[0]?.subscription}`
     )
 
-    if (invoice.subscription) {
-      await prisma.subscription.updateMany({
-        where: { stripeSubId: invoice.subscription as string },
-        data: { status: 'past_due' },
-      })
+    const sku = invoice.lines.data.find(
+      (line) => typeof line.subscription === 'string'
+    )
+    const subId = sku?.subscription as string | undefined
+
+    if (!subId) {
+      console.log(
+        'No subscription id found in invoice lines — probably one-time invoice'
+      )
+      return
     }
+
+    await prisma.subscription.updateMany({
+      where: { stripeSubId: subId },
+      data: { status: 'past_due' },
+    })
   },
 }

@@ -52,3 +52,8 @@ export type Match = Prisma.MatchModel
  * 
  */
 export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel

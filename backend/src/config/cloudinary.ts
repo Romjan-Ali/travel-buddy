@@ -17,6 +17,7 @@ export const uploadToCloudinary = async (
         {
           resource_type: 'image',
           folder,
+          // upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET,
           transformation: [
             { width: 500, height: 500, crop: 'limit' },
             { quality: 'auto' },

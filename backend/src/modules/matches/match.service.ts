@@ -114,6 +114,7 @@ export const matchService = {
             select: {
               profile: {
                 select: {
+                  userId: true,
                   fullName: true,
                   profileImage: true,
                   currentLocation: true,
@@ -125,6 +126,7 @@ export const matchService = {
             select: {
               profile: {
                 select: {
+                  userId: true,
                   fullName: true,
                   profileImage: true,
                 },
