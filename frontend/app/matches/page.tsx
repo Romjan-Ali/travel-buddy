@@ -10,12 +10,13 @@ import { matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { MatchRequest } from '@/components/matches/match-request'
 import { Users, Inbox, Send, Check, Clock } from 'lucide-react'
+import { Match } from '@/types'
 
 export default function MatchesPage() {
   useProtectedRoute()
   const [activeTab, setActiveTab] = useState('received')
-  const [receivedMatches, setReceivedMatches] = useState<any[]>([])
-  const [sentMatches, setSentMatches] = useState<any[]>([])
+  const [receivedMatches, setReceivedMatches] = useState<Match[]>([])
+  const [sentMatches, setSentMatches] = useState<Match[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -26,14 +27,13 @@ export default function MatchesPage() {
     setIsLoading(true)
     try {
       if (activeTab === 'received' || activeTab === 'all') {
-        console.log('fetching')
         const receivedData = await matchAPI.getMyMatches({type: 'received'})
         console.log({receivedData})
-        setReceivedMatches(receivedData.matches || [])
+        setReceivedMatches(receivedData.data.matches || [])
       }
       if (activeTab === 'sent' || activeTab === 'all') {
         const sentData = await matchAPI.getMyMatches({type: 'sent'})
-        setSentMatches(sentData.matches || [])
+        setSentMatches(sentData.data.matches || [])
       }
     } catch (error) {
       toast.error('Failed to load matches')
@@ -163,7 +163,7 @@ export default function MatchesPage() {
                   </div>
                   <h3 className="font-semibold text-lg mb-2">No pending requests</h3>
                   <p className="text-muted-foreground mb-4">
-                    You don't have any pending match requests
+                    You don&apos;t have any pending match requests
                   </p>
                   <Button>
                     <Users className="mr-2 h-4 w-4" />
@@ -180,7 +180,7 @@ export default function MatchesPage() {
             <CardHeader>
               <CardTitle>Sent Match Requests</CardTitle>
               <CardDescription>
-                Requests you've sent to other travelers
+                Requests you&apos;ve sent to other travelers
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -206,7 +206,7 @@ export default function MatchesPage() {
                   </div>
                   <h3 className="font-semibold text-lg mb-2">No sent requests</h3>
                   <p className="text-muted-foreground">
-                    You haven't sent any match requests yet
+                    You haven&apos;t sent any match requests yet
                   </p>
                 </div>
               )}
@@ -219,7 +219,7 @@ export default function MatchesPage() {
             <CardHeader>
               <CardTitle>Accepted Matches</CardTitle>
               <CardDescription>
-                Travel companions you've connected with
+                Travel companions you&apos;ve connected with
               </CardDescription>
             </CardHeader>
             <CardContent>

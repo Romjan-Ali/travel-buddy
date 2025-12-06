@@ -1,3 +1,4 @@
+// frontend/components/matches/match-request.tsx
 'use client'
 
 import { useState } from 'react'
@@ -9,25 +10,10 @@ import { matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { MapPin, Calendar, Users, MessageSquare, Check, X } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import { Match } from '@/types'
 
 interface MatchRequestProps {
-  match: {
-    id: string
-    status: string
-    createdAt: string
-    initiator?: {
-      profile?: {
-        fullName: string
-        profileImage?: string
-        currentLocation?: string
-      }
-    }
-    travelPlan?: {
-      destination: string
-      startDate: string
-      endDate: string
-    }
-  }
+  match: Match
   type: 'received' | 'sent'
   onUpdate?: () => void
 }
@@ -71,7 +57,7 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
           {/* User Info */}
           <div className="flex items-start gap-4 flex-1">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={otherUser?.profile?.profileImage} />
+              <AvatarImage src={otherUser?.profile?.profileImage ?? undefined} />
               <AvatarFallback className="text-lg">
                 {otherUser?.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
               </AvatarFallback>

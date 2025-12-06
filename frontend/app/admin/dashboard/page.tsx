@@ -1,42 +1,30 @@
+// frontend/app/admin/dashboard/page.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
 import { adminAPI } from '@/lib/api'
 import { toast } from 'sonner'
-import { 
-  Users, 
-  Calendar, 
-  Star, 
-  TrendingUp, 
+import {
+  Users,
+  Calendar,
+  Star,
+  TrendingUp,
   Shield,
   Globe,
   DollarSign,
   Activity,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react'
-
-interface DashboardStats {
-  totals: {
-    users: number
-    activeUsers: number
-    travelPlans: number
-    activeTravelPlans: number
-    reviews: number
-    matches: number
-    subscriptions: number
-  }
-  recentSignups: Array<{
-    id: string
-    email: string
-    profile?: {
-      fullName: string
-    }
-    createdAt: string
-  }>
-}
+import { DashboardStats } from '@/types'
 
 export default function AdminDashboardPage() {
   const { user } = useAuth()
@@ -71,7 +59,9 @@ export default function AdminDashboardPage() {
             <Shield className="h-8 w-8 text-red-600 dark:text-red-400" />
           </div>
           <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-          <p className="text-muted-foreground">Admin privileges required to view this page.</p>
+          <p className="text-muted-foreground">
+            Admin privileges required to view this page.
+          </p>
         </div>
       </div>
     )
@@ -84,7 +74,8 @@ export default function AdminDashboardPage() {
           <div>
             <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
             <p className="text-muted-foreground">
-              Welcome back, Administrator. Here's an overview of the platform.
+              Welcome back, Administrator. Here&apos;s an overview of the
+              platform.
             </p>
           </div>
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary">
@@ -130,8 +121,12 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Travel Plans</p>
-                    <p className="text-2xl font-bold">{stats.totals.travelPlans}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Travel Plans
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {stats.totals.travelPlans}
+                    </p>
                     <p className="text-xs text-blue-600 mt-1">
                       {stats.totals.activeTravelPlans} upcoming
                     </p>
@@ -147,7 +142,9 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Matches Made</p>
+                    <p className="text-sm text-muted-foreground">
+                      Matches Made
+                    </p>
                     <p className="text-2xl font-bold">{stats.totals.matches}</p>
                     <p className="text-xs text-purple-600 mt-1">
                       Successful connections
@@ -164,8 +161,12 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Subscriptions</p>
-                    <p className="text-2xl font-bold">{stats.totals.subscriptions}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Subscriptions
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {stats.totals.subscriptions}
+                    </p>
                     <p className="text-xs text-amber-600 mt-1">
                       Premium members
                     </p>
@@ -184,7 +185,9 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Reviews</p>
+                    <p className="text-sm text-muted-foreground">
+                      Total Reviews
+                    </p>
                     <p className="text-2xl font-bold">{stats.totals.reviews}</p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
@@ -198,7 +201,9 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Active Sessions</p>
+                    <p className="text-sm text-muted-foreground">
+                      Active Sessions
+                    </p>
                     <p className="text-2xl font-bold">247</p>
                     <p className="text-xs text-green-600 mt-1">
                       Real-time users
@@ -241,7 +246,10 @@ export default function AdminDashboardPage() {
                 <div className="space-y-4">
                   {stats.recentSignups.length > 0 ? (
                     stats.recentSignups.map((signup) => (
-                      <div key={signup.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/50">
+                      <div
+                        key={signup.id}
+                        className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/50"
+                      >
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <Users className="h-5 w-5 text-primary" />
@@ -277,27 +285,45 @@ export default function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2"
+                  >
                     <Users className="h-6 w-6" />
                     <span>Manage Users</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2"
+                  >
                     <Calendar className="h-6 w-6" />
                     <span>Travel Plans</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2"
+                  >
                     <Star className="h-6 w-6" />
                     <span>Moderate Reviews</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2"
+                  >
                     <DollarSign className="h-6 w-6" />
                     <span>Subscriptions</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2"
+                  >
                     <AlertCircle className="h-6 w-6" />
                     <span>Reports</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2"
+                  >
                     <Globe className="h-6 w-6" />
                     <span>Analytics</span>
                   </Button>

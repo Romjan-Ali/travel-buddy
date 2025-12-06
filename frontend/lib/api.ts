@@ -1,4 +1,5 @@
 // frontend/lib/api.ts
+import { ApiResponse, DashboardStats, MatchesResponse, TravelPlan, TravelPlansResponse } from '@/types'
 import { toast } from 'sonner'
 
 const API_BASE_URL =
@@ -140,7 +141,7 @@ export const userAPI = {
 // Travel Plan endpoints
 export const travelPlanAPI = {
   create: (data: any) => api.post('/travel-plans', data),
-  getMyPlans: (page = 1, limit = 10) =>
+  getMyPlans: (page = 1, limit = 10): Promise<TravelPlansResponse> =>
     api.get(`/travel-plans/my-plans?page=${page}&limit=${limit}`),
   getById: (id: string) => api.get(`/travel-plans/${id}`),
   update: (id: string, data: any) => api.patch(`/travel-plans/${id}`, data),
@@ -225,7 +226,7 @@ export const matchAPI = {
     status?: string
     page?: number
     limit?: number
-  }) => api.get(`/matches?${toQueryString(query)}`),
+  }): Promise<MatchesResponse> => api.get(`/matches?${toQueryString(query)}`),
   updateStatus: (id: string, status: string) =>
     api.patch(`/matches/${id}/status`, { status }),
   delete: (id: string) => api.delete(`/matches/${id}`),
@@ -281,7 +282,7 @@ export const uploadAPI = {
 
 // Admin endpoints
 export const adminAPI = {
-  getDashboardStats: () => api.get('/admin/dashboard'),
+  getDashboardStats: (): Promise<ApiResponse<DashboardStats>> => api.get('/admin/dashboard'),
   getAnalytics: () => api.get('/admin/analytics'),
   getAllUsers: (page = 1, limit = 20, filters?: any) =>
     api.get(

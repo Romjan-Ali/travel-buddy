@@ -28,35 +28,8 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import { Match, TravelPlan } from '@/types'
 
-interface TravelPlan {
-  id: string
-  destination: string
-  startDate: string
-  endDate: string
-  travelType: string
-  description?: string
-}
-
-interface Match {
-  id: string
-  status: string
-  initiator?: {
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-  receiver?: {
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-  travelPlan?: {
-    destination: string
-  }
-}
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -85,7 +58,7 @@ export default function DashboardPage() {
         page: 1,
         limit: 5
       })
-      setRecentMatches(matchesData.matches || [])
+      setRecentMatches(matchesData.data.matches || [])
     } catch (error) {
       toast.error('Failed to load dashboard data')
       console.error('Dashboard data error:', error)
