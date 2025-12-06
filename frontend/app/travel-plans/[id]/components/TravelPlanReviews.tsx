@@ -40,7 +40,8 @@ export function TravelPlanReviews({
     setIsLoading(true)
     try {
       const result = await reviewAPI.getTravelPlanReviews(travelPlanId)
-      setReviews(result.reviews || [])
+      console.log('result', result)
+      setReviews(result.data.reviews || [])
     } catch (error) {
       toast.error('Failed to load reviews')
       console.error('Reviews error:', error)

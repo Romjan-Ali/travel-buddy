@@ -1,3 +1,4 @@
+// frontend/app/matches/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -25,11 +26,13 @@ export default function MatchesPage() {
     setIsLoading(true)
     try {
       if (activeTab === 'received' || activeTab === 'all') {
-        const receivedData = await matchAPI.getMyMatches('received')
+        console.log('fetching')
+        const receivedData = await matchAPI.getMyMatches({type: 'received'})
+        console.log({receivedData})
         setReceivedMatches(receivedData.matches || [])
       }
       if (activeTab === 'sent' || activeTab === 'all') {
-        const sentData = await matchAPI.getMyMatches('sent')
+        const sentData = await matchAPI.getMyMatches({type: 'sent'})
         setSentMatches(sentData.matches || [])
       }
     } catch (error) {

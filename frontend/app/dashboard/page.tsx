@@ -79,12 +79,12 @@ export default function DashboardPage() {
       setUpcomingPlans(plansData.plans || [])
 
       // Fetch recent matches
-      const matchesData = await matchAPI.getMyMatches(
-        'received',
-        'ACCEPTED',
-        1,
-        5
-      )
+      const matchesData = await matchAPI.getMyMatches({
+        type: 'received',
+        status: 'ACCEPTED',
+        page: 1,
+        limit: 5
+      })
       setRecentMatches(matchesData.matches || [])
     } catch (error) {
       toast.error('Failed to load dashboard data')
