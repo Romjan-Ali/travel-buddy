@@ -1,3 +1,4 @@
+// backend/src/modules/payments/payment.routes.ts
 import { Router } from 'express';
 import { paymentController } from './payment.controller';
 import { authenticate } from '../../middleware/auth';

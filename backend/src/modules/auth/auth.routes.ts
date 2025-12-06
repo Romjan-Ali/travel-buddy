@@ -1,3 +1,4 @@
+// backend/src/modules/auth/auth.routes.ts
 import { Router } from 'express';
 import { authController } from './auth.controller';
 import { validate } from '../../middleware/validation';

@@ -1,7 +1,9 @@
+// backend/src/modules/payments/payment.controller.ts
 import { type Response } from 'express'
 import type { AuthRequest } from '../../utils/types'
 import { paymentService } from './payment.service'
 import { sendResponse } from '../../utils/helpers'
+import { stripe } from '../../config/stripe'
 
 export const paymentController = {
   async createSubscription(req: AuthRequest, res: Response) {
@@ -41,6 +43,14 @@ export const paymentController = {
   async handleWebhook(req: AuthRequest, res: Response) {
     const sig = req.headers['stripe-signature']
     const event = req.body
+
+  /*
+    const event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    ) 
+  */
 
     console.log('Received Stripe webhook event:', event)
 

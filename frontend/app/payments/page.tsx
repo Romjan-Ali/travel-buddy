@@ -1,7 +1,14 @@
+// frontend/app/payments/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -9,14 +16,14 @@ import { useAuth, useProtectedRoute } from '@/lib/auth-context'
 import { paymentAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { SubscriptionPlans } from '@/components/payments/subscription-plans'
-import { 
-  CreditCard, 
-  CheckCircle, 
-  History, 
+import {
+  CreditCard,
+  CheckCircle,
+  History,
   Download,
   AlertCircle,
   Shield,
-  Zap
+  Zap,
 } from 'lucide-react'
 
 export default function PaymentsPage() {
@@ -42,14 +49,20 @@ export default function PaymentsPage() {
   }
 
   const handleCancelSubscription = async () => {
-    if (!confirm('Are you sure you want to cancel your subscription? You will lose access to premium features at the end of the billing period.')) {
+    if (
+      !confirm(
+        'Are you sure you want to cancel your subscription? You will lose access to premium features at the end of the billing period.'
+      )
+    ) {
       return
     }
 
     setIsCancelling(true)
     try {
       await paymentAPI.cancelSubscription()
-      toast.success('Subscription will be canceled at the end of the billing period')
+      toast.success(
+        'Subscription will be canceled at the end of the billing period'
+      )
       fetchSubscription()
     } catch (error) {
       toast.error('Failed to cancel subscription')
@@ -60,7 +73,7 @@ export default function PaymentsPage() {
 
   const getSubscriptionStatus = () => {
     if (!subscription) return { label: 'Free', variant: 'secondary' as const }
-    
+
     switch (subscription.status) {
       case 'active':
         return { label: 'Active', variant: 'default' as const }
@@ -92,15 +105,13 @@ export default function PaymentsPage() {
               <CreditCard className="h-5 w-5" />
               Current Plan
             </span>
-            <Badge variant={status.variant}>
-              {status.label}
-            </Badge>
+            <Badge variant={status.variant}>{status.label}</Badge>
           </CardTitle>
           <CardDescription>
             Manage your subscription and billing information
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent>
           {isLoading ? (
             <div className="animate-pulse space-y-4">
@@ -115,16 +126,21 @@ export default function PaymentsPage() {
                   <p className="text-xl font-bold">Premium Subscription</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Billing Period</p>
+                  <p className="text-sm text-muted-foreground">
+                    Billing Period
+                  </p>
                   <p className="text-xl font-bold">Monthly</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Next Billing Date</p>
+                  <p className="text-sm text-muted-foreground">
+                    Next Billing Date
+                  </p>
                   <p className="text-xl font-bold">
-                    {subscription.stripeData?.currentPeriodEnd 
-                      ? new Date(subscription.stripeData.currentPeriodEnd).toLocaleDateString()
-                      : 'N/A'
-                    }
+                    {subscription.stripeData?.currentPeriodEnd
+                      ? new Date(
+                          subscription.stripeData.currentPeriodEnd
+                        ).toLocaleDateString()
+                      : 'N/A'}
                   </p>
                 </div>
               </div>
@@ -182,8 +198,11 @@ export default function PaymentsPage() {
                       </h4>
                       <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
                         Your subscription will be canceled on{' '}
-                        {new Date(subscription.stripeData.currentPeriodEnd).toLocaleDateString()}.
-                        You'll lose access to premium features after this date.
+                        {new Date(
+                          subscription.stripeData.currentPeriodEnd
+                        ).toLocaleDateString()}
+                        . You&apos;ll lose access to premium features after this
+                        date.
                       </p>
                     </div>
                   </div>
@@ -194,8 +213,8 @@ export default function PaymentsPage() {
                     <CreditCard className="h-4 w-4" />
                     Update Payment Method
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="gap-2 text-destructive hover:text-destructive"
                     onClick={handleCancelSubscription}
                     disabled={isCancelling}
@@ -210,9 +229,12 @@ export default function PaymentsPage() {
               <div className="h-16 w-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
                 <CreditCard className="h-8 w-8 text-muted-foreground" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">No Active Subscription</h3>
+              <h3 className="font-semibold text-lg mb-2">
+                No Active Subscription
+              </h3>
               <p className="text-muted-foreground mb-4">
-                You're currently on the free plan. Upgrade to unlock premium features.
+                You&apos;re currently on the free plan. Upgrade to unlock
+                premium features.
               </p>
             </div>
           )}
@@ -228,8 +250,20 @@ export default function PaymentsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SubscriptionPlans currentPlan={subscription ? 'premium' : 'free'} />
-          
+          <SubscriptionPlans
+            currentPlan={
+              subscription
+                ? subscription.stripeData.priceId ===
+                  'price_1SaHXbLaGyGdTIttfCY7mwaP'
+                  ? 'premium'
+                  : subscription.stripeData.priceId ===
+                    'price_1SaI29LaGyGdTItteNpIsNMc'
+                  ? 'yearly'
+                  : 'free'
+                : 'free'
+            }
+          />
+
           <div className="mt-8 p-6 bg-muted/30 rounded-lg">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />

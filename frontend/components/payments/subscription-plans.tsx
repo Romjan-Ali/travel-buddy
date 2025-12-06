@@ -1,7 +1,15 @@
+// frontend/components/payments/subscription-plans.tsx
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { paymentAPI } from '@/lib/api'
@@ -20,11 +28,11 @@ const plans = [
       'Connect with 10 travelers per month',
       'Basic search filters',
       'Profile verification',
-      'Community support'
+      'Community support',
     ],
     buttonText: 'Current Plan',
     buttonVariant: 'outline' as const,
-    popular: false
+    popular: false,
   },
   {
     id: 'premium',
@@ -39,11 +47,11 @@ const plans = [
       'Verified badge',
       'Priority support',
       'Early access to new features',
-      'Travel insights & analytics'
+      'Travel insights & analytics',
     ],
     buttonText: 'Upgrade to Premium',
     buttonVariant: 'default' as const,
-    popular: true
+    popular: true,
   },
   {
     id: 'yearly',
@@ -57,34 +65,39 @@ const plans = [
       'Annual travel report',
       'Exclusive travel guides',
       'Dedicated account manager',
-      'Offline trip planning'
+      'Offline trip planning',
     ],
     buttonText: 'Choose Yearly',
     buttonVariant: 'default' as const,
-    popular: false
-  }
+    popular: false,
+  },
 ]
 
 interface SubscriptionPlansProps {
   currentPlan?: string
 }
 
-export function SubscriptionPlans({ currentPlan = 'free' }: SubscriptionPlansProps) {
+export function SubscriptionPlans({
+  currentPlan = 'free',
+}: SubscriptionPlansProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null)
 
+  console.log('current plan', currentPlan)
+
   const handleSubscribe = async (planId: string) => {
+    // Plan ID can be premium or yearly
+
     if (planId === 'free') return
 
     setIsLoading(planId)
-    try {
-      // In a real implementation, you would use Stripe price IDs
-      // For now, we'll use mock price IDs
-      const priceId = planId === 'premium' 
-        ? 'price_1SaHXbLaGyGdTIttfCY7mwaP' 
-        : 'price_1SaI29LaGyGdTItteNpIsNMc'
-      
+    try {      
+      const priceId =
+        planId === 'premium'
+          ? 'price_1SaHXbLaGyGdTIttfCY7mwaP'
+          : 'price_1SaI29LaGyGdTItteNpIsNMc'
+
       const result = await paymentAPI.createSubscription(priceId)
-      
+
       if (result.data?.url) {
         // Redirect to Stripe checkout
         window.location.href = result.data.url
@@ -100,9 +113,11 @@ export function SubscriptionPlans({ currentPlan = 'free' }: SubscriptionPlansPro
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {plans.map((plan) => (
-        <Card 
+        <Card
           key={plan.id}
-          className={`relative ${plan.popular ? 'border-primary shadow-lg' : ''}`}
+          className={`relative ${
+            plan.popular ? 'border-primary shadow-lg' : ''
+          }`}
         >
           {plan.popular && (
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -112,7 +127,7 @@ export function SubscriptionPlans({ currentPlan = 'free' }: SubscriptionPlansPro
               </Badge>
             </div>
           )}
-          
+
           <CardHeader>
             <div className="flex items-center justify-between mb-2">
               <CardTitle className="text-2xl">{plan.name}</CardTitle>
@@ -128,7 +143,7 @@ export function SubscriptionPlans({ currentPlan = 'free' }: SubscriptionPlansPro
             </div>
             <CardDescription>{plan.description}</CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <ul className="space-y-3">
               {plan.features.map((feature, index) => (
@@ -139,7 +154,7 @@ export function SubscriptionPlans({ currentPlan = 'free' }: SubscriptionPlansPro
               ))}
             </ul>
           </CardContent>
-          
+
           <CardFooter>
             <Button
               className="w-full gap-2"

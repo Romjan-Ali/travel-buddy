@@ -3,7 +3,8 @@ import { toast } from 'sonner'
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
-const NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
+const NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
 
 class ApiError extends Error {
   constructor(message: string, public status?: number, public data?: any) {
@@ -211,7 +212,9 @@ export const reviewAPI = {
   getTravelPlanReviews: (travelPlanId: string) =>
     api.get<{ reviews: Review[] }>(`/reviews/travel-plan/${travelPlanId}`),
   checkCanReview: (userId: string) =>
-    api.get<{ canReview: boolean; reason?: string }>(`/reviews/can-review/${userId}`),
+    api.get<{ canReview: boolean; reason?: string }>(
+      `/reviews/can-review/${userId}`
+    ),
 }
 
 // Match endpoints
@@ -238,6 +241,12 @@ export const paymentAPI = {
     api.post('/payments/create-payment', { amount, description }),
   getSubscription: () => api.get('/payments/subscription'),
   cancelSubscription: () => api.post('/payments/cancel-subscription'),
+
+  purchaseVerifiedBadge: () =>
+    api.post('/payments/create-payment', {
+      amount: 19.99,
+      description: 'Verified Traveler Badge',
+    }),
 }
 
 // Upload endpoints
@@ -294,18 +303,16 @@ export const adminAPI = {
 
 // Message endpoints
 export const messageAPI = {
-  send: (data: { receiverId: string; content: string; matchId?: string }) => 
+  send: (data: { receiverId: string; content: string; matchId?: string }) =>
     api.post('/messages/send', data),
-  
-  getConversations: () => api.get('/messages/conversations'),
-  
-  getConversation: (userId: string, page = 1, limit = 50) => 
-    api.get(`/messages/conversation/${userId}?page=${page}&limit=${limit}`),
-  
-  markAsRead: (messageIds: string[]) => 
-    api.post('/messages/read', { messageIds }),
-  
-  deleteMessage: (messageId: string) => 
-    api.delete(`/messages/${messageId}`),
-}
 
+  getConversations: () => api.get('/messages/conversations'),
+
+  getConversation: (userId: string, page = 1, limit = 50) =>
+    api.get(`/messages/conversation/${userId}?page=${page}&limit=${limit}`),
+
+  markAsRead: (messageIds: string[]) =>
+    api.post('/messages/read', { messageIds }),
+
+  deleteMessage: (messageId: string) => api.delete(`/messages/${messageId}`),
+}

@@ -38,10 +38,23 @@ app.use(helmet())
 // Request logger middleware
 app.use(morgan('combined'))
 
+// Trust proxy
+app.set('trust proxy', 1)
+
 // CORS configuration
+const allowedOrigins = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map(origin => origin.trim())
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     credentials: true,
   })
 )
@@ -86,7 +99,7 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
   console.log(`📊 Environment: ${process.env.NODE_ENV}`)
   console.log(`🔗 Client URL: ${process.env.CLIENT_URL}`)

@@ -1,3 +1,4 @@
+// backend/src/modules/auth/auth.controller.ts
 import { type Response } from 'express'
 import type { AuthRequest } from '../../utils/types'
 import { authService } from './auth.service'

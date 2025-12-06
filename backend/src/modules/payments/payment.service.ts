@@ -138,6 +138,10 @@ export const paymentService = {
             status: 'past_due',
             currentPeriodEnd: { gte: new Date() },
           },
+          {
+            status: 'canceled',
+            currentPeriodEnd: { gte: new Date() },
+          },
         ],
       },
       orderBy: { createdAt: 'desc' },
@@ -174,6 +178,7 @@ export const paymentService = {
             currentPeriodStart: new Date(firstItem.current_period_start * 1000),
             currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
             cancelAtPeriodEnd: stripeSub.cancel_at_period_end,
+            priceId: firstItem.price.id
           },
         }
       } catch (error) {
