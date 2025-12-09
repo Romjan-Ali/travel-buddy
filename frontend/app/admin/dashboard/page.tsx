@@ -28,7 +28,6 @@ import { DashboardStats } from '@/types'
 
 export default function AdminDashboardPage() {
   const { user } = useAuth()
-  console.log('Rendering AdminDashboardPage for user:', user)
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
