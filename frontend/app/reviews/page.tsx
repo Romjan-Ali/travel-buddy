@@ -14,7 +14,7 @@ import { ReceivedReviewsTab } from '@/components/reviews/ReceivedReviewsTab'
 import { GivenReviewsTab } from '@/components/reviews/GivenReviewsTab'
 import { ReviewTips } from '@/components/reviews/ReviewTips'
 import { EditReviewDialog } from '@/components/reviews/edit-review-dialog'
-import { Review } from '@/types'
+import type { Review } from '@/types'
 
 export default function ReviewsPage() {
   useProtectedRoute()
@@ -27,11 +27,12 @@ export default function ReviewsPage() {
   const [stats, setStats] = useState({
     averageRating: 0,
     totalReviews: 0,
-    ratingDistribution: [0, 0, 0, 0, 0]
+    ratingDistribution: [0, 0, 0, 0, 0],
   })
 
   useEffect(() => {
     fetchReviews()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
 
   const fetchReviews = async () => {
@@ -40,11 +41,11 @@ export default function ReviewsPage() {
       if (activeTab === 'received' || activeTab === 'all') {
         const receivedData = await reviewAPI.getMyReviews('received')
         setReceivedReviews(receivedData.data.reviews || [])
-        
-        setStats(prev => ({
+
+        setStats((prev) => ({
           ...prev,
           averageRating: receivedData.data.averageRating || 0,
-          totalReviews: receivedData.data.totalReviews || 0
+          totalReviews: receivedData.data.totalReviews || 0,
         }))
       }
       if (activeTab === 'given' || activeTab === 'all') {
@@ -60,19 +61,28 @@ export default function ReviewsPage() {
   }
 
   const handleDeleteReview = async (reviewId: string) => {
-    if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) return
+    if (
+      !confirm(
+        'Are you sure you want to delete this review? This action cannot be undone.'
+      )
+    )
+      return
 
     try {
       await reviewAPI.delete(reviewId)
       toast.success('Review deleted successfully')
       fetchReviews()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to delete review')
     }
   }
 
-  const handleEditReview = (review: Review) => {
-    setEditingReview(review)
+  const handleEditReview = (reviewId: string) => {
+    const review = givenReviews.find((r) => r.id === reviewId)
+    if (review) {
+      setEditingReview(review)
+    }
   }
 
   const handleReviewUpdated = () => {
@@ -84,7 +94,7 @@ export default function ReviewsPage() {
   // Calculate rating distribution
   const calculateRatingDistribution = (reviews: Review[]) => {
     const distribution = [0, 0, 0, 0, 0]
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       if (review.rating >= 1 && review.rating <= 5) {
         distribution[review.rating - 1]++
       }
@@ -95,9 +105,9 @@ export default function ReviewsPage() {
   useEffect(() => {
     if (receivedReviews.length > 0) {
       const distribution = calculateRatingDistribution(receivedReviews)
-      setStats(prev => ({
+      setStats((prev) => ({
         ...prev,
-        ratingDistribution: distribution
+        ratingDistribution: distribution,
       }))
     }
   }, [receivedReviews])
@@ -105,7 +115,7 @@ export default function ReviewsPage() {
   return (
     <div className="container py-8">
       <ReviewsHeader />
-      
+
       <ReviewsStats
         averageRating={stats.averageRating}
         receivedCount={receivedReviews.length}

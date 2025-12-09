@@ -1,7 +1,6 @@
 // frontend/components/home/how-it-works.tsx
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,

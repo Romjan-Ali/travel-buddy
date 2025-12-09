@@ -4,11 +4,9 @@
 import Link from 'next/link'
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
 import { Search } from 'lucide-react'

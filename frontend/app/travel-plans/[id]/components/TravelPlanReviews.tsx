@@ -30,7 +30,7 @@ export function TravelPlanReviews({
   const { user } = useAuth()
   const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   // const [travelCompanions, setTravelCompanions] = useState<any[]>([])
 
   useEffect(() => {

@@ -33,7 +33,6 @@ export function ReviewCard({
   onEdit,
   onDelete,
   showAuthor = true,
-  showSubject = false,
 }: ReviewCardProps) {
   const isOwner = currentUserId === review.author?.id
   const canEdit = isOwner && onEdit

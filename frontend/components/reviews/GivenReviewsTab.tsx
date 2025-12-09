@@ -1,18 +1,23 @@
-// frontend/components/reviews/GivenReviewsTab.tsx
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ReviewCard } from './review-card'
 import { Star, User, Calendar } from 'lucide-react'
 import Link from 'next/link'
-import { Review } from '@/types'
+import type { Review } from '@/types'
 
 interface GivenReviewsTabProps {
   reviews: Array<Review>
   currentUserId?: string
   isLoading: boolean
-  onEditReview: (review: Review) => void
+  onEditReview: (reviewId: string) => void
   onDeleteReview: (reviewId: string) => void
 }
 

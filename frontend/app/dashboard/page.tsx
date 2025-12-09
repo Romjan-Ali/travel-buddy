@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
-import { travelPlanAPI, matchAPI, reviewAPI } from '@/lib/api'
+import { useAuth } from '@/lib/auth-context'
+import { travelPlanAPI, matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {
   Calendar,
@@ -351,7 +351,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="flex flex-col items-center text-center mb-6">
                 <Avatar className="h-20 w-20 mb-4">
-                  <AvatarImage src={user.profile?.profileImage} />
+                  <AvatarImage src={user.profile?.profileImage ?? undefined} />
                   <AvatarFallback className="text-lg">
                     {user.profile?.fullName?.charAt(0).toUpperCase() ||
                       user.email.charAt(0).toUpperCase()}

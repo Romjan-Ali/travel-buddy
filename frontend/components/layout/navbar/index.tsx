@@ -27,6 +27,7 @@ export function Navbar() {
     try {
       await logout()
       toast.success('Logged out successfully')
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to logout')
     }
@@ -41,18 +42,17 @@ export function Navbar() {
     const fetchPendingReviews = async () => {
       if (user) {
         try {
-          const response = await reviewAPI.getMyReviews("received")
+          const response = await reviewAPI.getMyReviews('received')
           const reviews = response.data.reviews || []
           setPendingReviews(reviews.length)
         } catch (error) {
-          console.error("Error fetching pending reviews:", error)
+          console.error('Error fetching pending reviews:', error)
         }
       }
     }
 
     fetchPendingReviews()
   }, [user])
-
 
   // Get navigation items
   const navItems = getNavItems(pendingReviews)
@@ -61,7 +61,7 @@ export function Navbar() {
   const adminNavItems = navItems.admin
 
   return (
-    <nav className="sticky top-0 z-50 w-full px-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full px-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Left Section: Logo & Desktop Navigation */}
         <div className="flex items-center gap-2">

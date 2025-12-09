@@ -1,30 +1,22 @@
 // frontend/components/messages/chat-window.tsx
-'use client'
+"use client"
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Badge } from '@/components/ui/badge'
-import { messageAPI } from '@/lib/api'
-import { socketClient } from '@/lib/socket'
-import { useAuth } from '@/lib/auth-context'
-import { toast } from 'sonner'
-import { 
-  Send, 
-  Paperclip, 
-  Smile, 
-  MoreVertical,
-  Clock,
-  Check,
-  CheckCheck,
-  Image as ImageIcon,
-  Mic,
-  X
-} from 'lucide-react'
-import { format } from 'date-fns'
+import type React from "react"
+
+import { useState, useEffect, useRef, useCallback } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Badge } from "@/components/ui/badge"
+import { messageAPI } from "@/lib/api"
+import { socketClient } from "@/lib/socket"
+import { useAuth } from "@/lib/auth-context"
+import { toast } from "sonner"
+import { Send, Paperclip, Smile, MoreVertical, Clock, Check, CheckCheck, ImageIcon, Mic, X } from "lucide-react"
+import { format } from "date-fns"
+import { ApiResponse } from "@/types"
 
 interface Message {
   id: string
@@ -55,59 +47,65 @@ interface ChatWindowProps {
 }
 
 export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
-  console.log('Rendering ChatWindow with otherUser:', otherUser)
+  console.log("Rendering ChatWindow with otherUser:", otherUser)
   const { user } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState('')
+  const [newMessage, setNewMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isTyping, setIsTyping] = useState(false)
   const [isOtherTyping, setIsOtherTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const socket = socketClient.getSocket()
-  const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   useEffect(() => {
     fetchMessages()
-    
+
     // Join chat room
     if (socket && user) {
-      socket.emit('join', user.id)
-      
+      socket.emit("join", user.id)
+
       // Listen for new messages
-      socket.on('new_message', handleNewMessage)
-      socket.on('user_typing', handleUserTyping)
-      
+      socket.on("new_message", handleNewMessage)
+      socket.on("user_typing", handleUserTyping)
+
       return () => {
-        socket.off('new_message', handleNewMessage)
-        socket.off('user_typing', handleUserTyping)
+        socket.off("new_message", handleNewMessage)
+        socket.off("user_typing", handleUserTyping)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, user, otherUser.id])
 
   const fetchMessages = async () => {
     setIsLoading(true)
     try {
       const result = await messageAPI.getConversation(otherUser.id)
-      setMessages(result.data?.messages || [])
-      
+      const fetchedMessages = (result as ApiResponse<{messages: Message[]}>).data?.messages || []
+      setMessages(fetchedMessages)
+
       // Mark messages as read
-      const unreadMessages = result.data?.messages
+      const unreadMessages = fetchedMessages
         .filter((msg: Message) => msg.senderId === otherUser.id && !msg.read)
         .map((msg: Message) => msg.id)
-      
+
       if (unreadMessages.length > 0) {
         await messageAPI.markAsRead(unreadMessages)
       }
-    } catch (error) {
-      toast.error('Failed to load messages')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Failed to load messages:", error.message)
+      }
+      toast.error("Failed to load messages")
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleNewMessage = (message: Message) => {
-    setMessages(prev => [...prev, message])
-    
+    setMessages((prev) => [...prev, message])
+
     // Mark as read if it's from the other user
     if (message.senderId === otherUser.id) {
       messageAPI.markAsRead([message.id])
@@ -124,7 +122,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
     if (!newMessage.trim() || !user || !socket) return
 
     const messageContent = newMessage.trim()
-    setNewMessage('')
+    setNewMessage("")
 
     try {
       // Optimistically add message
@@ -140,20 +138,22 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
           profile: user.profile,
         },
       }
-      
-      setMessages(prev => [...prev, tempMessage])
+
+      setMessages((prev) => [...prev, tempMessage])
 
       // Send via socket
-      socket.emit('send_message', {
+      socket.emit("send_message", {
         receiverId: otherUser.id,
         content: messageContent,
         matchId,
       })
-
-    } catch (error) {
-      toast.error('Failed to send message')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Failed to send message:", error.message)
+      }
+      toast.error("Failed to send message")
       // Remove optimistic message on error
-      setMessages(prev => prev.filter(msg => !msg.id.startsWith('temp-')))
+      setMessages((prev) => prev.filter((msg) => !msg.id.startsWith("temp-")))
     }
   }
 
@@ -166,7 +166,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
     }
 
     // Send typing start event
-    socket.emit('typing', {
+    socket.emit("typing", {
       receiverId: otherUser.id,
       isTyping: true,
     })
@@ -174,7 +174,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
 
     // Send typing stop event after 1 second of inactivity
     typingTimeoutRef.current = setTimeout(() => {
-      socket.emit('typing', {
+      socket.emit("typing", {
         receiverId: otherUser.id,
         isTyping: false,
       })
@@ -183,14 +183,14 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
   }, [socket, otherUser.id])
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       sendMessage()
     }
   }
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
   useEffect(() => {
@@ -199,33 +199,38 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
 
   const formatMessageTime = (dateString: string) => {
     const date = new Date(dateString)
-    return format(date, 'HH:mm')
+    return format(date, "HH:mm")
   }
 
   const isToday = (dateString: string) => {
     const date = new Date(dateString)
     const today = new Date()
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear()
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    )
   }
 
   const formatMessageDate = (dateString: string) => {
     const date = new Date(dateString)
     if (isToday(dateString)) {
-      return 'Today'
+      return "Today"
     }
-    return format(date, 'MMM d, yyyy')
+    return format(date, "MMM d, yyyy")
   }
 
-  const groupedMessages = messages.reduce((groups, message) => {
-    const date = formatMessageDate(message.createdAt)
-    if (!groups[date]) {
-      groups[date] = []
-    }
-    groups[date].push(message)
-    return groups
-  }, {} as Record<string, Message[]>)
+  const groupedMessages = messages.reduce(
+    (groups, message) => {
+      const date = formatMessageDate(message.createdAt)
+      if (!groups[date]) {
+        groups[date] = []
+      }
+      groups[date].push(message)
+      return groups
+    },
+    {} as Record<string, Message[]>,
+  )
 
   return (
     <Card className="flex flex-col h-[600px] max-h-[80vh]">
@@ -234,34 +239,21 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
         <div className="flex items-center gap-3">
           <Avatar>
             <AvatarImage src={otherUser.profile?.profileImage ?? undefined} />
-            <AvatarFallback>
-              {otherUser.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
-            </AvatarFallback>
+            <AvatarFallback>{otherUser.profile?.fullName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold">{otherUser.profile?.fullName || 'Traveler'}</h3>
+            <h3 className="font-semibold">{otherUser.profile?.fullName || "Traveler"}</h3>
             <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${socketClient.isConnected() ? 'bg-green-500' : 'bg-gray-300'}`} />
-              <span className="text-xs text-muted-foreground">
-                {socketClient.isConnected() ? 'Online' : 'Offline'}
-              </span>
-              {isOtherTyping && (
-                <span className="text-xs text-muted-foreground animate-pulse">
-                  typing...
-                </span>
-              )}
+              <div className={`h-2 w-2 rounded-full ${socketClient.isConnected() ? "bg-green-500" : "bg-gray-300"}`} />
+              <span className="text-xs text-muted-foreground">{socketClient.isConnected() ? "Online" : "Offline"}</span>
+              {isOtherTyping && <span className="text-xs text-muted-foreground animate-pulse">typing...</span>}
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {onClose && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="md:hidden"
-            >
+            <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
               <X className="h-4 w-4" />
             </Button>
           )}
@@ -285,7 +277,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
               </div>
               <h3 className="font-semibold text-lg mb-2">No messages yet</h3>
               <p className="text-muted-foreground">
-                Start a conversation with {otherUser.profile?.fullName || 'this traveler'}
+                Start a conversation with {otherUser.profile?.fullName || "this traveler"}
               </p>
             </div>
           ) : (
@@ -297,49 +289,47 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
                     {date}
                   </Badge>
                 </div>
-                
+
                 {/* Messages for this date */}
                 {dateMessages.map((message) => {
                   const isOwnMessage = message.senderId === user?.id
-                  
+
                   return (
-                    <div
-                      key={message.id}
-                      className={`flex mb-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className={`flex max-w-[70%] ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <div key={message.id} className={`flex mb-4 ${isOwnMessage ? "justify-end" : "justify-start"}`}>
+                      <div className={`flex max-w-[70%] ${isOwnMessage ? "flex-row-reverse" : "flex-row"}`}>
                         {/* Avatar (only for other user's messages) */}
                         {!isOwnMessage && (
                           <Avatar className="h-8 w-8 mt-1 mr-2">
                             <AvatarImage src={message.sender.profile?.profileImage ?? undefined} />
                             <AvatarFallback>
-                              {message.sender.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
+                              {message.sender.profile?.fullName?.charAt(0).toUpperCase() || "U"}
                             </AvatarFallback>
                           </Avatar>
                         )}
-                        
+
                         {/* Message Bubble */}
-                        <div className={`rounded-2xl px-4 py-2 ${isOwnMessage 
-                          ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                          : 'bg-muted rounded-tl-none'
-                        }`}>
+                        <div
+                          className={`rounded-2xl px-4 py-2 ${
+                            isOwnMessage
+                              ? "bg-primary text-primary-foreground rounded-tr-none"
+                              : "bg-muted rounded-tl-none"
+                          }`}
+                        >
                           <p className="text-sm">{message.content}</p>
-                          <div className={`flex items-center justify-end gap-1 mt-1 ${isOwnMessage 
-                            ? 'text-primary-foreground/70' 
-                            : 'text-muted-foreground'
-                          }`}>
-                            <span className="text-xs">
-                              {formatMessageTime(message.createdAt)}
-                            </span>
-                            {isOwnMessage && (
-                              message.read ? (
+                          <div
+                            className={`flex items-center justify-end gap-1 mt-1 ${
+                              isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
+                            }`}
+                          >
+                            <span className="text-xs">{formatMessageTime(message.createdAt)}</span>
+                            {isOwnMessage &&
+                              (message.read ? (
                                 <CheckCheck className="h-3 w-3" />
-                              ) : message.id.startsWith('temp-') ? (
+                              ) : message.id.startsWith("temp-") ? (
                                 <Clock className="h-3 w-3" />
                               ) : (
                                 <Check className="h-3 w-3" />
-                              )
-                            )}
+                              ))}
                           </div>
                         </div>
                       </div>
@@ -362,7 +352,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
           <Button variant="ghost" size="icon">
             <ImageIcon className="h-5 w-5" />
           </Button>
-          
+
           <div className="flex-1 relative">
             <Input
               value={newMessage}
@@ -374,21 +364,12 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
               placeholder="Type your message..."
               className="pr-12"
             />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-1 top-1/2 transform -translate-y-1/2"
-            >
+            <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 transform -translate-y-1/2">
               <Smile className="h-5 w-5" />
             </Button>
           </div>
-          
-          <Button
-            onClick={sendMessage}
-            disabled={!newMessage.trim()}
-            size="icon"
-            className="rounded-full"
-          >
+
+          <Button onClick={sendMessage} disabled={!newMessage.trim()} size="icon" className="rounded-full">
             <Send className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon">

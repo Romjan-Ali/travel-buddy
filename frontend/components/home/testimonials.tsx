@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react'
 
@@ -56,7 +56,7 @@ export function Testimonials() {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-b from-background to-muted/30">
+    <section className="py-16 bg-linear-to-b from-background to-muted/30">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Traveler Success Stories</h2>
@@ -72,7 +72,7 @@ export function Testimonials() {
             </div>
             <CardContent className="p-8 md:p-12">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <Avatar className="h-20 w-20">
                     <AvatarFallback className="text-lg">
                       {testimonials[currentIndex].name

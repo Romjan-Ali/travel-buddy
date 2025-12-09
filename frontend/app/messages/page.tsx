@@ -1,19 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth, useProtectedRoute } from '@/lib/auth-context'
 import { messageAPI } from '@/lib/api'
 import { ChatWindow } from '@/components/messages/chat-window'
@@ -52,6 +46,12 @@ interface Conversation {
   unreadCount: number
 }
 
+interface ApiResponse {
+  data: {
+    conversations: Conversation[]
+  }
+}
+
 export default function MessagesPage() {
   useProtectedRoute()
   const { user } = useAuth()
@@ -78,9 +78,10 @@ export default function MessagesPage() {
   const fetchConversations = async () => {
     setIsLoading(true)
     try {
-      const result = await messageAPI.getConversations()
+      const result = (await messageAPI.getConversations()) as ApiResponse
       setConversations(result.data?.conversations || [])
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Failed to load conversations:', error)
       toast.error('Failed to load conversations')
     } finally {
       setIsLoading(false)
@@ -119,7 +120,7 @@ export default function MessagesPage() {
     }
   }
 
-  const truncateMessage = (text: string, length: number = 30) => {
+  const truncateMessage = (text: string, length = 30) => {
     return text.length > length ? text.substring(0, length) + '...' : text
   }
 
@@ -138,7 +139,11 @@ export default function MessagesPage() {
           <CardHeader className="border-b">
             <div className="flex items-center justify-between mb-4">
               <CardTitle>Conversations</CardTitle>
-              <Button size="sm" variant="outline" className="gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2 bg-transparent"
+              >
                 <Plus className="h-4 w-4" />
                 New Chat
               </Button>
@@ -210,7 +215,10 @@ export default function MessagesPage() {
                       <div className="relative">
                         <Avatar>
                           <AvatarImage
-                            src={conversation.user.profile?.profileImage}
+                            src={
+                              conversation.user.profile?.profileImage ||
+                              '/placeholder.svg'
+                            }
                           />
                           <AvatarFallback>
                             {conversation.user.profile?.fullName
@@ -265,7 +273,12 @@ export default function MessagesPage() {
         <div className="lg:col-span-2">
           {selectedConversation ? (
             <ChatWindow
-              otherUser={getSelectedUser()!}
+              otherUser={
+                getSelectedUser() || {
+                  id: selectedConversation,
+                  profile: { fullName: 'Traveler' },
+                }
+              }
               onClose={() => setSelectedConversation(null)}
             />
           ) : (

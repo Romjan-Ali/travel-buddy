@@ -1,6 +1,6 @@
 // frontend/components/layout/footer.tsx
 import Link from 'next/link'
-import { Plane, Facebook, Twitter, Instagram, Globe } from 'lucide-react'
+import { Plane, Facebook, Twitter, Instagram } from 'lucide-react'
 
 export function Footer() {
   return (
