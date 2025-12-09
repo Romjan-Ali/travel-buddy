@@ -100,6 +100,7 @@ export default function EditTravelPlanPage() {
     if (travelPlanId) {
       fetchTravelPlan()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [travelPlanId])
 
   const fetchTravelPlan = async () => {

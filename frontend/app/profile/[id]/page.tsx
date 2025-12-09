@@ -33,6 +33,7 @@ export default function ProfilePage() {
     if (currentUser && !isOwnProfile) {
       checkReviewPermission()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id, currentUser])
 
   const fetchProfile = async () => {

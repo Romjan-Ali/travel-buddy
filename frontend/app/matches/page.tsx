@@ -21,6 +21,7 @@ export default function MatchesPage() {
 
   useEffect(() => {
     fetchMatches()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
 
   const fetchMatches = async () => {

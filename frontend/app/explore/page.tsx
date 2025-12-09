@@ -237,6 +237,7 @@ export default function ExplorePage() {
 
   useEffect(() => {
     fetchTravelPlans()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, page])
 
   useEffect(() => {

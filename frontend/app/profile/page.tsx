@@ -57,6 +57,7 @@ export default function OwnProfilePage() {
       return
     }
     fetchProfile()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser])
 
   const fetchProfile = async () => {

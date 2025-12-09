@@ -36,6 +36,7 @@ export function TravelPlanReviews({
   useEffect(() => {
     fetchReviews()
     fetchTravelCompanions()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [travelPlanId])
 
   const fetchReviews = async () => {
