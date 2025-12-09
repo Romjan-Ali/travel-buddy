@@ -5,29 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { ReviewCard } from './review-card'
 import { Star, User, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import { Review } from '@/types'
 
 interface GivenReviewsTabProps {
-  reviews: Array<{
-    id: string
-    rating: number
-    comment?: string
-    createdAt: string
-    subject?: {
-      id: string
-      profile?: {
-        fullName: string
-        profileImage?: string
-      }
-    }
-    travelPlan?: {
-      id: string
-      destination: string
-      startDate: string
-    }
-  }>
+  reviews: Array<Review>
   currentUserId?: string
   isLoading: boolean
-  onEditReview: (review: any) => void
+  onEditReview: (review: Review) => void
   onDeleteReview: (reviewId: string) => void
 }
 
@@ -66,10 +51,10 @@ export function GivenReviewsTab({
               </a>
             </Button>
             <Button variant="outline" asChild>
-              <a href="/travel-plans">
+              <Link href="/travel-plans">
                 <Calendar className="mr-2 h-4 w-4" />
                 View Your Trips
-              </a>
+              </Link>
             </Button>
           </div>
         </CardContent>
@@ -80,9 +65,9 @@ export function GivenReviewsTab({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Reviews You've Given</CardTitle>
+        <CardTitle>Reviews You&apos;ve Given</CardTitle>
         <CardDescription>
-          Reviews you've written for other travelers
+          Reviews you&apos;ve written for other travelers
         </CardDescription>
       </CardHeader>
       <CardContent>

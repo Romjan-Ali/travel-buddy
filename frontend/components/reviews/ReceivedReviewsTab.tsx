@@ -5,26 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { ReviewCard } from './review-card'
 import { User, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import { Review } from '@/types'
 
 interface ReceivedReviewsTabProps {
-  reviews: Array<{
-    id: string
-    rating: number
-    comment?: string
-    createdAt: string
-    author?: {
-      id: string
-      profile?: {
-        fullName: string
-        profileImage?: string
-      }
-    }
-    travelPlan?: {
-      id: string
-      destination: string
-      startDate: string
-    }
-  }>
+  reviews: Array<Review>
   currentUserId?: string
   isLoading: boolean
 }
@@ -55,10 +40,10 @@ export function ReceivedReviewsTab({
             Complete trips with other travelers to receive reviews
           </p>
           <Button asChild>
-            <a href="/travel-plans/new">
+            <Link href="/travel-plans/new">
               <Calendar className="mr-2 h-4 w-4" />
               Plan Your Next Trip
-            </a>
+            </Link>
           </Button>
         </CardContent>
       </Card>

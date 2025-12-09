@@ -8,8 +8,8 @@ import { formatDate, calculateDaysBetween } from '@/lib/utils'
 
 interface TravelPlanHeaderProps {
   destination: string
-  startDate: string
-  endDate: string
+  startDate: string | Date
+  endDate: string | Date
   travelType: string
   isPlanOwner: boolean
   userMatchStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null

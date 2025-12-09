@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { useAuth } from '@/lib/auth-context'
-import { userAPI } from '@/lib/api'
+import { reviewAPI, userAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { ReviewOpportunityBanner } from '@/components/profile/ReviewOpportunityBanner'
@@ -15,51 +15,7 @@ import { ProfileAboutTab } from '@/components/profile/ProfileAboutTab'
 import { ProfileReviewsTab } from '@/components/profile/ProfileReviewsTab'
 import { ProfilePlansTab } from '@/components/profile/ProfilePlansTab'
 import { ProfileSidebar } from '@/components/profile/ProfileSidebar'
-
-interface ProfileUser {
-  id: string
-  email: string
-  profile?: {
-    fullName: string
-    profileImage?: string
-    bio?: string
-    currentLocation?: string
-    travelInterests?: string[]
-    visitedCountries?: string[]
-    phoneNumber?: string
-    socialLinks?: string[]
-  }
-  travelPlans?: Array<{
-    id: string
-    destination: string
-    startDate: string
-    endDate: string
-    travelType: string
-    description?: string
-  }>
-  reviewsReceived?: Array<{
-    id: string
-    rating: number
-    comment?: string
-    author?: {
-      id: string
-      profile?: {
-        fullName: string
-        profileImage?: string
-      }
-    }
-    travelPlan?: {
-      id: string
-      destination: string
-      startDate: string
-    }
-    createdAt: string
-  }>
-  _count?: {
-    travelPlans: number
-    reviewsReceived: number
-  }
-}
+import { ProfileUser, ReviableTrip } from '@/types'
 
 export default function ProfilePage() {
   const params = useParams()
@@ -67,7 +23,7 @@ export default function ProfilePage() {
   const [profileUser, setProfileUser] = useState<ProfileUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [canReview, setCanReview] = useState(false)
-  const [reviewableTrips, setReviewableTrips] = useState<any[]>([])
+  const [reviewableTrips, setReviewableTrips] = useState<ReviableTrip[]>([])
   const [activeTab, setActiveTab] = useState('about')
 
   const isOwnProfile = currentUser?.id === params.id
@@ -94,15 +50,12 @@ export default function ProfilePage() {
 
   const checkReviewPermission = async () => {
     if (!currentUser || isOwnProfile) return
-    
+
     try {
-      const response = await fetch(`/api/reviews/can-review/${params.id}`)
-      if (response.ok) {
-        const data = await response.json()
-        setCanReview(data.canReview)
-        if (data.trips) {
-          setReviewableTrips(data.trips)
-        }
+      const response = await reviewAPI.checkCanReview(params.id as string)
+      setCanReview(response.data.canReview)
+      if (response.data.trips) {
+        setReviewableTrips(response.data.trips)
       }
     } catch (error) {
       console.error('Error checking review permission:', error)
@@ -111,7 +64,10 @@ export default function ProfilePage() {
   }
 
   const calculateAverageRating = () => {
-    if (!profileUser?.reviewsReceived || profileUser.reviewsReceived.length === 0)
+    if (
+      !profileUser?.reviewsReceived ||
+      profileUser.reviewsReceived.length === 0
+    )
       return 0
     const total = profileUser.reviewsReceived.reduce(
       (sum, review) => sum + review.rating,
@@ -214,12 +170,14 @@ export default function ProfilePage() {
                 averageRating={averageRating}
               />
             </div>
-            
+
             {/* Review Guidelines Sidebar */}
             <div>
               <Card className="sticky top-8">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-4">Review Guidelines</h3>
+                  <h3 className="font-semibold text-lg mb-4">
+                    Review Guidelines
+                  </h3>
                   <div className="space-y-3">
                     <div>
                       <h4 className="font-semibold text-sm mb-1">Be Honest</h4>
@@ -228,13 +186,18 @@ export default function ProfilePage() {
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">Be Specific</h4>
+                      <h4 className="font-semibold text-sm mb-1">
+                        Be Specific
+                      </h4>
                       <p className="text-sm text-muted-foreground">
-                        Include details about the trip, communication, and overall experience.
+                        Include details about the trip, communication, and
+                        overall experience.
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">Be Respectful</h4>
+                      <h4 className="font-semibold text-sm mb-1">
+                        Be Respectful
+                      </h4>
                       <p className="text-sm text-muted-foreground">
                         Focus on the experience rather than personal attributes.
                       </p>

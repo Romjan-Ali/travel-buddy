@@ -18,18 +18,11 @@ import { Separator } from '@/components/ui/separator'
 import { User, Settings, LogOut } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
 import { NavItem } from './NavItems'
+import { AuthUser } from '@/types'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface UserMenuProps {
-  user: {
-    id: string
-    email: string
-    role: 'USER' | 'ADMIN'
-    isVerified: boolean
-    profile?: {
-      fullName?: string
-      profileImage?: string
-    }
-  }
+  user: AuthUser | null
   userNavItems: NavItem[]
   adminNavItems: NavItem[]
   onLogout: () => Promise<void>
@@ -43,13 +36,23 @@ export function UserMenu({
 }: UserMenuProps) {
   const router = useRouter()
 
+  if(!user){
+    return (
+      <Card>
+        <CardContent>
+          User Not Found
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
           <Avatar className="h-9 w-9">
             <AvatarImage
-              src={user.profile?.profileImage}
+              src={user.profile?.profileImage ?? undefined}
               alt={user.profile?.fullName}
             />
             <AvatarFallback>
@@ -108,7 +111,7 @@ export function UserMenu({
         <DropdownMenuSeparator />
 
         {/* Admin Navigation (if admin) */}
-        {user.role === 'ADMIN' && (
+        {user && user.role === 'ADMIN' && (
           <>
             <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
               Admin

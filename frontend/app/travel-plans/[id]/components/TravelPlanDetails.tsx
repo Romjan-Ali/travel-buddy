@@ -7,9 +7,10 @@ import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 import { MapPin, Calendar, Briefcase, DollarSign, Users, Share2, MessageSquare, Heart, UserPlus } from 'lucide-react'
 import { formatDate, calculateDaysBetween } from '@/lib/utils'
+import { TravelPlan } from '@/types'
 
 interface TravelPlanDetailsProps {
-  travelPlan: any
+  travelPlan: TravelPlan
   isPlanOwner: boolean
   userMatchStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null
   isUpcoming: boolean

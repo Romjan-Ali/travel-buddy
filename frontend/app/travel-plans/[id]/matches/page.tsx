@@ -34,48 +34,7 @@ import {
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { QuickChat } from '@/components/messages/quick-chat'
-
-interface TravelPlan {
-  id: string
-  destination: string
-  startDate: string
-  endDate: string
-  travelType: string
-  budget: string
-  description?: string
-  user: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-}
-
-interface Match {
-  id: string
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
-  createdAt: string
-  initiator?: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-      currentLocation?: string
-      travelInterests?: string[]
-    }
-    averageRating?: number
-    reviewCount?: number
-  }
-  receiver?: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-  message?: string
-}
+import { Match, MatchWithRelations, SingleTravelPlan, TravelPlan } from '@/types'
 
 export default function TravelPlanMatchesPage() {
   const params = useParams()
@@ -84,7 +43,7 @@ export default function TravelPlanMatchesPage() {
   const { user } = useAuth()
 
   const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)
-  const [matches, setMatches] = useState<Match[]>([])
+  const [matches, setMatches] = useState<MatchWithRelations[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('all')
 
@@ -192,7 +151,7 @@ export default function TravelPlanMatchesPage() {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-4">Travel Plan Not Found</h2>
           <p className="text-muted-foreground mb-6">
-            The travel plan you're looking for doesn't exist.
+            The travel plan you&apos;re looking for doesn&apos;t exist.
           </p>
           <Button onClick={() => router.push('/travel-plans')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -203,7 +162,7 @@ export default function TravelPlanMatchesPage() {
     )
   }
 
-  const isPlanOwner = user?.id === travelPlan.user.id
+  const isPlanOwner = user?.id === travelPlan.user?.id
   const filteredMatches = getFilteredMatches()
   const stats = {
     total: matches.length,
@@ -341,7 +300,7 @@ export default function TravelPlanMatchesPage() {
                             <div className="flex items-start gap-4 flex-1">
                               <Avatar className="h-16 w-16">
                                 <AvatarImage
-                                  src={otherUser?.profile?.profileImage}
+                                  src={otherUser?.profile?.profileImage ?? undefined}
                                 />
                                 <AvatarFallback className="text-lg">
                                   {otherUser?.profile?.fullName
@@ -379,13 +338,13 @@ export default function TravelPlanMatchesPage() {
                                 </div>
 
                                 {/* Message */}
-                                {match.message && (
+                                {/* {match.message && (
                                   <div className="mt-3 p-3 bg-muted/30 rounded-lg">
                                     <p className="text-sm text-muted-foreground italic">
-                                      "{match.message}"
+                                      &quot;{match.message}&quot;
                                     </p>
                                   </div>
-                                )}
+                                )} */}
 
                                 {/* Interests */}
                                 {otherUser?.profile?.travelInterests &&
@@ -581,16 +540,16 @@ export default function TravelPlanMatchesPage() {
 
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={travelPlan.user.profile?.profileImage} />
+                    <AvatarImage src={travelPlan.user?.profile?.profileImage ?? undefined} />
                     <AvatarFallback>
-                      {travelPlan.user.profile?.fullName
+                      {travelPlan.user?.profile?.fullName
                         ?.charAt(0)
                         .toUpperCase() || 'P'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="text-sm font-medium">
-                      {travelPlan.user.profile?.fullName || 'Plan Owner'}
+                      {travelPlan.user?.profile?.fullName || 'Plan Owner'}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Trip Organizer

@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button'
 import { TravelPlanTimeline } from './TravelPlanTimeline'
 import { QuickActions } from './QuickActions'
 import { Share2 } from 'lucide-react'
+import { TravelPlan } from '@/types'
 
 interface TravelPlanSidebarProps {
-  travelPlan: any
+  travelPlan: TravelPlan
   isPlanOwner: boolean
   userMatchStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null
   isUpcoming: boolean

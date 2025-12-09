@@ -1,3 +1,4 @@
+// backend/src/modules/matches/match.service.ts
 import { prisma } from '../../lib/prisma'
 import { AppError } from '../../middleware/errorHandler'
 
@@ -96,56 +97,93 @@ export const matchService = {
     const skip = (page - 1) * limit
 
     const where: any = {}
-    if (type === 'sent') {
-      where.initiatorId = userId
-    } else {
-      where.receiverId = userId
-    }
+    if (type === 'sent') where.initiatorId = userId
+    else where.receiverId = userId
 
-    if (status) {
-      where.status = status
-    }
+    if (status) where.status = status
 
     const [matches, total] = await Promise.all([
-      prisma.match.findMany({
-        where,
-        include: {
-          initiator: {
-            select: {
-              profile: {
-                select: {
-                  userId: true,
-                  fullName: true,
-                  profileImage: true,
-                  currentLocation: true,
+      prisma.match
+        .findMany({
+          where,
+          include: {
+            initiator: {
+              select: {
+                id: true,
+                profile: {
+                  select: {
+                    fullName: true,
+                    profileImage: true,
+                    currentLocation: true,
+                  },
                 },
+                _count: { select: { reviewsReceived: true } },
+                reviewsReceived: { select: { rating: true, comment: true } },
               },
             },
-          },
-          receiver: {
-            select: {
-              profile: {
-                select: {
-                  userId: true,
-                  fullName: true,
-                  profileImage: true,
+            receiver: {
+              select: {
+                id: true,
+                profile: {
+                  select: { fullName: true, profileImage: true },
                 },
+                _count: { select: { reviewsReceived: true } },
+                reviewsReceived: { select: { rating: true, comment: true } },
               },
             },
-          },
-          travelPlan: {
-            select: {
-              destination: true,
-              startDate: true,
-              endDate: true,
-              travelType: true,
+            travelPlan: {
+              select: {
+                destination: true,
+                startDate: true,
+                endDate: true,
+                travelType: true,
+              },
+            },
+            messages: {
+              select: {
+                id: true,
+                content: true, // ✅ corrected
+                createdAt: true,
+                senderId: true,
+                receiverId: true,
+              },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
             },
           },
-        },
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-      }),
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: limit,
+        })
+        .then((matches) =>
+          matches.map((match) => ({
+            ...match,
+            initiator: {
+              ...match.initiator,
+              reviewCount: match.initiator._count.reviewsReceived,
+              averageRating:
+                match.initiator.reviewsReceived.length > 0
+                  ? match.initiator.reviewsReceived.reduce(
+                      (sum, r) => sum + r.rating,
+                      0
+                    ) / match.initiator.reviewsReceived.length
+                  : 0,
+            },
+            receiver: {
+              ...match.receiver,
+              reviewCount: match.receiver._count.reviewsReceived,
+              averageRating:
+                match.receiver.reviewsReceived.length > 0
+                  ? match.receiver.reviewsReceived.reduce(
+                      (sum, r) => sum + r.rating,
+                      0
+                    ) / match.receiver.reviewsReceived.length
+                  : 0,
+            },
+            lastMessage: match.messages?.[0] || null,
+          }))
+        ),
+
       prisma.match.count({ where }),
     ])
 
@@ -159,7 +197,6 @@ export const matchService = {
       },
     }
   },
-
   async updateMatchStatus(
     matchId: string,
     userId: string,

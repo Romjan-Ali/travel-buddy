@@ -24,6 +24,8 @@ interface EditReviewDialogProps {
   initialComment: string
   onReviewUpdated?: () => void
   trigger?: React.ReactNode
+  open: boolean                     
+  onOpenChange?: (open: boolean) => void 
 }
 
 export function EditReviewDialog({
@@ -50,8 +52,12 @@ export function EditReviewDialog({
       toast.success('Review updated successfully!')
       setOpen(false)
       onReviewUpdated?.()
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update review')
+    } catch (error: unknown) {
+      if(error instanceof Error){
+        toast.error(error.message)
+      } else {
+         toast.error('Failed to update review')
+      }     
     } finally {
       setIsLoading(false)
     }

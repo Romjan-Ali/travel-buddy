@@ -1,3 +1,4 @@
+// frontend/components/messages/chat-window.tsx
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -36,7 +37,7 @@ interface Message {
     id: string
     profile?: {
       fullName: string
-      profileImage?: string
+      profileImage?: string | null
     }
   }
 }
@@ -46,7 +47,7 @@ interface ChatWindowProps {
     id: string
     profile?: {
       fullName: string
-      profileImage?: string
+      profileImage?: string | null
     }
   }
   matchId?: string
@@ -232,7 +233,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
       <CardHeader className="flex flex-row items-center justify-between border-b p-4">
         <div className="flex items-center gap-3">
           <Avatar>
-            <AvatarImage src={otherUser.profile?.profileImage} />
+            <AvatarImage src={otherUser.profile?.profileImage ?? undefined} />
             <AvatarFallback>
               {otherUser.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
             </AvatarFallback>
@@ -310,7 +311,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
                         {/* Avatar (only for other user's messages) */}
                         {!isOwnMessage && (
                           <Avatar className="h-8 w-8 mt-1 mr-2">
-                            <AvatarImage src={message.sender.profile?.profileImage} />
+                            <AvatarImage src={message.sender.profile?.profileImage ?? undefined} />
                             <AvatarFallback>
                               {message.sender.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
                             </AvatarFallback>

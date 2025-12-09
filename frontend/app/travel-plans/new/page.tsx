@@ -246,7 +246,7 @@ export default function NewTravelPlanPage() {
                 disabled={isLoading}
               />
               <p className="text-xs text-muted-foreground">
-                Include activities you're interested in, accommodation preferences, or any specific requirements
+                Include activities you&apos;re interested in, accommodation preferences, or any specific requirements
               </p>
             </div>
 

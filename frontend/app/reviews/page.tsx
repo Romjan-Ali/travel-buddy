@@ -14,35 +14,7 @@ import { ReceivedReviewsTab } from '@/components/reviews/ReceivedReviewsTab'
 import { GivenReviewsTab } from '@/components/reviews/GivenReviewsTab'
 import { ReviewTips } from '@/components/reviews/ReviewTips'
 import { EditReviewDialog } from '@/components/reviews/edit-review-dialog'
-
-interface Review {
-  id: string
-  rating: number
-  comment?: string
-  createdAt: string
-  updatedAt: string
-  author?: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-  subject?: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-  travelPlan?: {
-    id: string
-    destination: string
-    startDate: string
-    endDate: string
-    travelType: string
-  }
-}
+import { Review } from '@/types'
 
 export default function ReviewsPage() {
   useProtectedRoute()
@@ -67,17 +39,17 @@ export default function ReviewsPage() {
     try {
       if (activeTab === 'received' || activeTab === 'all') {
         const receivedData = await reviewAPI.getMyReviews('received')
-        setReceivedReviews(receivedData.reviews || [])
+        setReceivedReviews(receivedData.data.reviews || [])
         
         setStats(prev => ({
           ...prev,
-          averageRating: receivedData.averageRating || 0,
-          totalReviews: receivedData.totalReviews || 0
+          averageRating: receivedData.data.averageRating || 0,
+          totalReviews: receivedData.data.totalReviews || 0
         }))
       }
       if (activeTab === 'given' || activeTab === 'all') {
         const givenData = await reviewAPI.getMyReviews('given')
-        setGivenReviews(givenData.reviews || [])
+        setGivenReviews(givenData.data.reviews || [])
       }
     } catch (error) {
       toast.error('Failed to load reviews')

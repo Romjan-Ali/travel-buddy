@@ -3,7 +3,13 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Home, UserCheck, CreditCard } from 'lucide-react'
 import { paymentAPI } from '@/lib/api'
@@ -12,7 +18,9 @@ import Link from 'next/link'
 
 export default function PaymentSuccessPage() {
   const [isLoading, setIsLoading] = useState(true)
-  const [paymentType, setPaymentType] = useState<'subscription' | 'badge' | 'unknown'>('unknown')
+  const [paymentType, setPaymentType] = useState<
+    'subscription' | 'badge' | 'unknown'
+  >('unknown')
   const searchParams = useSearchParams()
   const router = useRouter()
   const sessionId = searchParams.get('session_id')
@@ -28,7 +36,7 @@ export default function PaymentSuccessPage() {
       try {
         // You can make an API call to verify the payment
         const subscription = await paymentAPI.getSubscription()
-        
+
         if (subscription.data?.subscription) {
           setPaymentType('subscription')
           toast.success('Premium subscription activated!')
@@ -54,12 +62,12 @@ export default function PaymentSuccessPage() {
           </div>
           <CardTitle className="text-2xl">Payment Successful!</CardTitle>
           <CardDescription>
-            {paymentType === 'subscription' 
+            {paymentType === 'subscription'
               ? 'Your premium subscription is now active'
               : 'Your purchase was completed successfully'}
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {paymentType === 'subscription' ? (
             <div className="space-y-4">
@@ -74,9 +82,9 @@ export default function PaymentSuccessPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-3 text-sm">
-                <p className="font-medium">What's Next:</p>
+                <p className="font-medium">What&apos;s Next:</p>
                 <ul className="space-y-2 text-left">
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
@@ -109,9 +117,7 @@ export default function PaymentSuccessPage() {
 
           <div className="flex flex-col gap-3 pt-4">
             <Button asChild>
-              <Link href="/dashboard">
-                Go to Dashboard
-              </Link>
+              <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/">

@@ -51,6 +51,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { TravelPlan } from '@/types'
 
 // Reuse the same schema from new page
 const travelPlanSchema = z.object({
@@ -63,21 +64,7 @@ const travelPlanSchema = z.object({
   isPublic: z.boolean().default(true),
 })
 
-type TravelPlanFormData = z.infer<typeof travelPlanSchema>
-
-interface TravelPlan {
-  id: string
-  destination: string
-  startDate: string
-  endDate: string
-  budget: string
-  travelType: 'SOLO' | 'FAMILY' | 'FRIENDS' | 'COUPLE' | 'BUSINESS'
-  description?: string
-  isPublic: boolean
-  userId: string
-  createdAt: string
-  updatedAt: string
-}
+export type TravelPlanFormData = z.infer<typeof travelPlanSchema>
 
 export default function EditTravelPlanPage() {
   const params = useParams()
@@ -223,7 +210,7 @@ export default function EditTravelPlanPage() {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-4">Travel Plan Not Found</h2>
           <p className="text-muted-foreground mb-6">
-            The travel plan you're trying to edit doesn't exist.
+            The travel plan you&apos;re trying to edit doesn&apos;t exist.
           </p>
           <Button onClick={() => router.push('/travel-plans')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -411,7 +398,7 @@ export default function EditTravelPlanPage() {
                 disabled={isSaving}
               />
               <p className="text-xs text-muted-foreground">
-                Include activities you're interested in, accommodation
+                Include activities you&apos;re interested in, accommodation
                 preferences, or any specific requirements
               </p>
             </div>

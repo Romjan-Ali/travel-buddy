@@ -23,17 +23,6 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [pendingReviews, setPendingReviews] = useState(0)
 
-  // Function declarations
-  const fetchPendingReviews = async () => {
-    try {
-      const response = await reviewAPI.getMyReviews('received')
-      const reviews = response.reviews || []
-      setPendingReviews(0) // Placeholder
-    } catch (error) {
-      console.error('Error fetching pending reviews:', error)
-    }
-  }
-
   const handleLogout = async () => {
     try {
       await logout()
@@ -48,12 +37,22 @@ export function Navbar() {
     return pathname.startsWith(path)
   }
 
-  // Effects
   useEffect(() => {
-    if (user) {
-      fetchPendingReviews()
+    const fetchPendingReviews = async () => {
+      if (user) {
+        try {
+          const response = await reviewAPI.getMyReviews("received")
+          const reviews = response.data.reviews || []
+          setPendingReviews(reviews.length)
+        } catch (error) {
+          console.error("Error fetching pending reviews:", error)
+        }
+      }
     }
+
+    fetchPendingReviews()
   }, [user])
+
 
   // Get navigation items
   const navItems = getNavItems(pendingReviews)

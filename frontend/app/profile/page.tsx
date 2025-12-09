@@ -40,48 +40,7 @@ import {
   Shield,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-
-interface ProfileUser {
-  id: string
-  email: string
-  role: 'USER' | 'ADMIN'
-  isVerified: boolean
-  isActive: boolean
-  profile?: {
-    fullName: string
-    profileImage?: string
-    bio?: string
-    currentLocation?: string
-    travelInterests?: string[]
-    visitedCountries?: string[]
-    phoneNumber?: string
-    socialLinks?: string[]
-  }
-  travelPlans?: Array<{
-    id: string
-    destination: string
-    startDate: string
-    endDate: string
-    travelType: string
-    description?: string
-  }>
-  reviewsReceived?: Array<{
-    id: string
-    rating: number
-    comment?: string
-    author?: {
-      profile?: {
-        fullName: string
-        profileImage?: string
-      }
-    }
-    createdAt: string
-  }>
-  _count?: {
-    travelPlans: number
-    reviewsReceived: number
-  }
-}
+import { ProfileUser } from '@/types'
 
 export default function OwnProfilePage() {
   const { user: currentUser, logout } = useAuth()

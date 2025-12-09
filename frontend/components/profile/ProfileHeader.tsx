@@ -18,27 +18,11 @@ import {
   Heart,
   MessageSquare,
 } from 'lucide-react'
+import Link from 'next/link'
+import { ProfileUser } from '@/types'
 
 interface ProfileHeaderProps {
-  profileUser: {
-    id: string
-    email: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-      bio?: string
-      currentLocation?: string
-      travelInterests?: string[]
-      phoneNumber?: string
-    }
-    _count?: {
-      travelPlans: number
-      reviewsReceived: number
-    }
-    reviewsReceived?: Array<{
-      rating: number
-    }>
-  }
+  profileUser: ProfileUser
   currentUser?: {
     id: string
     isVerified: boolean
@@ -96,10 +80,10 @@ export function ProfileHeader({
                   </h1>
                   {isOwnProfile && (
                     <Button size="sm" variant="outline" className="gap-2" asChild>
-                      <a href="/profile/edit">
+                      <Link href="/profile/edit">
                         <Edit className="h-4 w-4" />
                         Edit Profile
-                      </a>
+                      </Link>
                     </Button>
                   )}
                 </div>

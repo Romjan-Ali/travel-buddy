@@ -56,38 +56,7 @@ import {
   XCircle, // Added
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-
-interface TravelPlan {
-  id: string
-  destination: string
-  startDate: string
-  endDate: string
-  travelType: string
-  budget: string
-  description?: string
-  user: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-      currentLocation?: string
-      travelInterests?: string[]
-    }
-    averageRating?: number
-    reviewCount?: number
-  }
-  _count: {
-    matches: number
-  }
-}
-
-interface Match {
-  id: string
-  travelPlanId: string
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
-  createdAt: string
-  receiverId: string
-}
+import { Match, TravelPlan, TravelPlansResponse } from '@/types'
 
 interface MatchRequestDialogProps {
   travelPlan: TravelPlan
@@ -112,6 +81,11 @@ function MatchRequestDialog({
       return
     }
 
+    if (!travelPlan.user.id) {
+      toast.error('Travel user ID in travel plan is missing')
+      return
+    }
+
     setIsLoading(true)
     try {
       await matchAPI.create({
@@ -124,8 +98,12 @@ function MatchRequestDialog({
       toast.success('Match request sent successfully!')
       onSuccess()
       onOpenChange(false)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to send match request')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Failed to send match request')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -133,7 +111,7 @@ function MatchRequestDialog({
 
   const getDefaultMessage = () => {
     return `Hi ${
-      travelPlan.user.profile?.fullName || 'there'
+      travelPlan.user?.profile?.fullName || 'there'
     }! I'm interested in joining your trip to ${
       travelPlan.destination
     } from ${formatDate(travelPlan.startDate)} to ${formatDate(
@@ -151,7 +129,7 @@ function MatchRequestDialog({
           </DialogTitle>
           <DialogDescription>
             Send a match request to{' '}
-            {travelPlan.user.profile?.fullName || 'this traveler'}
+            {travelPlan.user?.profile?.fullName || 'this traveler'}
           </DialogDescription>
         </DialogHeader>
 
@@ -186,7 +164,7 @@ function MatchRequestDialog({
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground">
-              Introduce yourself and explain why you'd be a good travel
+              Introduce yourself and explain why you&apos;d be a good travel
               companion
             </p>
           </div>
@@ -252,7 +230,9 @@ export default function ExplorePage() {
   })
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [sentRequestPlanIds, setSentRequestPlanIds] = useState<Set<string>>(new Set())
+  const [sentRequestPlanIds, setSentRequestPlanIds] = useState<Set<string>>(
+    new Set()
+  )
   const [sentMatchRequests, setSentMatchRequests] = useState<Match[]>([])
 
   useEffect(() => {
@@ -269,9 +249,10 @@ export default function ExplorePage() {
           limit: 20,
         })
 
-        const sentMatchRequestsPlanIds = sentMatchRequestsData.data.matches.map(
-          (v: Match) => v.travelPlanId
-        ) || []
+        const sentMatchRequestsPlanIds =
+          sentMatchRequestsData.data.matches
+            .map((v: Match) => v.travelPlanId)
+            .filter((id): id is string => Boolean(id)) || []
 
         setSentRequestPlanIds(new Set(sentMatchRequestsPlanIds))
         setSentMatchRequests(sentMatchRequestsData.data.matches || [])
@@ -329,7 +310,7 @@ export default function ExplorePage() {
     }
 
     // Check if user is viewing their own plan
-    if (user.id === plan.user.id) {
+    if (user.id === plan.user?.id) {
       toast.error('You cannot send a match request to your own travel plan')
       return
     }
@@ -347,10 +328,11 @@ export default function ExplorePage() {
           page: 1,
           limit: 20,
         })
-        
-        const sentMatchRequestsPlanIds = sentMatchRequestsData.data.matches.map(
-          (v: Match) => v.travelPlanId
-        ) || []
+
+        const sentMatchRequestsPlanIds =
+          sentMatchRequestsData.data.matches
+            .map((v: Match) => v.travelPlanId)
+            .filter((id): id is string => Boolean(id)) || []
 
         setSentRequestPlanIds(new Set(sentMatchRequestsPlanIds))
         setSentMatchRequests(sentMatchRequestsData.data.matches || [])
@@ -363,7 +345,9 @@ export default function ExplorePage() {
     }
   }
 
-  const getMatchStatus = (planId: string): 'PENDING' | 'ACCEPTED' | 'REJECTED' | null => {
+  const getMatchStatus = (
+    planId: string
+  ): 'PENDING' | 'ACCEPTED' | 'REJECTED' | null => {
     const match = sentMatchRequests.find(
       (match) => match.travelPlanId === planId
     )
@@ -524,7 +508,7 @@ export default function ExplorePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {travelPlans.map((plan) => {
                 const matchStatus = getMatchStatus(plan.id)
-                const isOwnPlan = user?.id === plan.user.id
+                const isOwnPlan = user?.id === plan.user?.id
 
                 return (
                   <Link href={`/travel-plans/${plan.id}`} key={plan.id}>
@@ -565,19 +549,22 @@ export default function ExplorePage() {
                             <div className="flex items-center gap-2 mb-3">
                               <Avatar className="h-8 w-8">
                                 <AvatarImage
-                                  src={plan.user.profile?.profileImage}
+                                  src={
+                                    plan.user?.profile?.profileImage ??
+                                    undefined
+                                  }
                                 />
                                 <AvatarFallback>
-                                  {plan.user.profile?.fullName
+                                  {plan.user?.profile?.fullName
                                     ?.charAt(0)
                                     .toUpperCase() || 'T'}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
                                 <p className="text-sm font-medium">
-                                  {plan.user.profile?.fullName || 'Traveler'}
+                                  {plan.user?.profile?.fullName || 'Traveler'}
                                 </p>
-                                {plan.user.averageRating && (
+                                {plan.user?.averageRating && (
                                   <div className="flex items-center gap-1">
                                     <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                                     <span className="text-xs">
@@ -620,9 +607,9 @@ export default function ExplorePage() {
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
                               <Users className="h-4 w-4" />
-                              <span>{plan._count.matches} requests</span>
+                              <span>{plan._count?.matches} requests</span>
                             </div>
-                            {plan.user.profile?.currentLocation && (
+                            {plan.user?.profile?.currentLocation && (
                               <div className="flex items-center gap-1">
                                 <Globe className="h-4 w-4" />
                                 <span>{plan.user.profile.currentLocation}</span>
@@ -632,9 +619,16 @@ export default function ExplorePage() {
                         </div>
 
                         {/* Actions */}
-                        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className="flex gap-2"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           {isOwnPlan ? (
-                            <Button variant="outline" className="flex-1" disabled>
+                            <Button
+                              variant="outline"
+                              className="flex-1"
+                              disabled
+                            >
                               Your Plan
                             </Button>
                           ) : matchStatus === 'ACCEPTED' ? (

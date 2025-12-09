@@ -10,12 +10,22 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ImageUpload } from '@/components/upload/image-upload'
 import ProfileEditForm from '@/components/profile/edit-form'
+import { AuthUser } from '@/types'
+
+export interface ProfileFormData {
+  fullName: string
+  bio: string
+  travelInterests: string[]
+  visitedCountries: string[]
+  currentLocation: string
+  phoneNumber: string
+}
 
 export default function EditProfilePage() {
   const { user, updateUser } = useAuth()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [profileData, setProfileData] = useState({
+  const [profileData, setProfileData] = useState<ProfileFormData>({
     fullName: '',
     bio: '',
     travelInterests: [],
@@ -47,7 +57,7 @@ export default function EditProfilePage() {
       })
       
       // Update auth context with new user data
-      updateUser(result.data.user)
+      updateUser(result.data.user as unknown as AuthUser)
       
       toast.success('Profile image updated successfully!')
       
@@ -62,7 +72,7 @@ export default function EditProfilePage() {
   const fetchUserProfile = async () => {
     try {
       const result = await userAPI.getProfile()
-      updateUser(result.data.user)
+      updateUser(result.data.user as unknown as AuthUser)
     } catch (error) {
       console.error('Failed to refresh profile:', error)
     }
@@ -73,7 +83,7 @@ export default function EditProfilePage() {
     setIsLoading(true)
     try {
       const result = await userAPI.updateProfile(profileData)
-      updateUser(result.data.user)
+      updateUser(result.data.user as unknown as AuthUser)
       toast.success('Profile updated successfully!')
       router.push('/profile')  // Changed to /profile (own profile)
     } catch (error) {
@@ -95,8 +105,8 @@ export default function EditProfilePage() {
               <h3 className="text-lg font-medium mb-4">Profile Picture</h3>
               <ImageUpload
                 type="profile"
-                currentImage={user?.profile?.profileImage}
-                onUploadComplete={handleImageUploadComplete}  // ✅ Updated callback
+                currentImage={user?.profile?.profileImage ?? undefined}
+                onUploadComplete={handleImageUploadComplete}
               />
             </div>
 

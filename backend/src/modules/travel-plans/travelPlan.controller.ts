@@ -64,7 +64,12 @@ export const travelPlanController = {
   },
 
   async searchTravelPlans(req: AuthRequest, res: Response) {
-    const filters = req.query
+    const filtersQuery = req.query.filters
+    const interests =
+      typeof req.query.interests === 'string'
+        ? req.query.interests.split(',')
+        : undefined
+    const filters = { ...filtersQuery, interests }
     const { page = 1, limit = 10 } = req.query
 
     const result = await travelPlanService.searchTravelPlans(

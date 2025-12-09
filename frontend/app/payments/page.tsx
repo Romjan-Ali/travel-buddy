@@ -25,10 +25,11 @@ import {
   Shield,
   Zap,
 } from 'lucide-react'
+import { Subscription } from '@/types'
 
 export default function PaymentsPage() {
   useProtectedRoute()
-  const [subscription, setSubscription] = useState<any>(null)
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isCancelling, setIsCancelling] = useState(false)
 
@@ -253,10 +254,10 @@ export default function PaymentsPage() {
           <SubscriptionPlans
             currentPlan={
               subscription
-                ? subscription.stripeData.priceId ===
+                ? subscription.stripeData?.priceId ===
                   'price_1SaHXbLaGyGdTIttfCY7mwaP'
                   ? 'premium'
-                  : subscription.stripeData.priceId ===
+                  : subscription.stripeData?.priceId ===
                     'price_1SaI29LaGyGdTItteNpIsNMc'
                   ? 'yearly'
                   : 'free'

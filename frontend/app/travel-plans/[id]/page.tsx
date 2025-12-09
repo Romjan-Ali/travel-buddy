@@ -14,12 +14,13 @@ import { TravelPlanTabs } from './components/TravelPlanTabs'
 import { TravelPlanSidebar } from './components/TravelPlanSidebar'
 import { MatchRequestDialog } from './components/MatchRequestDialog'
 import { TravelPlanReviews } from './components/TravelPlanReviews'
+import { Match, TravelPlan } from '@/types'
 
 export default function TravelPlanDetailsPage() {
   const params = useParams()
   const router = useRouter()
   const { user } = useAuth()
-  const [travelPlan, setTravelPlan] = useState<any>(null)
+  const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false)
   const [userMatchStatus, setUserMatchStatus] = useState<
@@ -59,7 +60,7 @@ export default function TravelPlanDetailsPage() {
       })
 
       const matchForThisPlan = matchesResult.data?.matches?.find(
-        (match: any) => match.travelPlanId === travelPlanId
+        (match: Match) => match.travelPlanId === travelPlanId
       )
 
       setUserMatchStatus(matchForThisPlan?.status || null)
@@ -117,7 +118,7 @@ export default function TravelPlanDetailsPage() {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-4">Travel Plan Not Found</h2>
           <p className="text-muted-foreground mb-6">
-            The travel plan you're looking for doesn't exist or has been
+            The travel plan you&apos;re looking for doesn&apos;t exist or has been
             removed.
           </p>
           <Button onClick={() => router.push('/travel-plans')}>
@@ -129,7 +130,7 @@ export default function TravelPlanDetailsPage() {
     )
   }
 
-  const isPlanOwner = user?.id === travelPlan.user.id
+  const isPlanOwner = user?.id === travelPlan.user?.id
   const startDate = new Date(travelPlan.startDate)
   const isUpcoming = startDate > new Date()
 
@@ -162,7 +163,7 @@ export default function TravelPlanDetailsPage() {
         startDate={travelPlan.startDate}
         endDate={travelPlan.endDate}
         budget={travelPlan.budget}
-        matchesCount={travelPlan._count?.matches || 0}
+        matchesCount={travelPlan.matches?.length || 0}
         isUpcoming={isUpcoming}
       />
 

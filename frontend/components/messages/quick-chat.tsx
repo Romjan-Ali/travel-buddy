@@ -1,3 +1,4 @@
+// frontend/components/messages/quick-chat.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -11,7 +12,7 @@ interface QuickChatProps {
     id: string
     profile?: {
       fullName: string
-      profileImage?: string
+      profileImage?: string | null
     }
   }
   matchId?: string

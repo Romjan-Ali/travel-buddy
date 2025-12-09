@@ -2,7 +2,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -10,11 +17,18 @@ import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/lib/auth-context'
 import { matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
-import { MapPin, Calendar, MessageSquare, CheckCircle, Send } from 'lucide-react'
+import {
+  MapPin,
+  Calendar,
+  MessageSquare,
+  CheckCircle,
+  Send,
+} from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import { TravelPlan } from '@/types'
 
 interface MatchRequestDialogProps {
-  travelPlan: any
+  travelPlan: TravelPlan
   isOpen: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
@@ -24,7 +38,7 @@ export function MatchRequestDialog({
   travelPlan,
   isOpen,
   onOpenChange,
-  onSuccess
+  onSuccess,
 }: MatchRequestDialogProps) {
   const { user } = useAuth()
   const [message, setMessage] = useState('')
@@ -36,26 +50,42 @@ export function MatchRequestDialog({
       return
     }
 
+    if (!travelPlan.user.id) {
+      toast.error('Travel plan user ID is missing')
+      return
+    }
+
     setIsLoading(true)
     try {
       await matchAPI.create({
-        receiverId: travelPlan.user.id,
+        receiverId: travelPlan.user?.id,
         travelPlanId: travelPlan.id,
-        message: message || `I'd like to join your trip to ${travelPlan.destination}`
+        message:
+          message || `I'd like to join your trip to ${travelPlan.destination}`,
       })
-      
+
       toast.success('Match request sent successfully!')
       onSuccess()
       onOpenChange(false)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to send match request')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Failed to send match request')
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
   const getDefaultMessage = () => {
-    return `Hi ${travelPlan.user.profile?.fullName || 'there'}! I'm interested in joining your trip to ${travelPlan.destination} from ${formatDate(travelPlan.startDate)} to ${formatDate(travelPlan.endDate)}. Looking forward to connecting!`
+    return `Hi ${
+      travelPlan.user?.profile?.fullName || 'there'
+    }! I'm interested in joining your trip to ${
+      travelPlan.destination
+    } from ${formatDate(travelPlan.startDate)} to ${formatDate(
+      travelPlan.endDate
+    )}. Looking forward to connecting!`
   }
 
   return (
@@ -67,7 +97,8 @@ export function MatchRequestDialog({
             Request to Join
           </DialogTitle>
           <DialogDescription>
-            Send a match request to {travelPlan.user.profile?.fullName || 'this traveler'}
+            Send a match request to{' '}
+            {travelPlan.user?.profile?.fullName || 'this traveler'}
           </DialogDescription>
         </DialogHeader>
 
@@ -81,7 +112,8 @@ export function MatchRequestDialog({
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                {formatDate(travelPlan.startDate)} - {formatDate(travelPlan.endDate)}
+                {formatDate(travelPlan.startDate)} -{' '}
+                {formatDate(travelPlan.endDate)}
               </div>
               <Badge variant="outline" className="text-xs">
                 {travelPlan.travelType}
@@ -101,7 +133,8 @@ export function MatchRequestDialog({
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground">
-              Introduce yourself and explain why you'd be a good travel companion
+              Introduce yourself and explain why you&apos;d be a good travel
+              companion
             </p>
           </div>
 

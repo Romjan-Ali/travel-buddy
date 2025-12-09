@@ -11,25 +11,10 @@ import React, {
 import { useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { authAPI } from '@/lib/api'
-
-interface User {
-  id: string
-  email: string
-  role: 'USER' | 'ADMIN'
-  isVerified: boolean
-  isActive: boolean
-  profile?: {
-    fullName: string
-    profileImage?: string
-    bio?: string
-    currentLocation?: string
-    travelInterests?: string[]
-    visitedCountries?: string[]
-  }
-}
+import { AuthUser } from '@/types'
 
 interface AuthContextType {
-  user: User | null
+  user: AuthUser | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (data: {
@@ -38,13 +23,13 @@ interface AuthContextType {
     fullName: string
   }) => Promise<void>
   logout: () => Promise<void>
-  updateUser: (user: User) => void
+  updateUser: (user: AuthUser) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
@@ -74,8 +59,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(result.data.user)
       toast.success('Login successful!')
       router.push('/dashboard')
-    } catch (error: any) {
-      toast.error(error.message || 'Login failed')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Login failed')
+      }
       throw error
     } finally {
       setIsLoading(false)
@@ -90,11 +79,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     try {
       const response = await authAPI.register(data)
-      setUser(response.user)
+      setUser(response.data.user)
       toast.success('Registration successful!')
       router.push('/dashboard')
-    } catch (error: any) {
-      toast.error(error.message || 'Registration failed')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Registration failed')
+      }
       throw error
     } finally {
       setIsLoading(false)
@@ -108,14 +101,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null)
       toast.success('Logged out successfully')
       router.push('/login')
-    } catch (error: any) {
-      toast.error(error.message || 'Logout failed')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Logout failed')
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
-  const updateUser = (updatedUser: User) => {
+  const updateUser = (updatedUser: AuthUser) => {
     setUser(updatedUser)
   }
 

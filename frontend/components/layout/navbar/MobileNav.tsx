@@ -12,19 +12,12 @@ import { Search, Menu, X, User, Settings, LogOut } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { NavItem } from './NavItems'
+import { AuthUser } from '@/types'
 
 interface MobileNavProps {
   isOpen: boolean
   onClose: () => void
-  user: {
-    id: string
-    email: string
-    role: 'USER' | 'ADMIN'
-    profile?: {
-      fullName?: string
-      profileImage?: string
-    }
-  } | null
+  user: AuthUser | null
   navItems: NavItem[]
   userNavItems: NavItem[]
   adminNavItems: NavItem[]
@@ -93,7 +86,7 @@ export function MobileNav({
               <div className="flex items-center gap-3 py-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={user.profile?.profileImage}
+                    src={user.profile?.profileImage ?? undefined}
                     alt={user.profile?.fullName}
                   />
                   <AvatarFallback>

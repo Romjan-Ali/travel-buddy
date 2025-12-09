@@ -243,7 +243,7 @@ export const travelPlanService = {
 
     const where: any = {
       isPublic: true,
-      startDate: { gte: new Date() }, // Only future plans
+      // startDate: { gte: new Date() }, // Only future plans
     }
 
     if (filters.destination) {
@@ -264,6 +264,16 @@ export const travelPlanService = {
           endDate: { gte: new Date(filters.startDate) },
         },
       ]
+    }
+
+    if (filters.interests?.length) {
+      where.user = {
+        profile: {
+          travelInterests: {
+            hasSome: filters.interests,
+          },
+        },
+      }
     }
 
     const [plans, total] = await Promise.all([

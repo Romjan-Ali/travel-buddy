@@ -10,11 +10,12 @@ import { reviewAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { Star, MessageSquare, Users } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
+import { Review } from '@/types'
 
 interface TravelPlanReviewsProps {
   travelPlanId: string
   travelPlanDestination: string
-  organizerId: string
+  organizerId?: string
   organizerName: string
   organizerImage?: string
 }
@@ -27,9 +28,10 @@ export function TravelPlanReviews({
   organizerImage,
 }: TravelPlanReviewsProps) {
   const { user } = useAuth()
-  const [reviews, setReviews] = useState<any[]>([])
+  const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [travelCompanions, setTravelCompanions] = useState<any[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const [travelCompanions, setTravelCompanions] = useState<any[]>([])
 
   useEffect(() => {
     fetchReviews()
@@ -155,7 +157,7 @@ export function TravelPlanReviews({
       )}
 
       {/* Review Travel Companions Section */}
-      {travelCompanions.length > 0 && (
+      {/* travelCompanions.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -209,7 +211,7 @@ export function TravelPlanReviews({
             </div>
           </CardContent>
         </Card>
-      )}
+      ) */}
     </div>
   )
 }

@@ -6,36 +6,16 @@ import { Button } from '@/components/ui/button'
 import { ReviewCard } from '@/components/reviews/review-card'
 import { StarRating } from '@/components/reviews/star-rating'
 import { Star } from 'lucide-react'
+import { ProfileUser } from '@/types'
 
 interface ProfileReviewsTabProps {
-  profileUser: {
-    reviewsReceived?: Array<{
-      id: string
-      rating: number
-      comment?: string
-      author?: {
-        id: string
-        profile?: {
-          fullName: string
-          profileImage?: string
-        }
-      }
-      travelPlan?: {
-        id: string
-        destination: string
-        startDate: string
-      }
-      createdAt: string
-    }>
-    _count?: {
-      reviewsReceived: number
-    }
-  }
+  profileUser: ProfileUser
   currentUser?: {
     id: string
   } | null
   averageRating: number
 }
+
 
 export function ProfileReviewsTab({
   profileUser,

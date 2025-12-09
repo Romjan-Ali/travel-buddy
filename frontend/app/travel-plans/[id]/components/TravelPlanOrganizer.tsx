@@ -7,16 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { MapPin, Star, MessageSquare, UserPlus } from 'lucide-react'
+import { Review, TravelPlan } from '@/types'
 
 interface TravelPlanOrganizerProps {
-  travelPlan: any
+  travelPlan: TravelPlan
   isPlanOwner: boolean
 }
 
 export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrganizerProps) {
   // Calculate average rating for the plan owner
-  const averageRating = travelPlan.user.reviewsReceived?.length 
-    ? travelPlan.user.reviewsReceived.reduce((sum: number, review: any) => sum + review.rating, 0) / travelPlan.user.reviewsReceived.length
+  const averageRating = travelPlan.user?.reviewsReceived?.length 
+    ? travelPlan.user?.reviewsReceived.reduce((sum: number, review: Review) => sum + review.rating, 0) / travelPlan.user?.reviewsReceived.length
     : 0
 
   return (
@@ -24,7 +25,7 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Trip Organizer</span>
-          <Link href={`/profile/${travelPlan.user.id}`}>
+          <Link href={`/profile/${travelPlan.user?.id}`}>
             <Button variant="outline" size="sm">
               View Full Profile
             </Button>
@@ -34,9 +35,9 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
       <CardContent>
         <div className="flex flex-col md:flex-row items-start gap-6">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={travelPlan.user.profile?.profileImage} />
+            <AvatarImage src={travelPlan.user?.profile?.profileImage ?? undefined} />
             <AvatarFallback className="text-2xl">
-              {travelPlan.user.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
+              {travelPlan.user?.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
           
@@ -44,12 +45,12 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="text-2xl font-bold mb-1">
-                  {travelPlan.user.profile?.fullName || 'Traveler'}
+                  {travelPlan.user?.profile?.fullName || 'Traveler'}
                 </h3>
-                {travelPlan.user.profile?.currentLocation && (
+                {travelPlan.user?.profile?.currentLocation && (
                   <div className="flex items-center gap-1 text-muted-foreground mb-2">
                     <MapPin className="h-4 w-4" />
-                    <span>{travelPlan.user.profile.currentLocation}</span>
+                    <span>{travelPlan.user?.profile.currentLocation}</span>
                   </div>
                 )}
                 
@@ -66,7 +67,7 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
                     </div>
                     <span className="font-medium">{averageRating.toFixed(1)}</span>
                     <span className="text-sm text-muted-foreground">
-                      ({travelPlan.user._count?.reviewsReceived || 0} reviews)
+                      ({travelPlan.user?._count?.reviewsReceived || 0} reviews)
                     </span>
                   </div>
                 )}
@@ -74,25 +75,25 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
             </div>
 
             {/* Bio */}
-            {travelPlan.user.profile?.bio && (
-              <p className="text-muted-foreground mb-4">{travelPlan.user.profile.bio}</p>
+            {travelPlan.user?.profile?.bio && (
+              <p className="text-muted-foreground mb-4">{travelPlan.user?.profile.bio}</p>
             )}
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div className="text-center p-3 bg-muted/30 rounded-lg">
-                <div className="text-xl font-bold">{travelPlan.user._count?.travelPlans || 0}</div>
+                <div className="text-xl font-bold">{travelPlan.user?._count?.travelPlans || 0}</div>
                 <div className="text-sm text-muted-foreground">Trips</div>
               </div>
               <div className="text-center p-3 bg-muted/30 rounded-lg">
                 <div className="text-xl font-bold">
-                  {travelPlan.user._count?.reviewsReceived || 0}
+                  {travelPlan.user?._count?.reviewsReceived || 0}
                 </div>
                 <div className="text-sm text-muted-foreground">Reviews</div>
               </div>
               <div className="text-center p-3 bg-muted/30 rounded-lg">
                 <div className="text-xl font-bold">
-                  {travelPlan.user.profile?.visitedCountries?.length || 0}
+                  {travelPlan.user?.profile?.visitedCountries?.length || 0}
                 </div>
                 <div className="text-sm text-muted-foreground">Countries</div>
               </div>
@@ -103,7 +104,7 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
             </div>
 
             {/* Interests */}
-            {travelPlan.user.profile?.travelInterests && travelPlan.user.profile.travelInterests.length > 0 && (
+            {travelPlan.user?.profile?.travelInterests && travelPlan.user?.profile.travelInterests.length > 0 && (
               <div>
                 <h4 className="font-semibold mb-2">Travel Interests</h4>
                 <div className="flex flex-wrap gap-2">
@@ -125,7 +126,7 @@ export function TravelPlanOrganizer({ travelPlan, isPlanOwner }: TravelPlanOrgan
             Message
           </Button>
           {!isPlanOwner && (
-            <Link href={`/profile/${travelPlan.user.id}`} className="flex-1">
+            <Link href={`/profile/${travelPlan.user?.id}`} className="flex-1">
               <Button variant="outline" className="w-full gap-2">
                 <UserPlus className="h-4 w-4" />
                 Connect

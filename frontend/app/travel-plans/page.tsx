@@ -33,21 +33,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
-interface TravelPlan {
-  id: string
-  destination: string
-  startDate: string
-  endDate: string
-  travelType: string
-  budget: string
-  description?: string
-  isPublic: boolean
-  createdAt: string
-  _count: {
-    matches: number
-  }
-}
+import { TravelPlan } from '@/types'
 
 export default function TravelPlansPage() {
   const router = useRouter()

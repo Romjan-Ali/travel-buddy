@@ -6,8 +6,8 @@ import { Calendar, DollarSign, Users, Clock, CheckCircle } from 'lucide-react'
 import { calculateDaysBetween } from '@/lib/utils'
 
 interface TravelPlanStatsProps {
-  startDate: string
-  endDate: string
+  startDate: string | Date
+  endDate: string | Date
   budget: string
   matchesCount: number
   isUpcoming: boolean

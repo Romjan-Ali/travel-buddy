@@ -8,10 +8,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { X } from 'lucide-react'
+import { ProfileFormData } from '@/app/profile/edit/page'
 
 interface ProfileEditFormProps {
-  data: any
-  onChange: (data: any) => void
+  data: ProfileFormData
+  onChange: (data: ProfileFormData) => void
   onSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }

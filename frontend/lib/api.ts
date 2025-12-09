@@ -1,5 +1,36 @@
 // frontend/lib/api.ts
-import { ApiResponse, DashboardStats, MatchesResponse, TravelPlan, TravelPlansResponse } from '@/types'
+import { TravelPlanFormData } from '@/app/travel-plans/[id]/edit/page'
+import {
+  ApiResponse,
+  AuthProfile,
+  AuthResponse,
+  AuthUser,
+  CanReview,
+  CreateMatchInput,
+  CreateTravelPlanInput,
+  DashboardStats,
+  GetUserByAdmin,
+  LoginCredentials,
+  MatchesResponse,
+  MatchWithRelations,
+  Pagination,
+  Profile,
+  ProfileUser,
+  RegisterCredentials,
+  Review,
+  SingleTravelPlan,
+  Subscription,
+  SubscriptionResponse,
+  TravelPlan,
+  TravelPlanByAdmin,
+  TravelPlanFilters,
+  TravelPlansResponse,
+  UpdatedUserStatus,
+  UpdateProfileInput,
+  UpdateTravelPlanInput,
+  User,
+  UserDetails,
+} from '@/types'
 import { toast } from 'sonner'
 
 const API_BASE_URL =
@@ -7,8 +38,8 @@ const API_BASE_URL =
 const NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET =
   process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
 
-class ApiError extends Error {
-  constructor(message: string, public status?: number, public data?: any) {
+class ApiError<TData = unknown> extends Error {
+  constructor(message: string, public status?: number, public data?: TData) {
     super(message)
     this.name = 'ApiError'
   }
@@ -66,7 +97,7 @@ class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'GET' })
   }
 
-  async post<T>(
+  /* async post<T>(
     endpoint: string,
     body?: any,
     options?: RequestInit
@@ -100,6 +131,42 @@ class ApiClient {
       method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,
     })
+  } */
+
+  async post<TResponse, TBody>(
+    endpoint: string,
+    body?: TBody,
+    options?: RequestInit
+  ): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, {
+      ...options,
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    })
+  }
+
+  async put<TResponse, TBody>(
+    endpoint: string,
+    body?: TBody,
+    options?: RequestInit
+  ): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, {
+      ...options,
+      method: 'PUT',
+      body: body ? JSON.stringify(body) : undefined,
+    })
+  }
+
+  async patch<TResponse, TBody>(
+    endpoint: string,
+    body?: TBody,
+    options?: RequestInit
+  ): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+    })
   }
 
   async delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -121,17 +188,24 @@ export const api = new ApiClient()
 
 // Auth endpoints
 export const authAPI = {
-  register: (data: any) => api.post('/auth/register', data),
-  login: (data: any) => api.post('/auth/login', data),
-  logout: () => api.post('/auth/logout'),
-  getMe: () => api.get('/auth/me'),
+  register: (data: RegisterCredentials): Promise<ApiResponse<AuthResponse>> =>
+    api.post('/auth/register', data),
+  login: (data: LoginCredentials): Promise<ApiResponse<AuthResponse>> =>
+    api.post('/auth/login', data),
+  logout: (): Promise<ApiResponse> => api.post('/auth/logout'),
+  getMe: (): Promise<ApiResponse<{ user: AuthUser }>> => api.get('/auth/me'),
 }
 
 // User endpoints
 export const userAPI = {
-  getProfile: () => api.get('/users/profile'),
-  updateProfile: (data: any) => api.patch('/users/profile', data),
-  getPublicProfile: (id: string) => api.get(`/users/${id}`),
+  getProfile: (): Promise<ApiResponse<{ user: ProfileUser }>> =>
+    api.get('/users/profile'),
+  updateProfile: (
+    data: UpdateProfileInput
+  ): Promise<ApiResponse<{ user: ProfileUser }>> =>
+    api.patch('/users/profile', data),
+  getPublicProfile: (id: string): Promise<ApiResponse<{ user: ProfileUser }>> =>
+    api.get(`/users/${id}`),
   searchUsers: (query: string, page = 1, limit = 10) =>
     api.get(
       `/users?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`
@@ -140,21 +214,50 @@ export const userAPI = {
 
 // Travel Plan endpoints
 export const travelPlanAPI = {
-  create: (data: any) => api.post('/travel-plans', data),
+  create: (data: CreateTravelPlanInput) => api.post('/travel-plans', data),
   getMyPlans: (page = 1, limit = 10): Promise<TravelPlansResponse> =>
     api.get(`/travel-plans/my-plans?page=${page}&limit=${limit}`),
-  getById: (id: string) => api.get(`/travel-plans/${id}`),
-  update: (id: string, data: any) => api.patch(`/travel-plans/${id}`, data),
+  getById: (id: string): Promise<ApiResponse<{ travelPlan: TravelPlan }>> =>
+    api.get(`/travel-plans/${id}`),
+  update: (id: string, data: TravelPlanFormData) =>
+    api.patch(`/travel-plans/${id}`, data),
   delete: (id: string) => api.delete(`/travel-plans/${id}`),
-  search: (filters: any, page = 1, limit = 10) =>
-    api.get(
-      `/travel-plans/search?${new URLSearchParams(
-        filters
-      ).toString()}&page=${page}&limit=${limit}`
-    ),
+  search: (
+    filters: TravelPlanFilters,
+    page = 1,
+    limit = 10
+  ): Promise<TravelPlansResponse> => {
+    const params = new URLSearchParams()
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined) {
+        if (value instanceof Date) {
+          params.append(key, value.toISOString())
+        } else if (Array.isArray(value)) {
+          // Convert array to comma-separated string
+          params.append(key, value.join(','))
+        } else if (typeof value === 'object' && value !== null) {
+          // Flatten nested objects like budgetRange
+          Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+            if (nestedValue !== undefined) {
+              params.append(`${key}[${nestedKey}]`, String(nestedValue))
+            }
+          })
+        } else {
+          params.append(key, String(value))
+        }
+      }
+    })
+
+    // Add pagination
+    params.append('page', String(page))
+    params.append('limit', String(limit))
+
+    return api.get(`/travel-plans/search?${params.toString()}`)
+  },
 }
 
-export interface Review {
+/* export interface Review {
   id: string
   rating: number
   comment?: string
@@ -183,7 +286,7 @@ export interface Review {
     endDate: string
     travelType: string
   }
-}
+} */
 
 export interface ReviewInput {
   subjectId: string
@@ -194,39 +297,53 @@ export interface ReviewInput {
 
 // Review endpoints
 export const reviewAPI = {
-  create: (data: ReviewInput) => api.post<{ review: Review }>('/reviews', data),
+  create: (data: ReviewInput) =>
+    api.post<ApiResponse<{ review: Review }>, ReviewInput>('/reviews', data),
+
   getMyReviews: (type = 'received', page = 1, limit = 10) =>
-    api.get<{
-      reviews: Review[]
-      averageRating: number
-      totalReviews: number
-      pagination: {
-        page: number
-        limit: number
-        total: number
-        pages: number
-      }
-    }>(`/reviews/my-reviews?type=${type}&page=${page}&limit=${limit}`),
+    api.get<
+      ApiResponse<{
+        reviews: Review[]
+        averageRating: number
+        totalReviews: number
+        pagination: {
+          page: number
+          limit: number
+          total: number
+          pages: number
+        }
+      }>
+    >(`/reviews/my-reviews?type=${type}&page=${page}&limit=${limit}`),
+
   update: (id: string, data: { rating?: number; comment?: string }) =>
-    api.patch<{ review: Review }>(`/reviews/${id}`, data),
-  delete: (id: string) => api.delete<{ message: string }>(`/reviews/${id}`),
+    api.patch<
+      ApiResponse<{ review: Review }>,
+      { rating?: number; comment?: string }
+    >(`/reviews/${id}`, data),
+
+  delete: (id: string) =>
+    api.delete<ApiResponse<{ message: string }>>(`/reviews/${id}`),
+
   getTravelPlanReviews: (travelPlanId: string) =>
-    api.get<{ reviews: Review[] }>(`/reviews/travel-plan/${travelPlanId}`),
-  checkCanReview: (userId: string) =>
-    api.get<{ canReview: boolean; reason?: string }>(
-      `/reviews/can-review/${userId}`
+    api.get<ApiResponse<{ reviews: Review[] }>>(
+      `/reviews/travel-plan/${travelPlanId}`
     ),
+
+  checkCanReview: (userId: string) =>
+    api.get<ApiResponse<CanReview>>(`/reviews/can-review/${userId}`),
 }
 
 // Match endpoints
 export const matchAPI = {
-  create: (data: any) => api.post('/matches', data),
+  create: (data: CreateMatchInput) => api.post('/matches', data),
   getMyMatches: (query: {
     type: 'sent' | 'received'
     status?: string
     page?: number
     limit?: number
-  }): Promise<MatchesResponse> => api.get(`/matches?${toQueryString(query)}`),
+  }): Promise<
+    ApiResponse<{ matches: MatchWithRelations[]; pagination: Pagination }>
+  > => api.get(`/matches?${toQueryString(query)}`),
   updateStatus: (id: string, status: string) =>
     api.patch(`/matches/${id}/status`, { status }),
   delete: (id: string) => api.delete(`/matches/${id}`),
@@ -236,11 +353,14 @@ export const matchAPI = {
 
 // Payment endpoints
 export const paymentAPI = {
-  createSubscription: (priceId: string) =>
+  createSubscription: (
+    priceId: string
+  ): Promise<ApiResponse<{ sessionId: string; url: string }>> =>
     api.post('/payments/create-subscription', { priceId }),
   createOneTimePayment: (amount: number, description: string) =>
     api.post('/payments/create-payment', { amount, description }),
-  getSubscription: () => api.get('/payments/subscription'),
+  getSubscription: (): Promise<SubscriptionResponse> =>
+    api.get('/payments/subscription'),
   cancelSubscription: () => api.post('/payments/cancel-subscription'),
 
   purchaseVerifiedBadge: () =>
@@ -282,18 +402,31 @@ export const uploadAPI = {
 
 // Admin endpoints
 export const adminAPI = {
-  getDashboardStats: (): Promise<ApiResponse<DashboardStats>> => api.get('/admin/dashboard'),
+  getDashboardStats: (): Promise<ApiResponse<DashboardStats>> =>
+    api.get('/admin/dashboard'),
   getAnalytics: () => api.get('/admin/analytics'),
-  getAllUsers: (page = 1, limit = 20, filters?: any) =>
+  getAllUsers: (
+    page = 1,
+    limit = 20,
+    filters?: string
+  ): Promise<ApiResponse<GetUserByAdmin[]>> =>
     api.get(
       `/admin/users?page=${page}&limit=${limit}&${new URLSearchParams(
         filters
       ).toString()}`
     ),
-  getUserDetails: (id: string) => api.get(`/admin/users/${id}`),
-  updateUserStatus: (id: string, data: any) =>
+  getUserDetails: (id: string): Promise<ApiResponse<{ user: UserDetails }>> =>
+    api.get(`/admin/users/${id}`),
+  updateUserStatus: (
+    id: string,
+    data: { isActive?: boolean; isVerified?: boolean; role?: string }
+  ): Promise<ApiResponse<{ user: UpdatedUserStatus }>> =>
     api.patch(`/admin/users/${id}`, data),
-  getAllTravelPlans: (page = 1, limit = 20, filters?: any) =>
+  getAllTravelPlans: (
+    page = 1,
+    limit = 20,
+    filters?: string
+  ): Promise<ApiResponse<{ travelPlans: TravelPlanByAdmin[] }>> =>
     api.get(
       `/admin/travel-plans?page=${page}&limit=${limit}&${new URLSearchParams(
         filters

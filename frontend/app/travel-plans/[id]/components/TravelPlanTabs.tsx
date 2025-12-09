@@ -6,9 +6,10 @@ import { TravelPlanDetails } from './TravelPlanDetails'
 import { TravelPlanMatches } from './TravelPlanMatches'
 import { TravelPlanOrganizer } from './TravelPlanOrganizer'
 import { TravelPlanReviews } from './TravelPlanReviews'
+import { TravelPlan } from '@/types'
 
 interface TravelPlanTabsProps {
-  travelPlan: any
+  travelPlan: TravelPlan
   isPlanOwner: boolean
   userMatchStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null
   isUpcoming: boolean
@@ -33,7 +34,7 @@ export function TravelPlanTabs({
             Matches ({travelPlan._count?.matches || 0})
           </TabsTrigger>
           <TabsTrigger value="reviews">
-            Reviews ({travelPlan._count?.reviews || 0})
+            Reviews ({travelPlan._count?.reviewsReceived || 0})
           </TabsTrigger>
           <TabsTrigger value="organizer">Organizer</TabsTrigger>
         </TabsList>
@@ -60,9 +61,9 @@ export function TravelPlanTabs({
           <TravelPlanReviews
             travelPlanId={travelPlan.id}
             travelPlanDestination={travelPlan.destination}
-            organizerId={travelPlan.user.id}
-            organizerName={travelPlan.user.profile?.fullName || 'Traveler'}
-            organizerImage={travelPlan.user.profile?.profileImage}
+            organizerId={travelPlan.user?.id}
+            organizerName={travelPlan.user?.profile?.fullName || 'Traveler'}
+            organizerImage={travelPlan.user?.profile?.profileImage ?? undefined}
           />
         </TabsContent>
 

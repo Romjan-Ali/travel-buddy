@@ -13,33 +13,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Review } from '@/types'
 
 interface ReviewCardProps {
-  review: {
-    id: string
-    rating: number
-    comment?: string
-    createdAt: string
-    author?: {
-      id: string
-      profile?: {
-        fullName: string
-        profileImage?: string
-      }
-    }
-    subject?: {
-      id: string
-      profile?: {
-        fullName: string
-        profileImage?: string
-      }
-    }
-    travelPlan?: {
-      id: string
-      destination: string
-      startDate: string
-    }
-  }
+  review: Review
+
   type?: 'received' | 'given'
   currentUserId?: string
   onEdit?: (reviewId: string) => void
@@ -78,7 +56,7 @@ export function ReviewCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 mb-4">
             <Avatar>
-              <AvatarImage src={userImage} />
+              <AvatarImage src={userImage ?? undefined} />
               <AvatarFallback>{getInitials(userName)}</AvatarFallback>
             </Avatar>
             <div>

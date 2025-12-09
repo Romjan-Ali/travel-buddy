@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getInitials } from '@/lib/utils'
 
 interface LeaveReviewDialogProps {
-  subjectId: string
+  subjectId?: string
   subjectName: string
   subjectImage?: string
   travelPlanId?: string

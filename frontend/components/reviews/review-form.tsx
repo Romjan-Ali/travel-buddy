@@ -1,3 +1,4 @@
+// frontend/components/reviews/review-form.tsx
 'use client'
 
 import { useState } from 'react'
@@ -19,13 +20,18 @@ const reviewSchema = z.object({
 type ReviewFormData = z.infer<typeof reviewSchema>
 
 interface ReviewFormProps {
-  subjectId: string
+  subjectId?: string
   travelPlanId?: string
   onSuccess?: () => void
   onCancel?: () => void
 }
 
-export function ReviewForm({ subjectId, travelPlanId, onSuccess, onCancel }: ReviewFormProps) {
+export function ReviewForm({
+  subjectId,
+  travelPlanId,
+  onSuccess,
+  onCancel,
+}: ReviewFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
@@ -49,6 +55,11 @@ export function ReviewForm({ subjectId, travelPlanId, onSuccess, onCancel }: Rev
       return
     }
 
+    if (!subjectId) {
+      toast.error('Subject ID not found')
+      return
+    }
+
     setIsLoading(true)
     try {
       await reviewAPI.create({
@@ -59,8 +70,12 @@ export function ReviewForm({ subjectId, travelPlanId, onSuccess, onCancel }: Rev
       })
       toast.success('Review submitted successfully!')
       onSuccess?.()
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to submit review')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Failed to submit review')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -96,7 +111,9 @@ export function ReviewForm({ subjectId, travelPlanId, onSuccess, onCancel }: Rev
           ))}
         </div>
         {errors.rating && (
-          <p className="text-sm text-destructive mt-1">{errors.rating.message}</p>
+          <p className="text-sm text-destructive mt-1">
+            {errors.rating.message}
+          </p>
         )}
         <div className="text-sm text-muted-foreground mt-2">
           {rating === 5 && 'Excellent! 😊'}
@@ -120,10 +137,13 @@ export function ReviewForm({ subjectId, travelPlanId, onSuccess, onCancel }: Rev
           disabled={isLoading}
         />
         {errors.comment && (
-          <p className="text-sm text-destructive mt-1">{errors.comment.message}</p>
+          <p className="text-sm text-destructive mt-1">
+            {errors.comment.message}
+          </p>
         )}
         <p className="text-xs text-muted-foreground mt-1">
-          Be honest and specific about your experience. Your review helps other travelers.
+          Be honest and specific about your experience. Your review helps other
+          travelers.
         </p>
       </div>
 
@@ -144,7 +164,9 @@ export function ReviewForm({ subjectId, travelPlanId, onSuccess, onCancel }: Rev
           disabled={isLoading || rating === 0}
           className="gap-2"
         >
-          {isLoading ? 'Submitting...' : (
+          {isLoading ? (
+            'Submitting...'
+          ) : (
             <>
               <Send className="h-4 w-4" />
               Submit Review

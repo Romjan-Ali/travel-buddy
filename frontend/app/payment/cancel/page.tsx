@@ -1,7 +1,13 @@
 // frontend/app/payment/cancel/page.tsx
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { XCircle, ArrowLeft, CreditCard } from 'lucide-react'
 import Link from 'next/link'
@@ -17,14 +23,12 @@ export default function PaymentCancelPage() {
             </div>
           </div>
           <CardTitle className="text-2xl">Payment Cancelled</CardTitle>
-          <CardDescription>
-            Your payment was not completed
-          </CardDescription>
+          <CardDescription>Your payment was not completed</CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           <div className="text-left space-y-3">
-            <p>No worries! You can try again whenever you're ready.</p>
+            <p>No worries! You can try again whenever you&apos;re ready.</p>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
                 <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground mt-1.5"></div>

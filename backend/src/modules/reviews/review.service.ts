@@ -213,6 +213,7 @@ export const reviewService = {
               profile: {
                 select: {
                   fullName: true,
+                  profileImage: true
                 },
               },
             },

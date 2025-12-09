@@ -24,8 +24,6 @@ export const uploadToImgBB = async (file: Buffer): Promise<string> => {
       }
     )
 
-    console.log(response)
-
     return response.data.data.url
   } catch (error: any) {
     console.error(

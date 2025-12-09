@@ -36,8 +36,11 @@ export const authService = {
         id: true,
         email: true,
         role: true,
+        isVerified: true,
+        isActive: true,
         profile: true,
         createdAt: true,
+        updatedAt: true,
       },
     })
 

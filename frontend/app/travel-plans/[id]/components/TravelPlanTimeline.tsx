@@ -8,8 +8,8 @@ import { formatDate, calculateDaysBetween } from '@/lib/utils'
 
 interface TravelPlanTimelineProps {
   destination: string
-  startDate: string
-  endDate: string
+  startDate: string | Date
+  endDate: string | Date
   isUpcoming: boolean
 }
 

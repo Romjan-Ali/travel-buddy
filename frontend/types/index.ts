@@ -48,7 +48,6 @@ export interface Profile extends BaseEntity {
 export interface User extends BaseEntity {
   id: string
   email: string
-  password: string
   role: Role
   isVerified: boolean
   isActive: boolean
@@ -70,8 +69,269 @@ export interface UserWithProfile extends User {
   profile: Profile
 }
 
+/* export interface ProfileUser {
+  id: string
+  email: string
+  role: 'USER' | 'ADMIN'
+  isVerified: boolean
+  isActive: boolean
+  profile?: {
+    fullName: string
+    profileImage?: string
+    bio?: string
+    currentLocation?: string
+    travelInterests?: string[]
+    visitedCountries?: string[]
+    phoneNumber?: string
+    socialLinks?: string[]
+  }
+  travelPlans?: Array<{
+    id: string
+    destination: string
+    startDate: string
+    endDate: string
+    travelType: string
+    description?: string
+  }>
+  reviewsReceived?: Array<{
+    id: string
+    rating: number
+    comment?: string
+    author?: {
+      profile?: Profile
+    }
+    createdAt: string
+  }>
+  _count?: {
+    travelPlans: number
+    reviewsReceived: number
+  }
+} */
+
+export interface ProfileUser {
+  id: string
+  email?: string
+  role?: 'USER' | 'ADMIN'
+  isVerified?: boolean
+  profile: {
+    id: string
+    userId: string
+    fullName: string
+    bio?: string
+    profileImage?: string
+    dateOfBirth?: Date | string
+    travelInterests?: string[]
+    visitedCountries?: string[]
+    currentLocation?: string
+    phoneNumber?: string
+    socialLinks?: string[]
+    createdAt: Date | string
+    updatedAt: Date | string
+  }
+  travelPlans?: Array<{
+    id: string
+    destination: string
+    startDate: Date | string
+    endDate: Date | string
+    budget: string
+    travelType: string
+    description: string
+    isPublic: boolean
+    userId: string
+    createdAt: Date | string
+    updatedAt: Date | string
+  }>
+  reviewsReceived?: Array<{
+    id: string
+    rating: number
+    comment: string
+    authorId: string
+    subjectId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+    author: {
+      profile: {
+        fullName: string
+        profileImage?: string
+      }
+    }
+  }>
+  _count: {
+    travelPlans: number
+    reviewsReceived: number
+  }
+}
+
+// ==================== ADMIN ====================
+export interface UpdatedUserStatus {
+  id: string
+  email: string
+  role: string
+  isActive: boolean
+  isVerified: boolean
+  profile: {
+    fullName: string
+  }
+  updatedAt: Date | string
+}
+
+export interface GetUserByAdmin {
+  id: string
+  email: string
+  role: string
+  isActive: boolean
+  isVerified: boolean
+  profile: {
+    fullName: string
+    profileImage?: string
+    currentLocation?: string
+  }
+  _count: {
+    travelPlans: number
+    reviewsReceived: number
+    subscriptions: number
+  }
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+export interface UserDetails {
+  id: string
+  email: string
+  role: string
+  isActive: boolean
+  isVerified: boolean
+  profile: Profile
+  travelPlans?: Array<{
+    id: string
+    destination: string
+    startDate: string
+    endDate: string
+    budget: string
+    travelType: string
+    description: string
+    isPublic: boolean
+    userId: string
+    createdAt: string
+    updatedAt: string
+    matches?: Array<{
+      id: string
+      status: string
+      initiatorId: string
+      receiverId: string
+      travelPlanId: string
+      createdAt: Date | string
+      updatedAt: Date | string
+    }>
+  }>
+  reviewsReceived?: Array<{
+    id: string
+    rating: number
+    comment: string
+    authorId: string
+    subjectId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+    author: {
+      profile: {
+        fullName: string
+      }
+    }
+  }>
+  reviewsGiven?: Array<{
+    id: string
+    rating: number
+    comment: string
+    authorId: string
+    subjectId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+    author: {
+      profile: {
+        fullName: string
+      }
+    }
+  }>
+  subscriptions?: Subscription[]
+  matchesInitiated?: Array<{
+    id: string
+    status: string
+    initiatorId: string
+    receiverId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+    receiver: {
+      profile: {
+        fullName: string
+      }
+    }
+  }>
+  matchesReceived?: Array<{
+    id: string
+    status: string
+    initiatorId: string
+    receiverId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+    receiver: {
+      profile: {
+        fullName: string
+      }
+    }
+  }>
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+export interface TravelPlanByAdmin {
+  id: string
+  destination: string
+  startDate: string
+  endDate: string
+  budget: string
+  travelType: string
+  description: string
+  isPublic: boolean
+  userId: string
+  createdAt: string
+  updatedAt: string
+  user: {
+    id: string
+    email: string
+    profile: {
+      fullName: string
+      profileImage: string
+    }
+  }
+  matches: Array<{
+    id: string
+    status: string
+    initiatorId: string
+    receiverId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+  }>
+  _count: {
+    matches: number
+    reviews: number
+  }
+}
+
 // ==================== TRAVEL PLAN ====================
-export interface TravelPlan extends BaseEntity {
+interface TravelPlanUser extends User {
+  _count?: {
+    reviewsReceived: number
+    travelPlans: number
+  }
+}
+
+/* export interface TravelPlan extends BaseEntity {
   id: string
   destination: string
   startDate: Date | string
@@ -85,17 +345,88 @@ export interface TravelPlan extends BaseEntity {
   userId: string
 
   // Relations
-  user?: User
+  user?: TravelPlanUser
   matches?: Match[]
   reviews?: Review[]
   tripPhotos?: TripPhoto[]
+
+  // Stats
+  _count?: {
+    matches: number
+  }
+} */
+
+export interface TravelPlan extends BaseEntity {
+  id: string
+  destination: string
+  startDate: string
+  endDate: string
+  budget: string
+  travelType: 'SOLO' | 'FAMILY' | 'FRIENDS' | 'COUPLE' | 'BUSINESS'
+  description: string
+  isPublic: boolean
+  userId: string
+  createdAt: Date | string
+  updatedAt: Date | string
+  user: {
+    id?: string
+    profile: {
+      fullName: string
+      profileImage: string | null
+      bio?: string
+      currentLocation?: string
+      travelInterests?: string[]
+      visitedCountries?: string[]
+    }
+    reviewsReceived?: Array<{
+      id: string
+      rating: number
+      comment: string
+      authorId: string
+      subjectId: string
+      travelPlanId: string
+      createdAt: string
+      updatedAt: string
+      author: {
+        profile: {
+          fullName: string
+        }
+      }
+    }>
+    _count?: {
+      reviewsReceived: number
+      travelPlans: number
+    }
+    averageRating?: number
+    reviewCount?: number
+  }
+  matches?: Array<{
+    id: string
+    status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+    initiatorId: string
+    receiverId: string
+    travelPlanId: string
+    createdAt: string
+    updatedAt: string
+    initiator: {
+      profile: {
+        fullName: string
+        profileImage: string | null
+      }
+    }
+  }>
+  _count: {
+    matches?: number
+    reviewsReceived?: number
+    travelPlans?: number
+  }
 }
 
-export interface TravelPlanWithRelations extends TravelPlan {
+/* export interface TravelPlanWithRelations extends TravelPlan {
   user?: User
   tripPhotos?: TripPhoto[]
   matches?: Match[]
-}
+} */
 
 // ==================== TRIP PHOTO ====================
 export interface TripPhoto extends BaseEntity {
@@ -115,7 +446,7 @@ export interface TripPhoto extends BaseEntity {
 }
 
 // ==================== REVIEW ====================
-export interface Review extends BaseEntity {
+/* export interface Review extends BaseEntity {
   id: string
   rating: number
   comment?: string | null
@@ -129,6 +460,83 @@ export interface Review extends BaseEntity {
   author: User
   subject: User
   travelPlan?: TravelPlan | null
+} */
+
+export interface Review extends BaseEntity {
+  id: string
+  rating: number
+  comment?: string | null
+
+  authorId: string
+  subjectId: string
+  travelPlanId?: string | null
+
+  createdAt: string
+  updatedAt: string
+
+  author: {
+    id?: string
+    email?: string
+    profile: {
+      fullName: string
+      profileImage?: string | null
+    } | null
+  }
+
+  subject?: {
+    id: string
+    email: string
+    profile?: {
+      fullName: string
+      profileImage?: string | null
+    } | null
+  }
+
+  travelPlan?: {
+    id: string
+    destination: string
+    startDate: string
+    endDate: string
+    travelType: string
+  } | null
+}
+
+export interface FrontendReview extends BaseEntity {
+  id: string
+  rating: number
+  comment?: string
+  author: {
+    id: string
+    profile?: {
+      fullName: string
+      profileImage?: string
+    }
+  }
+  subject: {
+    id: string
+    profile?: {
+      fullName: string
+      profileImage?: string
+    }
+  }
+  travelPlanId?: string
+  travelPlan?: {
+    id: string
+    destination: string
+  }
+}
+
+export interface ReviableTrip {
+  id: string
+  destination: string
+  startDate: Date | string
+  endDate: Date | string
+}
+
+export interface CanReview {
+  canReview: boolean
+  reason?: string
+  trips?: ReviableTrip[]
 }
 
 // ==================== MATCH ====================
@@ -148,14 +556,28 @@ export interface Match extends BaseEntity {
   messages?: Message[]
 }
 
+export interface UserWithStats extends UserWithProfile {
+  averageRating: number
+  reviewCount: number
+}
+
 export interface MatchWithRelations extends Match {
-  initiator: UserWithProfile
-  receiver: UserWithProfile
+  initiator: UserWithStats
+  receiver: UserWithStats
   travelPlan?: TravelPlan
   messages?: Message[]
 }
 
 // ==================== SUBSCRIPTION ====================
+
+export interface StripeData {
+  status: string
+  currentPeriodStart: Date | string
+  currentPeriodEnd: Date | string
+  cancelAtPeriodEnd: boolean
+  priceId: string
+}
+
 export interface Subscription extends BaseEntity {
   id: string
   stripeSubId?: string | null
@@ -168,6 +590,9 @@ export interface Subscription extends BaseEntity {
 
   // Relation
   user?: User
+
+  // Stripe Data
+  stripeData?: StripeData
 }
 
 // ==================== MESSAGE ====================
@@ -245,10 +670,12 @@ export interface CreateTravelPlanInput {
   isPublic?: boolean
 }
 
+export type UpdateTravelPlanInput = Partial<CreateTravelPlanInput>
+
 export interface UpdateProfileInput {
   fullName?: string
   bio?: string
-  profileImage?: string
+  profileImage?: string | null
   dateOfBirth?: Date | string
   travelInterests?: string[]
   visitedCountries?: string[]
@@ -281,6 +708,7 @@ export interface TravelPlanFilters {
   }
   isPublic?: boolean
   userId?: string
+  interests?: string[]
 }
 
 export interface UserFilters {
@@ -301,18 +729,36 @@ export interface RegisterCredentials {
   email: string
   password: string
   fullName: string
-  confirmPassword: string
 }
 
 export interface AuthResponse {
-  user: UserWithProfile
-  token: string
-  refreshToken?: string
+  user: AuthUser
+}
+
+export interface AuthProfile extends BaseEntity {
+  userId: string
+  fullName: string
+  bio: string
+  profileImage: string | null
+  dateOfBirth: Date | string
+  travelInterests: string[]
+  visitedCountries: string[]
+  currentLocation: string
+  phoneNumber: string
+  socialLinks: string[]
+}
+
+export interface AuthUser extends BaseEntity {
+  email: string
+  role: string
+  isVerified: boolean
+  isActive: boolean
+  profile: Profile
 }
 
 // ==================== COMPONENT PROP TYPES ====================
 export interface TravelPlanCardProps {
-  plan: TravelPlanWithRelations
+  plan: TravelPlan
   showUserInfo?: boolean
   onLike?: (planId: string) => void
   onMessage?: (userId: string) => void
@@ -352,25 +798,21 @@ export function isUserWithProfile(
   )
 }
 
-export function isTravelPlanWithRelations(
-  plan: unknown
-): plan is TravelPlanWithRelations {
+export function isTravelPlanWithRelations(plan: unknown): plan is TravelPlan {
   return typeof plan === 'object' && plan !== null && 'user' in plan
 }
 
 // ==================== Response Types ====================
-
-export interface ApiResponse<T> {
-  success: boolean
-  message: string
-  data: T
-}
 
 export interface Pagination {
   page: number
   limit: number
   total: number
   pages: number
+}
+
+export type SingleTravelPlan = Omit<TravelPlan, '_count'> & {
+  matches: Match[]
 }
 
 export interface TravelPlansData {
@@ -386,3 +828,11 @@ export interface MatchesData {
 }
 
 export type MatchesResponse = ApiResponse<MatchesData>
+
+export interface SubscriptionData {
+  subscription: Subscription
+}
+
+export type SubscriptionResponse = ApiResponse<SubscriptionData>
+
+export type MessageResponse = ApiResponse<Message>

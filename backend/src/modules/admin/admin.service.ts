@@ -1,3 +1,4 @@
+// backend/src/modules/admin/admin.service.ts
 import { prisma } from '../../lib/prisma'
 import { AppError } from '../../middleware/errorHandler'
 
@@ -53,7 +54,16 @@ export const adminService = {
     }
   },
 
-  async getAllUsers(page: number = 1, limit: number = 20, filters?: any) {
+  async getAllUsers(
+    page: number = 1,
+    limit: number = 20,
+    filters: {
+      search?: string
+      role?: 'ADMIN' | 'USER'
+      isActive?: boolean
+      isVerified?: boolean
+    }
+  ) {
     const skip = (page - 1) * limit
     const where: any = {}
 
@@ -73,11 +83,11 @@ export const adminService = {
     }
 
     if (filters?.isActive !== undefined) {
-      where.isActive = filters.isActive === 'true'
+      where.isActive = filters.isActive === true
     }
 
     if (filters?.isVerified !== undefined) {
-      where.isVerified = filters.isVerified === 'true'
+      where.isVerified = filters.isVerified === true
     }
 
     const [users, total] = await Promise.all([

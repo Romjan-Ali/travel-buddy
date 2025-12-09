@@ -6,15 +6,21 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
 import { Calendar, Users, Share2 } from 'lucide-react'
+import Link from 'next/link'
 
 interface ProfilePlansTabProps {
   travelPlans: Array<{
     id: string
     destination: string
-    startDate: string
-    endDate: string
+    startDate: Date | string
+    endDate: Date | string
+    budget: string
     travelType: string
-    description?: string
+    description: string
+    isPublic: boolean
+    userId: string
+    createdAt: Date | string
+    updatedAt: Date | string
   }>
   isOwnProfile: boolean
 }
@@ -77,9 +83,9 @@ export function ProfilePlansTab({ travelPlans, isOwnProfile }: ProfilePlansTabPr
             </p>
             {isOwnProfile && (
               <Button className="mt-4" asChild>
-                <a href="/travel-plans/new">
+                <Link href="/travel-plans/new">
                   Create Travel Plan
-                </a>
+                </Link>
               </Button>
             )}
           </CardContent>
