@@ -1,4 +1,4 @@
-// frontend/app/layout.tsx
+import type React from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -11,7 +11,38 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Travel Buddy & Meetup - Find Your Perfect Travel Companion',
-  description: 'Connect with like-minded travelers, plan adventures together, and create unforgettable memories.',
+  description:
+    'Connect with like-minded travelers, plan adventures together, and create unforgettable memories. Join 10,000+ travelers worldwide on TravelBuddy.',
+  keywords: [
+    'travel buddy',
+    'travel companion',
+    'find travel partner',
+    'solo travel',
+    'group travel',
+    'meetup',
+    'travel planning',
+  ],
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  ),
+  openGraph: {
+    title: 'Travel Buddy & Meetup - Find Your Perfect Travel Companion',
+    description:
+      'Connect with like-minded travelers and plan adventures together',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Travel Buddy & Meetup',
+    description:
+      'Connect with like-minded travelers and plan adventures together',
+  },
+}
+
+export const viewport = {
+  themeColor: '#000000',
+  userScalable: true,
 }
 
 export default function RootLayout({
@@ -20,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-     <html lang="en">
+    <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
