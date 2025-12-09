@@ -6,35 +6,45 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useProtectedRoute } from '@/lib/auth-context'
 import { travelPlanAPI } from '@/lib/api'
+import type { CreateTravelPlanInput } from '@/types'
 import { toast } from 'sonner'
-import { 
-  Calendar, 
-  MapPin, 
-  DollarSign, 
-  Users, 
-  Globe, 
-  ArrowLeft,
-  Eye,
-  EyeOff
-} from 'lucide-react'
+import { Calendar, MapPin, DollarSign, Globe, ArrowLeft } from 'lucide-react'
 
 const travelPlanSchema = z.object({
   destination: z.string().min(2, 'Destination is required'),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
   budget: z.string().min(1, 'Budget is required'),
-  travelType: z.enum(['SOLO', 'FAMILY', 'FRIENDS', 'COUPLE', 'BUSINESS']),
+  travelType: z.enum([
+    'SOLO',
+    'FAMILY',
+    'FRIENDS',
+    'COUPLE',
+    'BUSINESS',
+  ] as const),
   description: z.string().optional(),
-  isPublic: z.boolean().default(true),
+  isPublic: z.boolean(),
 })
 
 type TravelPlanFormData = z.infer<typeof travelPlanSchema>
@@ -62,14 +72,19 @@ export default function NewTravelPlanPage() {
   const startDate = watch('startDate')
   const endDate = watch('endDate')
 
-  const onSubmit = async (data: TravelPlanFormData) => {
+  const onSubmit = async (data: TravelPlanFormData): Promise<void> => {
     setIsLoading(true)
     try {
-      const response = await travelPlanAPI.create(data)
+      const response = await travelPlanAPI.create(data as CreateTravelPlanInput)
       toast.success('Travel plan created successfully!')
-      router.push(`/travel-plans/${response.data.travelPlan.id}`)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create travel plan')
+      const travelPlanId = (
+        response as unknown as { data: { travelPlan: { id: string } } }
+      ).data.travelPlan.id
+      router.push(`/travel-plans/${travelPlanId}`)
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to create travel plan'
+      toast.error(message)
       console.error('Create travel plan error:', error)
     } finally {
       setIsLoading(false)
@@ -128,7 +143,9 @@ export default function NewTravelPlanPage() {
                 />
               </div>
               {errors.destination && (
-                <p className="text-sm text-destructive">{errors.destination.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.destination.message}
+                </p>
               )}
               <p className="text-xs text-muted-foreground">
                 Be specific about city and country for better matches
@@ -151,7 +168,9 @@ export default function NewTravelPlanPage() {
                   />
                 </div>
                 {errors.startDate && (
-                  <p className="text-sm text-destructive">{errors.startDate.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.startDate.message}
+                  </p>
                 )}
               </div>
 
@@ -169,24 +188,28 @@ export default function NewTravelPlanPage() {
                   />
                 </div>
                 {errors.endDate && (
-                  <p className="text-sm text-destructive">{errors.endDate.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.endDate.message}
+                  </p>
                 )}
               </div>
             </div>
 
-            {startDate && endDate && new Date(startDate) > new Date(endDate) && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                <p className="text-sm text-destructive">
-                  End date must be after start date
-                </p>
-              </div>
-            )}
+            {startDate &&
+              endDate &&
+              new Date(startDate) > new Date(endDate) && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                  <p className="text-sm text-destructive">
+                    End date must be after start date
+                  </p>
+                </div>
+              )}
 
             {/* Travel Type */}
             <div className="space-y-2">
               <Label>Travel Type *</Label>
               <Select
-                onValueChange={(value: TravelPlanFormData['travelType']) => 
+                onValueChange={(value: TravelPlanFormData['travelType']) =>
                   setValue('travelType', value)
                 }
                 defaultValue="SOLO"
@@ -206,16 +229,16 @@ export default function NewTravelPlanPage() {
                 </SelectContent>
               </Select>
               {errors.travelType && (
-                <p className="text-sm text-destructive">{errors.travelType.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.travelType.message}
+                </p>
               )}
             </div>
 
             {/* Budget */}
             <div className="space-y-2">
               <Label>Budget Range *</Label>
-              <Select
-                onValueChange={(value) => setValue('budget', value)}
-              >
+              <Select onValueChange={(value) => setValue('budget', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select your budget" />
                 </SelectTrigger>
@@ -231,7 +254,9 @@ export default function NewTravelPlanPage() {
                 </SelectContent>
               </Select>
               {errors.budget && (
-                <p className="text-sm text-destructive">{errors.budget.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.budget.message}
+                </p>
               )}
             </div>
 
@@ -246,7 +271,8 @@ export default function NewTravelPlanPage() {
                 disabled={isLoading}
               />
               <p className="text-xs text-muted-foreground">
-                Include activities you&apos;re interested in, accommodation preferences, or any specific requirements
+                Include activities you&apos;re interested in, accommodation
+                preferences, or any specific requirements
               </p>
             </div>
 
@@ -255,10 +281,9 @@ export default function NewTravelPlanPage() {
               <div className="space-y-0.5">
                 <Label className="text-base">Make this plan public</Label>
                 <p className="text-sm text-muted-foreground">
-                  {isPublic 
+                  {isPublic
                     ? 'Other travelers can see and request to join your plan'
-                    : 'Only you can see this plan'
-                  }
+                    : 'Only you can see this plan'}
                 </p>
               </div>
               <Switch
@@ -273,7 +298,7 @@ export default function NewTravelPlanPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1"
+                className="flex-1 bg-transparent"
                 onClick={() => router.back()}
                 disabled={isLoading}
               >
@@ -284,7 +309,9 @@ export default function NewTravelPlanPage() {
                 className="flex-1 gap-2"
                 disabled={isLoading}
               >
-                {isLoading ? 'Creating...' : (
+                {isLoading ? (
+                  'Creating...'
+                ) : (
                   <>
                     <MapPin className="h-4 w-4" />
                     Create Travel Plan
@@ -294,7 +321,9 @@ export default function NewTravelPlanPage() {
             </div>
 
             <div className="text-center text-sm text-muted-foreground pt-4 border-t">
-              <p>Tip: Complete profiles and detailed plans get 3x more matches!</p>
+              <p>
+                Tip: Complete profiles and detailed plans get 3x more matches!
+              </p>
             </div>
           </form>
         </CardContent>
