@@ -32,7 +32,6 @@ import {
   Calendar,
   MapPin,
   DollarSign,
-  Users,
   Globe,
   ArrowLeft,
   Save,
@@ -51,7 +50,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { TravelPlan } from '@/types'
+import type { TravelPlan } from '@/types'
 
 // Reuse the same schema from new page
 const travelPlanSchema = z.object({
@@ -61,7 +60,7 @@ const travelPlanSchema = z.object({
   budget: z.string().min(1, 'Budget is required'),
   travelType: z.enum(['SOLO', 'FAMILY', 'FRIENDS', 'COUPLE', 'BUSINESS']),
   description: z.string().optional(),
-  isPublic: z.boolean().default(true),
+  isPublic: z.boolean(),
 })
 
 export type TravelPlanFormData = z.infer<typeof travelPlanSchema>
@@ -140,8 +139,10 @@ export default function EditTravelPlanPage() {
         description: plan.description || '',
         isPublic: plan.isPublic,
       })
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to load travel plan')
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to load travel plan'
+      toast.error(message)
       console.error('Fetch travel plan error:', error)
       router.push('/travel-plans')
     } finally {
@@ -155,8 +156,10 @@ export default function EditTravelPlanPage() {
       await travelPlanAPI.update(travelPlanId, data)
       toast.success('Travel plan updated successfully!')
       router.push(`/travel-plans/${travelPlanId}`)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update travel plan')
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to update travel plan'
+      toast.error(message)
       console.error('Update travel plan error:', error)
     } finally {
       setIsSaving(false)
@@ -169,8 +172,10 @@ export default function EditTravelPlanPage() {
       await travelPlanAPI.delete(travelPlanId)
       toast.success('Travel plan deleted successfully!')
       router.push('/travel-plans')
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete travel plan')
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to delete travel plan'
+      toast.error(message)
       console.error('Delete travel plan error:', error)
     } finally {
       setIsDeleting(false)
@@ -240,9 +245,7 @@ export default function EditTravelPlanPage() {
                 <MapPin className="h-6 w-6 text-primary" />
                 Edit Travel Plan
               </CardTitle>
-              <CardDescription>
-                Update your travel plan details
-              </CardDescription>
+              <CardDescription>Update your travel plan details</CardDescription>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span className="px-2 py-1 bg-muted rounded">
@@ -319,13 +322,15 @@ export default function EditTravelPlanPage() {
               </div>
             </div>
 
-            {startDate && endDate && new Date(startDate) > new Date(endDate) && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                <p className="text-sm text-destructive">
-                  End date must be after start date
-                </p>
-              </div>
-            )}
+            {startDate &&
+              endDate &&
+              new Date(startDate) > new Date(endDate) && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                  <p className="text-sm text-destructive">
+                    End date must be after start date
+                  </p>
+                </div>
+              )}
 
             {/* Travel Type */}
             <div className="space-y-2">
@@ -472,7 +477,7 @@ export default function EditTravelPlanPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1"
+                className="flex-1 bg-transparent"
                 onClick={() => router.push(`/travel-plans/${travelPlanId}`)}
                 disabled={isSaving}
               >
