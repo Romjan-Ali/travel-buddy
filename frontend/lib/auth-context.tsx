@@ -1,17 +1,17 @@
-// frontend/lib/auth-context.tsx
 'use client'
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
+  useCallback,
 } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { authAPI } from '@/lib/api'
-import { AuthUser } from '@/types'
+import type { AuthUser } from '@/types'
 
 interface AuthContextType {
   user: AuthUser | null
@@ -30,32 +30,35 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
-
-  const checkAuth = async () => {
-    console.log('Checking auth for pathname:', pathname)
+  const checkAuth = useCallback(async () => {
     try {
       const result = await authAPI.getMe()
-      console.log('user result in check auth:', result.data.user)
       setUser(result.data.user)
     } catch (error) {
       setUser(null)
-    } finally {
-      setIsLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (isMounted) {
+      setIsLoading(true)
+      checkAuth().finally(() => setIsLoading(false))
+    }
+  }, [isMounted, checkAuth])
 
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
       const result = await authAPI.login({ email, password })
-      console.log('user result in login auth:', result.data.user)
       setUser(result.data.user)
       toast.success('Login successful!')
       router.push('/dashboard')

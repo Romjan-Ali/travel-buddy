@@ -1,5 +1,5 @@
 // backend/src/modules/auth/auth.controller.ts
-import { type Response } from 'express'
+import type { Response } from 'express'
 import type { AuthRequest } from '../../utils/types'
 import { authService } from './auth.service'
 import { sendResponse } from '../../utils/helpers'
@@ -9,11 +9,11 @@ export const authController = {
     const userData = req.body
     const result = await authService.register(userData)
 
-    // Set JWT as HTTP-only cookie
     res.cookie('token', result.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      secure: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      partitioned: process.env.NODE_ENV === 'production' ? true : false,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
 
@@ -26,11 +26,11 @@ export const authController = {
     const credentials = req.body
     const result = await authService.login(credentials)
 
-    // Set JWT as HTTP-only cookie
     res.cookie('token', result.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      secure: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      partitioned: process.env.NODE_ENV === 'production' ? true : false,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
 
@@ -49,11 +49,11 @@ export const authController = {
   },
 
   async logout(req: AuthRequest, res: Response) {
-    // Clear the token cookie
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      secure: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      partitioned: process.env.NODE_ENV === 'production' ? true : false,
     })
 
     await authService.logout()

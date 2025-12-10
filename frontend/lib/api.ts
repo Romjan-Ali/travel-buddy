@@ -97,42 +97,6 @@ class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'GET' })
   }
 
-  /* async post<T>(
-    endpoint: string,
-    body?: any,
-    options?: RequestInit
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
-    })
-  }
-
-  async put<T>(
-    endpoint: string,
-    body?: any,
-    options?: RequestInit
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
-    })
-  }
-
-  async patch<T>(
-    endpoint: string,
-    body?: any,
-    options?: RequestInit
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'PATCH',
-      body: body ? JSON.stringify(body) : undefined,
-    })
-  } */
-
   async post<TResponse, TBody>(
     endpoint: string,
     body?: TBody,
@@ -190,8 +154,8 @@ export const api = new ApiClient()
 export const authAPI = {
   register: (data: RegisterCredentials): Promise<ApiResponse<AuthResponse>> =>
     api.post('/auth/register', data),
-  login: (data: LoginCredentials): Promise<ApiResponse<AuthResponse>> =>
-    api.post('/auth/login', data),
+  login: (data: LoginCredentials) =>
+    api.post<ApiResponse<AuthResponse>, LoginCredentials>('/auth/login', data),
   logout: (): Promise<ApiResponse> => api.post('/auth/logout'),
   getMe: (): Promise<ApiResponse<{ user: AuthUser }>> => api.get('/auth/me'),
 }
@@ -256,37 +220,6 @@ export const travelPlanAPI = {
     return api.get(`/travel-plans/search?${params.toString()}`)
   },
 }
-
-/* export interface Review {
-  id: string
-  rating: number
-  comment?: string
-  createdAt: string
-  updatedAt: string
-  authorId: string
-  subjectId: string
-  travelPlanId?: string
-  author?: {
-    id: string
-    profile?: {
-      fullName: string
-      profileImage?: string
-    }
-  }
-  subject?: {
-    id: string
-    profile?: {
-      fullName: string
-    }
-  }
-  travelPlan?: {
-    id: string
-    destination: string
-    startDate: string
-    endDate: string
-    travelType: string
-  }
-} */
 
 export interface ReviewInput {
   subjectId: string
