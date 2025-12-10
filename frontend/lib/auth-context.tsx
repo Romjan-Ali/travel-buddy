@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const [isCheckedAuth, setIsCheckedAuth] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -41,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(result.data.user)
     } catch (error) {
       setUser(null)
+    } finally {
+      setIsCheckedAuth(true)
     }
   }, [])
 
@@ -54,6 +57,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       checkAuth().finally(() => setIsLoading(false))
     }
   }, [isMounted, checkAuth])
+
+  useEffect(() => {
+    if (!isCheckedAuth) return
+
+    const publicRoutes = [
+      '/login',
+      '/register',
+      '/',
+      '/about',
+      '/contact',
+      '/api/auth',
+      '/_next',
+    ]
+
+    const adminRoutes = ['/admin']
+
+    const isPublicRoute = publicRoutes.some((route) =>
+      route === '/' ? pathname === '/' : pathname.startsWith(route)
+    )
+    const isAdminRoute = adminRoutes.some((route) =>
+      route === '/' ? pathname === '/' : pathname.startsWith(route)
+    )
+
+    // Load route history from sessionStorage
+    const historyStr = sessionStorage.getItem('routeHistory')
+    const routeHistory: string[] = historyStr ? JSON.parse(historyStr) : []
+    if (routeHistory.length > 10) routeHistory.shift()
+
+    // Avoid duplicate consecutive routes
+    if (routeHistory.length === 0 || routeHistory[routeHistory.length - 1] !== pathname) {
+      routeHistory.push(pathname)
+      sessionStorage.setItem('routeHistory', JSON.stringify(routeHistory))
+    }
+
+    console.log('user from auth context', user)
+
+    // Handle access
+    if (user) {
+      if (isAdminRoute && user.role !== 'ADMIN') {
+        const previous = routeHistory[routeHistory.length - 2] || '/dashboard'
+        router.push(previous)
+      }
+    } else if (!isPublicRoute) {
+      const previous = routeHistory[routeHistory.length - 2] || '/login'
+      router.push(previous)
+    }
+  }, [user, pathname, isCheckedAuth, router])
 
   const login = async (email: string, password: string) => {
     setIsLoading(true)
@@ -145,7 +195,8 @@ export function useProtectedRoute() {
   const router = useRouter()
   const pathname = usePathname()
 
-  useEffect(() => {
+/*   useEffect(() => {
+    // Auth route protection
     if (
       !isLoading &&
       !user &&
@@ -153,10 +204,11 @@ export function useProtectedRoute() {
       pathname !== '/register'
     ) {
       router.push('/login')
+      console.log('Go to login')
     }
-  }, [user, isLoading, pathname, router])
+  }, [user, isLoading, pathname, router]) */
 
-  return { user, isLoading }
+  return { user, isLoading } 
 }
 
 // Admin route hook
