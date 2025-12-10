@@ -17,6 +17,7 @@ export function verifyToken(token: string): boolean {
 
 export function decodeToken(token: string): jwt.JwtPayload | null {
   try {
+    console.log('token', token)
     return jwt.decode(token) as jwt.JwtPayload
   } catch (error) {
     return null
