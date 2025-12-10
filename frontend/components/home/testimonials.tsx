@@ -6,12 +6,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react'
+import Image from 'next/image'
 
 const testimonials = [
   {
     name: 'Sarah Johnson',
     location: 'New York, USA',
-    image: '',
+    image: 'https://randomuser.me/api/portraits/women/60.jpg',
     rating: 5,
     text: 'TravelBuddy completely changed how I travel! I met Emma in Tokyo and we ended up exploring Japan together for two weeks. The matching system really works!',
     travel: 'Tokyo, Japan',
@@ -19,7 +20,7 @@ const testimonials = [
   {
     name: 'David Chen',
     location: 'Singapore',
-    image: '',
+    image: 'https://randomuser.me/api/portraits/men/60.jpg',
     rating: 5,
     text: "As a solo traveler, safety was my biggest concern. TravelBuddy's verification system gave me peace of mind. I've made friends from all over the world!",
     travel: 'Bali, Indonesia',
@@ -27,7 +28,7 @@ const testimonials = [
   {
     name: 'Maria Garcia',
     location: 'Madrid, Spain',
-    image: '',
+    image: 'https://randomuser.me/api/portraits/women/52.jpg',
     rating: 4,
     text: "The review system is fantastic. I could see other travelers' experiences before meeting up. Found the perfect hiking buddy for my Patagonia trip!",
     travel: 'Patagonia, Chile',
@@ -35,7 +36,7 @@ const testimonials = [
   {
     name: 'Alex Smith',
     location: 'London, UK',
-    image: '',
+    image: 'https://randomuser.me/api/portraits/men/70.jpg',
     rating: 5,
     text: 'I was hesitant at first, but TravelBuddy exceeded all expectations. Met three amazing people for my Southeast Asia backpacking trip. Lifelong friendships formed!',
     travel: 'Thailand & Vietnam',
@@ -75,10 +76,15 @@ export function Testimonials() {
                 <div className="shrink-0">
                   <Avatar className="h-20 w-20">
                     <AvatarFallback className="text-lg">
-                      {testimonials[currentIndex].name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')}
+                      <Image
+                        src={testimonials[currentIndex].image}
+                        width={600}
+                        height={600}
+                        alt={testimonials[currentIndex].name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
+                      />
                     </AvatarFallback>
                   </Avatar>
                 </div>

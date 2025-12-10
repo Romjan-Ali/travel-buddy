@@ -58,6 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [isMounted, checkAuth])
 
+
+  // Route Protection
   useEffect(() => {
     if (!isCheckedAuth) return
 
@@ -90,8 +92,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       routeHistory.push(pathname)
       sessionStorage.setItem('routeHistory', JSON.stringify(routeHistory))
     }
-
-    console.log('user from auth context', user)
 
     // Handle access
     if (user) {

@@ -5,13 +5,14 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Plane, Users, MapPin, Calendar, Search } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
+import Image from 'next/image'
 
 export function HeroSection() {
   const { user } = useAuth()
 
   return (
     <section className="relative overflow-hidden py-20 md:py-32">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/5" />
       <div className="container relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -25,8 +26,9 @@ export function HeroSection() {
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
               Connect with like-minded travelers, plan adventures together, and
-              create unforgettable memories. Whether you&apos;re backpacking through
-              Asia or exploring European cities, find your perfect match.
+              create unforgettable memories. Whether you&apos;re backpacking
+              through Asia or exploring European cities, find your perfect
+              match.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               {user ? (
@@ -78,7 +80,15 @@ export function HeroSection() {
           </div>
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-[4/3] bg-gradient-to-br from-primary/20 to-primary/10" />
+              <div className="aspect-4/3 bg-linear-to-br from-primary/20 to-primary/10">
+                <Image
+                  className="object-cover h-full"
+                  src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="On a boat on Lago di Braies"
+                  width={768}
+                  height={512}
+                />
+              </div>
             </div>
             <div className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg max-w-xs">
               <div className="flex items-center gap-3">
