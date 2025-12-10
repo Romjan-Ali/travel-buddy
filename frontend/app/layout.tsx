@@ -1,16 +1,10 @@
 import type React from 'react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
 import { AuthProvider } from '@/lib/auth-context'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { Toaster } from 'sonner'
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-})
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Travel Buddy & Meetup - Find Your Perfect Travel Companion',
@@ -55,11 +49,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="font-sans">
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4">
+            <main className="flex-1 container mx-auto px-4 py-4">
               {children}
             </main>
             <Footer />

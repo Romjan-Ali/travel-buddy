@@ -1,22 +1,22 @@
 // frontend/lib/jwt.ts
 import jwt from 'jsonwebtoken'
 
-export function decodeToken(token: string) {
+const JWT_SECRET =
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+
+export function verifyToken(token: string): boolean {
   try {
-    const decoded = jwt.decode(token)
-    return decoded
+    jwt.verify(token, JWT_SECRET)
+    return true
   } catch (error) {
-    console.error('Error decoding token:', error)
-    return null
+    return false
   }
 }
 
-export function verifyToken(token: string, secret: string) {
+export function decodeToken(token: string): jwt.JwtPayload | null {
   try {
-    const verified = jwt.verify(token, secret)
-    return verified
+    return jwt.decode(token) as jwt.JwtPayload
   } catch (error) {
-    console.error('Error verifying token:', error)
     return null
   }
 }
