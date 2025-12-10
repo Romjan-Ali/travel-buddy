@@ -1,201 +1,142 @@
 // frontend/proxy.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { decodeToken, verifyToken } from './lib/jwt'
+import { decodeToken } from './lib/jwt'
 
 export function proxy(request: NextRequest) {
   const token = request.cookies.get('token')?.value
   const { pathname } = request.nextUrl
-  
-  // ============================================
-  // Route classification
-  // ============================================
-  
-  // Public routes (no authentication required)
+
+  console.log('🔹 Request pathname:', pathname)
+  console.log('🔹 Token found:', !!token)
+
+  // Public routes (no auth required)
   const publicRoutes = [
-    '/',
     '/login',
     '/register',
-    '/forgot-password',
-    '/reset-password',
+    '/',
     '/about',
     '/contact',
-    '/privacy',
-    '/terms',
     '/api/auth',
-    '/api/public',
-    '/api/webhooks',
-    '/health',
     '/_next',
-    '/static',
-    '/favicon.ico',
-    '/robots.txt',
-    '/sitemap.xml'
   ]
-  
-  // Admin routes (require admin role)
-  const adminRoutes = [
-    '/admin',
-    '/api/admin'
-  ]
-  
-  // Auth routes (require authentication but not specific role)
-  const authRoutes = [
-    '/dashboard',
-    '/profile',
-    '/settings',
-    '/api/user'
-  ]
-  
-  // Check route types
-  const isPublicRoute = publicRoutes.some(route => 
+  const isPublicRoute = publicRoutes.some((route) =>
     route === '/' ? pathname === '/' : pathname.startsWith(route)
   )
-  
-  const isAdminRoute = adminRoutes.some(route => 
-    pathname.startsWith(route)
-  )
-  
-  const isAuthRoute = authRoutes.some(route => 
-    pathname.startsWith(route)
-  )
-  
+  console.log('🔹 Is public route:', isPublicRoute)
+
+  // Admin routes (require admin role)
+  const adminRoutes = ['/admin']
+  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route))
+  console.log('🔹 Is admin route:', isAdminRoute)
+
+  // API routes protection (optional but recommended)
   const isApiRoute = pathname.startsWith('/api/')
-  
+  console.log('🔹 Is API route:', isApiRoute)
+
   // ============================================
-  // 1. Check token validity (if exists)
+  // 1. Handle unauthenticated users
   // ============================================
-  let decodedToken = null
-  let tokenValid = false
-  
-  if (token) {
-    try {
-      // Verify token signature first
-      const verified = verifyToken(token)
-      if (verified) {
-        decodedToken = decodeToken(token) as { 
-          userId?: string
-          role?: string
-          exp?: number
-          email?: string
-        } | null
-        
-        // Check token expiration
-        if (decodedToken?.exp) {
-          const currentTime = Math.floor(Date.now() / 1000)
-          tokenValid = decodedToken.exp > currentTime
-        }
-      }
-    } catch (error) {
-      console.error('Token verification failed:', error)
-      tokenValid = false
-    }
-  }
-  
-  // ============================================
-  // 2. Handle public routes
-  // ============================================
-  if (isPublicRoute) {
-    // Optional: Redirect authenticated users away from auth pages
-    if (tokenValid && ['/login', '/register'].includes(pathname)) {
-      const redirectUrl = new URL('/dashboard', request.url)
-      return NextResponse.redirect(redirectUrl)
-    }
-    return NextResponse.next()
-  }
-  
-  // ============================================
-  // 3. Handle unauthenticated users
-  // ============================================
-  if (!tokenValid) {
+  if (!token && !isPublicRoute) {
+    console.log('⚠️ Unauthenticated user accessing protected route')
+
     if (isApiRoute) {
+      console.log('➡️ Returning 401 JSON response for API route')
       return NextResponse.json(
-        { 
-          error: 'Unauthorized', 
-          message: 'Authentication required',
-          code: 'AUTH_REQUIRED'
-        },
+        { error: 'Unauthorized', message: 'Please login first' },
         { status: 401 }
       )
     }
-    
-    // Redirect to login with redirect parameter
+
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
-    
-    // Clear invalid token cookie
-    const response = NextResponse.redirect(loginUrl)
-    response.cookies.delete('token')
-    
-    return response
+    console.log('➡️ Redirecting to login page:', loginUrl.toString())
+    return NextResponse.redirect(loginUrl)
   }
-  
+
   // ============================================
-  // 4. Handle admin route access control
+  // 2. Handle admin route access control
   // ============================================
-  if (isAdminRoute) {
-    const userRole = decodedToken?.role
-    
-    if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
+  if (token && isAdminRoute) {
+    const decodedToken = decodeToken(token) as { role?: string } | null
+    console.log('🔹 Decoded token for admin route:', decodedToken)
+
+    if (!decodedToken) {
+      console.log('⚠️ Invalid token for admin route')
       if (isApiRoute) {
         return NextResponse.json(
-          { 
-            error: 'Forbidden', 
-            message: 'Insufficient permissions',
-            code: 'ADMIN_ACCESS_REQUIRED'
-          },
+          { error: 'Unauthorized', message: 'Invalid token' },
+          { status: 401 }
+        )
+      }
+
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    const userRole = decodedToken.role
+    console.log('🔹 User role from token:', userRole)
+
+    if (!userRole || userRole !== 'ADMIN') {
+      console.log('⚠️ User is not admin')
+      if (isApiRoute) {
+        return NextResponse.json(
+          { error: 'Forbidden', message: 'Admin access required' },
           { status: 403 }
         )
       }
-      
-      // Log unauthorized access attempt
-      console.warn(`Unauthorized admin access attempt by user: ${decodedToken?.userId}`)
-      
-      // Redirect to dashboard or unauthorized page
+
       const redirectUrl = new URL('/unauthorized', request.url)
-      redirectUrl.searchParams.set('code', 'ADMIN_ACCESS_REQUIRED')
+      redirectUrl.searchParams.set('reason', 'admin-access-required')
+      console.log('➡️ Redirecting non-admin user:', redirectUrl.toString())
       return NextResponse.redirect(redirectUrl)
     }
-    
-    // User is admin - proceed with admin headers
+
     const response = NextResponse.next()
-    response.headers.set('x-user-id', decodedToken?.userId || '')
-    response.headers.set('x-user-role', userRole || '')
-    response.headers.set('x-user-email', decodedToken?.email || '')
-    
+    response.headers.set('x-user-role', 'ADMIN')
+    console.log('✅ Admin access granted')
     return response
   }
-  
+
   // ============================================
-  // 5. Handle authenticated routes
+  // 3. Handle regular authenticated users
   // ============================================
-  if (isAuthRoute || !isPublicRoute) {
+  if (token && !isPublicRoute) {
+    const decodedToken = decodeToken(token) as { role?: string } | null
+    console.log('🔹 Decoded token for protected route:', decodedToken)
+
+    if (!decodedToken) {
+      console.log('⚠️ Invalid token for protected route')
+      if (isApiRoute) {
+        return NextResponse.json(
+          { error: 'Unauthorized', message: 'Invalid token' },
+          { status: 401 }
+        )
+      }
+
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      console.log('➡️ Redirecting to login page due to invalid token')
+      return NextResponse.redirect(loginUrl)
+    }
+
+    const userRole = decodedToken.role
+    console.log('🔹 User role:', userRole)
+
     const response = NextResponse.next()
-    
-    // Add user information to headers for server components
-    response.headers.set('x-user-id', decodedToken?.userId || '')
-    response.headers.set('x-user-role', decodedToken?.role || 'USER')
-    response.headers.set('x-user-email', decodedToken?.email || '')
+    if (userRole) {
+      response.headers.set('x-user-role', userRole)
+    }
     response.headers.set('x-user-authenticated', 'true')
-    
+    console.log('✅ Regular user access granted')
     return response
   }
-  
-  // ============================================
-  // 6. Default fallback
-  // ============================================
+
+  console.log('✅ Public route or default handling')
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
-  ],
+  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico).*)'],
 }
