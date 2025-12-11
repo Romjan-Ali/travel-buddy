@@ -31,7 +31,7 @@ export function RatingDistribution({
       <CardContent>
         <div className="space-y-3">
           {[5, 4, 3, 2, 1].map((rating, index) => {
-            const count = ratingDistribution[5 - rating]
+            const count = ratingDistribution[rating - 1]
             const percentage = totalReviews > 0 
               ? (count / totalReviews) * 100 
               : 0

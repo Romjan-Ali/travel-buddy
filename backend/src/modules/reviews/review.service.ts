@@ -117,6 +117,14 @@ export const reviewService = {
         throw new AppError(404, 'Travel plan not found')
       }
 
+      const now = new Date()
+      if (travelPlan.endDate > now) {
+        throw new AppError(
+          400,
+          'You can only review after the trip is completed'
+        )
+      }
+
       if (travelPlan.matches.length === 0) {
         throw new AppError(400, 'Cannot review unless you traveled together')
       }
@@ -172,19 +180,19 @@ export const reviewService = {
     switch (sortBy) {
       case 'newest':
         orderBy = { createdAt: 'desc' }
-        break;
+        break
 
       case 'oldest':
         orderBy = { createdAt: 'asc' }
-        break;
+        break
 
       case 'highest':
         orderBy = { rating: 'desc' }
-        break;
+        break
 
       case 'lowest':
         orderBy = { rating: 'asc' }
-        break;
+        break
 
       default:
         orderBy = { createdAt: 'desc' }
@@ -213,7 +221,7 @@ export const reviewService = {
               profile: {
                 select: {
                   fullName: true,
-                  profileImage: true
+                  profileImage: true,
                 },
               },
             },
@@ -260,6 +268,125 @@ export const reviewService = {
         pages: Math.ceil(total / limit),
       },
     }
+  },
+
+  async getPendingReviews(userId: string) {
+    // Find all completed trips where user participated
+    const completedTrips = await prisma.travelPlan.findMany({
+      where: {
+        endDate: {
+          lt: new Date(), // Trip is completed
+        },
+        matches: {
+          some: {
+            OR: [{ initiatorId: userId }, { receiverId: userId }],
+            status: 'ACCEPTED',
+          },
+        },
+      },
+      include: {
+        matches: {
+          where: {
+            status: 'ACCEPTED',
+          },
+          include: {
+            initiator: {
+              select: {
+                id: true,
+                profile: {
+                  select: {
+                    fullName: true,
+                    profileImage: true,
+                  },
+                },
+              },
+            },
+            receiver: {
+              select: {
+                id: true,
+                profile: {
+                  select: {
+                    fullName: true,
+                    profileImage: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        endDate: 'desc',
+      },
+    })
+
+    // Get all reviews by this user to check which trips have been reviewed
+    const userReviews = await prisma.review.findMany({
+      where: {
+        authorId: userId,
+      },
+      select: {
+        travelPlanId: true,
+        subjectId: true,
+      },
+    })
+
+    const pendingReviews: Array<{
+      travelPlanId: string
+      subjectId: string
+      subjectName: string
+      subjectImage?: string
+      destination: string
+      endDate: Date
+      travelType: string
+    }> = []
+
+    // For each completed trip, find which participants haven't been reviewed
+    completedTrips.forEach((trip) => {
+      // Find the other participant in each match
+      trip.matches.forEach((match) => {
+        // Determine who the other user is (not the current user)
+        let otherUserId: string | null = null
+        let otherUserFullName: string = ''
+        let otherUserProfileImage: string | undefined
+
+        if (match.initiatorId === userId) {
+          // Current user is initiator, other user is receiver
+          otherUserId = match.receiverId
+          otherUserFullName = match.receiver.profile?.fullName || 'Unknown User'
+          otherUserProfileImage =
+            match.receiver.profile?.profileImage || undefined
+        } else if (match.receiverId === userId) {
+          // Current user is receiver, other user is initiator
+          otherUserId = match.initiatorId
+          otherUserFullName =
+            match.initiator.profile?.fullName || 'Unknown User'
+          otherUserProfileImage =
+            match.initiator.profile?.profileImage || undefined
+        }
+
+        // Check if user has already reviewed this person for this trip
+        const hasReviewed = userReviews.some(
+          (review) =>
+            review.travelPlanId === trip.id && review.subjectId === otherUserId
+        )
+
+        // If there's another participant and they haven't been reviewed for this trip
+        if (otherUserId && otherUserId !== userId && !hasReviewed) {
+          pendingReviews.push({
+            travelPlanId: trip.id,
+            subjectId: otherUserId,
+            subjectName: otherUserFullName,
+            subjectImage: otherUserProfileImage,
+            destination: trip.destination,
+            endDate: trip.endDate,
+            travelType: trip.travelType,
+          })
+        }
+      })
+    })
+
+    return pendingReviews
   },
 
   async updateReview(

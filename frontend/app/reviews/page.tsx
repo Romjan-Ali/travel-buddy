@@ -19,7 +19,7 @@ import type { Review } from '@/types'
 export default function ReviewsPage() {
   useProtectedRoute()
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState('received')
+  const [activeTab, setActiveTab] = useState('all')
   const [givenReviews, setGivenReviews] = useState<Review[]>([])
   const [receivedReviews, setReceivedReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(false)

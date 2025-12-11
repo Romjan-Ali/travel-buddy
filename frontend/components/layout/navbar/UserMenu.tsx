@@ -52,6 +52,7 @@ export function UserMenu({
         <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
           <Avatar className="h-9 w-9">
             <AvatarImage
+              className='object-cover w-full h-full'
               src={user.profile?.profileImage ?? undefined}
               alt={user.profile?.fullName}
             />

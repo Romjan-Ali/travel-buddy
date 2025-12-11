@@ -235,6 +235,7 @@ export const travelPlanService = {
       endDate?: string
       travelType?: string
       interests?: string[]
+      sort?: 'upcoming' | 'most_recent'
     },
     page: number = 1,
     limit: number = 10
@@ -276,6 +277,12 @@ export const travelPlanService = {
       }
     }
 
+    let orderBy: any = { startDate: 'asc' } // default upcoming
+
+    if (filters.sort === 'most_recent') {
+      orderBy = { createdAt: 'desc' }
+    }
+
     const [plans, total] = await Promise.all([
       prisma.travelPlan.findMany({
         where,
@@ -304,7 +311,7 @@ export const travelPlanService = {
             },
           },
         },
-        orderBy: { startDate: 'asc' },
+        orderBy,
         skip,
         take: limit,
       }),

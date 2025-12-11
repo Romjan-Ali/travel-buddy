@@ -42,7 +42,10 @@ export function ProfileHeader({
   onReviewSubmitted,
 }: ProfileHeaderProps) {
   const calculateAverageRating = () => {
-    if (!profileUser.reviewsReceived || profileUser.reviewsReceived.length === 0)
+    if (
+      !profileUser.reviewsReceived ||
+      profileUser.reviewsReceived.length === 0
+    )
       return 0
     const total = profileUser.reviewsReceived.reduce(
       (sum, review) => sum + review.rating,
@@ -58,14 +61,14 @@ export function ProfileHeader({
           {/* Avatar Section */}
           <div className="relative">
             <Avatar className="h-32 w-32">
-              <AvatarImage src={profileUser.profile?.profileImage} />
+              <AvatarImage className='object-cover w-full h-full' src={profileUser.profile?.profileImage} />
               <AvatarFallback className="text-3xl">
                 {profileUser.profile?.fullName?.charAt(0).toUpperCase() || 'T'}
               </AvatarFallback>
             </Avatar>
             {currentUser?.isVerified && (
               <div className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-blue-500 border-4 border-background flex items-center justify-center">
-                <Badge className="bg-blue-500 text-white">✓</Badge>
+                <Badge className="bg-blue-500 text-white rounded-full w-6 h-6">✓</Badge>
               </div>
             )}
           </div>
@@ -79,7 +82,12 @@ export function ProfileHeader({
                     {profileUser.profile?.fullName || 'Traveler'}
                   </h1>
                   {isOwnProfile && (
-                    <Button size="sm" variant="outline" className="gap-2" asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-2"
+                      asChild
+                    >
                       <Link href="/profile/edit">
                         <Edit className="h-4 w-4" />
                         Edit Profile
@@ -122,7 +130,7 @@ export function ProfileHeader({
                     <MessageSquare className="h-4 w-4" />
                     Message
                   </Button>
-                  
+
                   {canReview && (
                     <LeaveReviewDialog
                       subjectId={profileUser.id}
@@ -137,7 +145,7 @@ export function ProfileHeader({
                       }
                     />
                   )}
-                  
+
                   <Button variant="outline" className="gap-2">
                     <Heart className="h-4 w-4" />
                     Connect

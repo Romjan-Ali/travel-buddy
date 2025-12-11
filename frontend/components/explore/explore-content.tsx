@@ -227,6 +227,7 @@ export default function ExplorePage() {
     travelType: searchParams.get('travelType') || '',
     startDate: searchParams.get('startDate') || '',
     endDate: searchParams.get('endDate') || '',
+    sort: searchParams.get('sort') || 'upcoming',
   })
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -237,7 +238,7 @@ export default function ExplorePage() {
 
   useEffect(() => {
     fetchTravelPlans()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, page])
 
   useEffect(() => {
@@ -300,6 +301,7 @@ export default function ExplorePage() {
       travelType: '',
       startDate: '',
       endDate: '',
+      sort: 'upcoming',
     })
     setPage(1)
   }
@@ -478,15 +480,19 @@ export default function ExplorePage() {
           </h2>
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Sort by:</span>
-            <Select defaultValue="recent">
+            <Select
+              defaultValue="upcoming"
+              value={filters.sort}
+              onValueChange={(value) => handleFilterChange('sort', value)}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="recent">Most Recent</SelectItem>
                 <SelectItem value="upcoming">Upcoming</SelectItem>
-                <SelectItem value="popular">Most Popular</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
+                <SelectItem value="most_recent">Most Recent</SelectItem>
+                {/*                 <SelectItem value="popular">Most Popular</SelectItem>
+                <SelectItem value="rating">Highest Rated</SelectItem> */}
               </SelectContent>
             </Select>
           </div>

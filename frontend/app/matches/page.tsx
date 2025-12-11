@@ -2,38 +2,44 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth, useProtectedRoute } from '@/lib/auth-context'
 import { matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { MatchRequest } from '@/components/matches/match-request'
-import { Users, Inbox, Send, Check, Clock } from 'lucide-react'
+import { Users, Inbox, Send, Check, Clock, Compass, NotepadText } from 'lucide-react'
 import { Match } from '@/types'
+import Link from 'next/link'
 
 export default function MatchesPage() {
   useProtectedRoute()
-  const [activeTab, setActiveTab] = useState('received')
+  const [activeTab, setActiveTab] = useState('all')
   const [receivedMatches, setReceivedMatches] = useState<Match[]>([])
   const [sentMatches, setSentMatches] = useState<Match[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     fetchMatches()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
 
   const fetchMatches = async () => {
     setIsLoading(true)
     try {
       if (activeTab === 'received' || activeTab === 'all') {
-        const receivedData = await matchAPI.getMyMatches({type: 'received'})
-        console.log({receivedData})
+        const receivedData = await matchAPI.getMyMatches({ type: 'received' })
         setReceivedMatches(receivedData.data.matches || [])
       }
       if (activeTab === 'sent' || activeTab === 'all') {
-        const sentData = await matchAPI.getMyMatches({type: 'sent'})
+        const sentData = await matchAPI.getMyMatches({ type: 'sent' })
         setSentMatches(sentData.data.matches || [])
       }
     } catch (error) {
@@ -44,8 +50,10 @@ export default function MatchesPage() {
     }
   }
 
-  const pendingReceived = receivedMatches.filter(m => m.status === 'PENDING')
-  const acceptedMatches = [...receivedMatches, ...sentMatches].filter(m => m.status === 'ACCEPTED')
+  const pendingReceived = receivedMatches.filter((m) => m.status === 'PENDING')
+  const acceptedMatches = [...receivedMatches, ...sentMatches].filter(
+    (m) => m.status === 'ACCEPTED'
+  )
 
   return (
     <div className="container py-8">
@@ -120,7 +128,7 @@ export default function MatchesPage() {
         <TabsList className="grid grid-cols-3 mb-8">
           <TabsTrigger value="received" className="gap-2">
             <Inbox className="h-4 w-4" />
-            Received ({pendingReceived.length})
+            Pending Received ({pendingReceived.length})
           </TabsTrigger>
           <TabsTrigger value="sent" className="gap-2">
             <Send className="h-4 w-4" />
@@ -144,7 +152,9 @@ export default function MatchesPage() {
               {isLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="mt-2 text-muted-foreground">Loading matches...</p>
+                  <p className="mt-2 text-muted-foreground">
+                    Loading matches...
+                  </p>
                 </div>
               ) : pendingReceived.length > 0 ? (
                 <div className="space-y-4">
@@ -162,13 +172,17 @@ export default function MatchesPage() {
                   <div className="h-16 w-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
                     <Inbox className="h-8 w-8 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">No pending requests</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    No pending requests
+                  </h3>
                   <p className="text-muted-foreground mb-4">
                     You don&apos;t have any pending match requests
                   </p>
-                  <Button>
-                    <Users className="mr-2 h-4 w-4" />
-                    Find Travel Buddies
+                  <Button asChild>
+                    <Link href="/travel-plans">
+                      <NotepadText className="mr-2 h-4 w-4" />
+                      My Travel Plans
+                    </Link>
                   </Button>
                 </div>
               )}
@@ -188,16 +202,14 @@ export default function MatchesPage() {
               {isLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="mt-2 text-muted-foreground">Loading matches...</p>
+                  <p className="mt-2 text-muted-foreground">
+                    Loading matches...
+                  </p>
                 </div>
               ) : sentMatches.length > 0 ? (
                 <div className="space-y-4">
                   {sentMatches.map((match) => (
-                    <MatchRequest
-                      key={match.id}
-                      match={match}
-                      type="sent"
-                    />
+                    <MatchRequest key={match.id} match={match} type="sent" />
                   ))}
                 </div>
               ) : (
@@ -205,7 +217,9 @@ export default function MatchesPage() {
                   <div className="h-16 w-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
                     <Send className="h-8 w-8 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">No sent requests</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    No sent requests
+                  </h3>
                   <p className="text-muted-foreground">
                     You haven&apos;t sent any match requests yet
                   </p>
@@ -227,7 +241,9 @@ export default function MatchesPage() {
               {isLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="mt-2 text-muted-foreground">Loading matches...</p>
+                  <p className="mt-2 text-muted-foreground">
+                    Loading matches...
+                  </p>
                 </div>
               ) : acceptedMatches.length > 0 ? (
                 <div className="space-y-4">
@@ -244,7 +260,9 @@ export default function MatchesPage() {
                   <div className="h-16 w-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
                     <Users className="h-8 w-8 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">No accepted matches</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    No accepted matches
+                  </h3>
                   <p className="text-muted-foreground mb-4">
                     Start connecting with travelers to see accepted matches here
                   </p>

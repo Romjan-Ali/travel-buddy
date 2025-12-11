@@ -30,6 +30,10 @@ export const matchService = {
       if (!travelPlan) {
         throw new AppError(404, 'Travel plan not found or not accessible')
       }
+
+      if(travelPlan.endDate < new Date()) {
+        throw new AppError(400, 'Cannot match on an expired travel plan')
+      }
     }
 
     // Check if match already exists

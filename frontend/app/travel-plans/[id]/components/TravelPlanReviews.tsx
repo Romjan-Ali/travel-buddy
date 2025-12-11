@@ -18,6 +18,8 @@ interface TravelPlanReviewsProps {
   organizerId?: string
   organizerName: string
   organizerImage?: string
+  reviews: Review[]
+  fetchReviews: () => void
 }
 
 export function TravelPlanReviews({
@@ -26,32 +28,18 @@ export function TravelPlanReviews({
   organizerId,
   organizerName,
   organizerImage,
+  reviews,
+  fetchReviews
 }: TravelPlanReviewsProps) {
   const { user } = useAuth()
-  const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(false)
    
   // const [travelCompanions, setTravelCompanions] = useState<any[]>([])
 
   useEffect(() => {
-    fetchReviews()
-    fetchTravelCompanions()
+    // fetchTravelCompanions()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [travelPlanId])
-
-  const fetchReviews = async () => {
-    setIsLoading(true)
-    try {
-      const result = await reviewAPI.getTravelPlanReviews(travelPlanId)
-      console.log('result', result)
-      setReviews(result.data.reviews || [])
-    } catch (error) {
-      toast.error('Failed to load reviews')
-      console.error('Reviews error:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const fetchTravelCompanions = async () => {
     // Implement this based on your backend

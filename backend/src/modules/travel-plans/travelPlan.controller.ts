@@ -64,13 +64,13 @@ export const travelPlanController = {
   },
 
   async searchTravelPlans(req: AuthRequest, res: Response) {
-    const filtersQuery = req.query.filters
+    const { page, limit, ...filtersQuery } = req.query
     const interests =
       typeof req.query.interests === 'string'
         ? req.query.interests.split(',')
         : undefined
-    const filters = { ...filtersQuery, interests }
-    const { page = 1, limit = 10 } = req.query
+    const sort = req.query.sort as 'upcoming' | 'most_recent' | undefined
+    const filters = { ...filtersQuery, interests, sort }
 
     const result = await travelPlanService.searchTravelPlans(
       filters as any,

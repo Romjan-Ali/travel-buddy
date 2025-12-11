@@ -415,7 +415,7 @@ export interface TravelPlan extends BaseEntity {
       }
     }
   }>
-  _count: {
+  _count?: {
     matches?: number
     reviewsReceived?: number
     travelPlans?: number

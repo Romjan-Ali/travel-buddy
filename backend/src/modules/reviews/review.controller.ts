@@ -16,7 +16,7 @@ export const reviewController = {
     const result = await reviewService.checkCanReview(currentUserId, userId)
     sendResponse(res, 200, 'Review check completed', result)
   },
-  
+
   async createReview(req: AuthRequest, res: Response) {
     const reviewData = req.body
     const userId = req.user?.id
@@ -40,6 +40,15 @@ export const reviewController = {
       parseInt(limit as string)
     )
     sendResponse(res, 200, 'Reviews retrieved successfully', result)
+  },
+
+  async getPendingReviews(req: AuthRequest, res: Response) {
+    const userId = req.user?.id
+    if (!userId) {
+      return sendResponse(res, 401, 'Unauthorized')
+    }
+    const reviews = await reviewService.getPendingReviews(userId)
+    sendResponse(res, 200, 'Reviews Retrieved successfully', { reviews })
   },
 
   async updateReview(req: AuthRequest, res: Response) {

@@ -183,7 +183,7 @@ export default function TravelPlansPage() {
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
-                          <span>{plan._count.matches} matches</span>
+                          <span>{plan._count?.matches || 0} matches</span>
                         </div>
                         <Badge variant="secondary" className="text-xs">
                           {plan.budget}

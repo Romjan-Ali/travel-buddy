@@ -5,9 +5,19 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
-import { MapPin, Calendar, Briefcase, DollarSign, Users, Share2, MessageSquare, Heart, UserPlus } from 'lucide-react'
+import {
+  MapPin,
+  Calendar,
+  Briefcase,
+  DollarSign,
+  Users,
+  Share2,
+  MessageSquare,
+  Heart,
+  UserPlus,
+} from 'lucide-react'
 import { formatDate, calculateDaysBetween } from '@/lib/utils'
-import { TravelPlan } from '@/types'
+import { Review, TravelPlan } from '@/types'
 
 interface TravelPlanDetailsProps {
   travelPlan: TravelPlan
@@ -24,9 +34,12 @@ export function TravelPlanDetails({
   userMatchStatus,
   isUpcoming,
   travelPlanId,
-  onRequestToJoin
+  onRequestToJoin,
 }: TravelPlanDetailsProps) {
-  const daysBetween = calculateDaysBetween(new Date(travelPlan.startDate), new Date(travelPlan.endDate))
+  const daysBetween = calculateDaysBetween(
+    new Date(travelPlan.startDate),
+    new Date(travelPlan.endDate)
+  )
 
   return (
     <Card>
@@ -61,7 +74,8 @@ export function TravelPlanDetails({
                 <div>
                   <p className="text-sm text-muted-foreground">Dates</p>
                   <p className="font-medium">
-                    {formatDate(travelPlan.startDate)} - {formatDate(travelPlan.endDate)}
+                    {formatDate(travelPlan.startDate)} -{' '}
+                    {formatDate(travelPlan.endDate)}
                   </p>
                 </div>
               </div>
@@ -125,13 +139,20 @@ export function TravelPlanDetails({
               <Button
                 onClick={onRequestToJoin}
                 className="gap-2"
-                disabled={!isUpcoming || userMatchStatus === 'PENDING' || userMatchStatus === 'ACCEPTED'}
+                disabled={
+                  !isUpcoming ||
+                  userMatchStatus === 'PENDING' ||
+                  userMatchStatus === 'ACCEPTED'
+                }
               >
                 <UserPlus className="h-4 w-4" />
-                {userMatchStatus === 'PENDING' ? 'Request Pending' : 
-                 userMatchStatus === 'ACCEPTED' ? 'Request Accepted' : 
-                 userMatchStatus === 'REJECTED' ? 'Request to Join' : 
-                 'Request to Join'}
+                {userMatchStatus === 'PENDING'
+                  ? 'Request Pending'
+                  : userMatchStatus === 'ACCEPTED'
+                  ? 'Request Accepted'
+                  : userMatchStatus === 'REJECTED'
+                  ? 'Request to Join'
+                  : 'Request to Join'}
               </Button>
               <Button variant="outline" className="gap-2">
                 <MessageSquare className="h-4 w-4" />

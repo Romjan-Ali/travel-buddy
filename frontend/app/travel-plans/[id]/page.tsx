@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
-import { travelPlanAPI, matchAPI } from '@/lib/api'
+import { travelPlanAPI, matchAPI, reviewAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { ArrowLeft } from 'lucide-react'
 import { TravelPlanHeader } from './components/TravelPlanHeader'
@@ -14,13 +14,14 @@ import { TravelPlanTabs } from './components/TravelPlanTabs'
 import { TravelPlanSidebar } from './components/TravelPlanSidebar'
 import { MatchRequestDialog } from './components/MatchRequestDialog'
 import { TravelPlanReviews } from './components/TravelPlanReviews'
-import { Match, TravelPlan } from '@/types'
+import { Match, Review, TravelPlan } from '@/types'
 
 export default function TravelPlanDetailsPage() {
   const params = useParams()
   const router = useRouter()
   const { user } = useAuth()
   const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)
+  const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false)
   const [userMatchStatus, setUserMatchStatus] = useState<
@@ -33,6 +34,7 @@ export default function TravelPlanDetailsPage() {
     if (travelPlanId) {
       fetchTravelPlan()
       fetchUserMatchStatus()
+      fetchReviews()
     }
   }, [travelPlanId])
 
@@ -66,6 +68,19 @@ export default function TravelPlanDetailsPage() {
       setUserMatchStatus(matchForThisPlan?.status || null)
     } catch (error) {
       console.error('Failed to fetch match status:', error)
+    }
+  }
+
+  const fetchReviews = async () => {
+    setIsLoading(true)
+    try {
+      const result = await reviewAPI.getTravelPlanReviews(travelPlanId)
+      setReviews(result.data.reviews || [])
+    } catch (error) {
+      toast.error('Failed to load reviews')
+      console.error('Reviews error:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -118,8 +133,8 @@ export default function TravelPlanDetailsPage() {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-4">Travel Plan Not Found</h2>
           <p className="text-muted-foreground mb-6">
-            The travel plan you&apos;re looking for doesn&apos;t exist or has been
-            removed.
+            The travel plan you&apos;re looking for doesn&apos;t exist or has
+            been removed.
           </p>
           <Button onClick={() => router.push('/travel-plans')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -175,6 +190,8 @@ export default function TravelPlanDetailsPage() {
           isUpcoming={isUpcoming}
           travelPlanId={travelPlanId}
           onRequestToJoin={() => setIsMatchDialogOpen(true)}
+          reviews={reviews}
+          fetchReviews={fetchReviews}
         />
 
         <TravelPlanSidebar

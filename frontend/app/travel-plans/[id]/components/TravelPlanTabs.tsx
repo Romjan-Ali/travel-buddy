@@ -6,7 +6,7 @@ import { TravelPlanDetails } from './TravelPlanDetails'
 import { TravelPlanMatches } from './TravelPlanMatches'
 import { TravelPlanOrganizer } from './TravelPlanOrganizer'
 import { TravelPlanReviews } from './TravelPlanReviews'
-import { TravelPlan } from '@/types'
+import { Review, TravelPlan } from '@/types'
 
 interface TravelPlanTabsProps {
   travelPlan: TravelPlan
@@ -15,6 +15,8 @@ interface TravelPlanTabsProps {
   isUpcoming: boolean
   travelPlanId: string
   onRequestToJoin: () => void
+  reviews: Review[]
+  fetchReviews: () => void
 }
 
 export function TravelPlanTabs({
@@ -24,6 +26,8 @@ export function TravelPlanTabs({
   isUpcoming,
   travelPlanId,
   onRequestToJoin,
+  reviews,
+  fetchReviews,
 }: TravelPlanTabsProps) {
   return (
     <div className="lg:col-span-2">
@@ -31,10 +35,10 @@ export function TravelPlanTabs({
         <TabsList className="grid grid-cols-4 mb-6">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="matches">
-            Matches ({travelPlan._count?.matches || 0})
+            Matches ({travelPlan.matches?.length || 0})
           </TabsTrigger>
           <TabsTrigger value="reviews">
-            Reviews ({travelPlan._count?.reviewsReceived || 0})
+            Reviews ({reviews.length|| 0})
           </TabsTrigger>
           <TabsTrigger value="organizer">Organizer</TabsTrigger>
         </TabsList>
@@ -64,6 +68,8 @@ export function TravelPlanTabs({
             organizerId={travelPlan.user?.id}
             organizerName={travelPlan.user?.profile?.fullName || 'Traveler'}
             organizerImage={travelPlan.user?.profile?.profileImage ?? undefined}
+            reviews={reviews}
+            fetchReviews={fetchReviews}
           />
         </TabsContent>
 

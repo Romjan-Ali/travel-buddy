@@ -20,6 +20,7 @@ router.get(
   authenticate,
   reviewController.getTravelPlanReviews
 )
+router.get('/pending-reviews', authenticate, reviewController.getPendingReviews)
 router.patch(
   '/:id',
   authenticate,

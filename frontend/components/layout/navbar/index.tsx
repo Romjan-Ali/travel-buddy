@@ -27,7 +27,6 @@ export function Navbar() {
     try {
       await logout()
       toast.success('Logged out successfully')
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to logout')
     }
