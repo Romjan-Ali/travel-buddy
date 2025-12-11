@@ -130,6 +130,8 @@ export function ImageUpload({
         if (result.data?.url || result.data?.urls) {
           if (type === 'profile' && result.data.url) {
             onUploadComplete(result.data.url)
+          } else if (type === 'trip' && result.data.urls) {
+            onUploadComplete(result.data.urls)
           }
           toast.success('Images uploaded successfully!')
           setImages([])

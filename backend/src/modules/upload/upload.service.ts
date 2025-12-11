@@ -268,12 +268,12 @@ export const uploadService = {
       }
 
       // Delete from Cloudinary
-      try {
+/*       try {
         await deleteFromCloudinary(imageUrl)
       } catch (error) {
         console.error('Failed to delete from Cloudinary:', error)
         throw new AppError(500, 'Failed to delete image from storage')
-      }
+      } */
 
       // Remove from database
       await prisma.profile.update({
@@ -298,12 +298,12 @@ export const uploadService = {
       }
 
       // Delete from Cloudinary
-      try {
+/*       try {
         await deleteFromCloudinary(imageUrl)
       } catch (error) {
         console.error('Failed to delete from Cloudinary:', error)
         throw new AppError(500, 'Failed to delete image from storage')
-      }
+      } */
 
       // Remove from database
       await prisma.tripPhoto.delete({

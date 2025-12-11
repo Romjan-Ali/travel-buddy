@@ -415,6 +415,7 @@ export interface TravelPlan extends BaseEntity {
       }
     }
   }>
+  tripPhotos?: TripPhoto[]
   _count?: {
     matches?: number
     reviewsReceived?: number

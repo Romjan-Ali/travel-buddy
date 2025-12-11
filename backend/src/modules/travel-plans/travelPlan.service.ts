@@ -148,6 +148,7 @@ export const travelPlanService = {
           },
           take: 5,
         },
+        tripPhotos: true,
       },
     })
 

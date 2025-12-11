@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { useAuth, useProtectedRoute } from '@/lib/auth-context'
-import { travelPlanAPI } from '@/lib/api'
+import { travelPlanAPI, uploadAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {
   Calendar,
@@ -38,6 +38,7 @@ import {
   Trash2,
   Loader2,
   AlertCircle,
+  Trash,
 } from 'lucide-react'
 import {
   AlertDialog,
@@ -51,6 +52,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import type { TravelPlan } from '@/types'
+import { ImageUpload } from '@/components/upload/image-upload'
 
 // Reuse the same schema from new page
 const travelPlanSchema = z.object({
@@ -68,7 +70,6 @@ export type TravelPlanFormData = z.infer<typeof travelPlanSchema>
 export default function EditTravelPlanPage() {
   const params = useParams()
   const router = useRouter()
-  useProtectedRoute()
   const { user } = useAuth()
 
   const travelPlanId = params.id as string
@@ -76,6 +77,7 @@ export default function EditTravelPlanPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)
+  const [tripPhotos, setTripPhotos] = useState<string[]>([])
 
   const {
     register,
@@ -100,7 +102,7 @@ export default function EditTravelPlanPage() {
     if (travelPlanId) {
       fetchTravelPlan()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [travelPlanId])
 
   const fetchTravelPlan = async () => {
@@ -123,6 +125,7 @@ export default function EditTravelPlanPage() {
       }
 
       setTravelPlan(plan)
+      setTripPhotos(plan?.tripPhotos?.map((img) => img.url) || [])
 
       // Format dates for input fields (YYYY-MM-DD)
       const formatDateForInput = (dateString: string) => {
@@ -148,6 +151,29 @@ export default function EditTravelPlanPage() {
       router.push('/travel-plans')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleImageUploadComplete = async () => {
+    try {
+      const result = await travelPlanAPI.getById(travelPlanId)
+      const plan = result.data?.travelPlan
+      setTripPhotos(plan?.tripPhotos?.map((img) => img.url) || [])
+    } catch (error) {
+      console.error('Image upload completion error:', error)
+    }
+  }
+
+  const handleDeleteImage = async (imageUrl: string) => {
+    const photos = tripPhotos.filter((url) => url !== imageUrl)
+    setTripPhotos(photos)
+
+    try {
+      await uploadAPI.deleteImage(imageUrl)
+      toast.success('Image deleted successfully')
+    } catch (error) {
+      toast.error('Failed to delete image')
+      console.error('Delete image error:', error)
     }
   }
 
@@ -407,6 +433,39 @@ export default function EditTravelPlanPage() {
                 Include activities you&apos;re interested in, accommodation
                 preferences, or any specific requirements
               </p>
+            </div>
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label>Travel Plan Photos</Label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {tripPhotos.map((url, index) => (
+                  <div key={index} className="relative group">
+                    <Card className="overflow-hidden">
+                      <CardContent className="p-0">
+                        <img
+                          src={url}
+                          alt={`Preview ${index + 1}`}
+                          className="h-32 w-full object-cover"
+                        />
+                      </CardContent>
+                    </Card>
+                    <button
+                      onClick={() => handleDeleteImage(url)}
+                      type="button"
+                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-white flex items-center justify-center hover:bg-destructive/90 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <ImageUpload
+                multiple={true}
+                type="trip"
+                travelPlanId={travelPlanId}
+                onUploadComplete={handleImageUploadComplete}
+              />
             </div>
 
             {/* Visibility */}

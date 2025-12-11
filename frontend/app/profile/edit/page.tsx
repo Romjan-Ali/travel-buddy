@@ -4,13 +4,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { userAPI } from '@/lib/api'
+import { authAPI } from '@/lib/api'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ImageUpload } from '@/components/upload/image-upload'
 import ProfileEditForm from '@/components/profile/edit-form'
-import { AuthUser } from '@/types'
 
 export interface ProfileFormData {
   fullName: string
@@ -48,19 +46,16 @@ export default function EditProfilePage() {
   }, [user])
 
   // ✅ FIX: Add this function to handle image upload completion
-  const handleImageUploadComplete = async (imageUrl: string) => {
+  const handleImageUploadComplete = async () => {
     try {
-      // Update the profile with the new image URL
-      const result = await userAPI.updateProfile({
-        ...profileData,
-        profileImage: imageUrl
-      })
-      
+      // Get updated profile with new image URL
+      const result = await authAPI.getMe()
+
       // Update auth context with new user data
-      updateUser(result.data.user as unknown as AuthUser)
-      
+      updateUser(result.data.user)
+
       toast.success('Profile image updated successfully!')
-      
+
       // Optionally refresh the page data
       fetchUserProfile()
     } catch (error) {
@@ -71,8 +66,8 @@ export default function EditProfilePage() {
   // ✅ FIX: Add function to fetch fresh user data
   const fetchUserProfile = async () => {
     try {
-      const result = await userAPI.getProfile()
-      updateUser(result.data.user as unknown as AuthUser)
+      const result = await authAPI.getMe()
+      updateUser(result.data.user)
     } catch (error) {
       console.error('Failed to refresh profile:', error)
     }
@@ -82,10 +77,10 @@ export default function EditProfilePage() {
     e.preventDefault()
     setIsLoading(true)
     try {
-      const result = await userAPI.updateProfile(profileData)
-      updateUser(result.data.user as unknown as AuthUser)
+      const result = await authAPI.getMe()
+      updateUser(result.data.user)
       toast.success('Profile updated successfully!')
-      router.push('/profile')  // Changed to /profile (own profile)
+      router.push('/profile') // Changed to /profile (own profile)
     } catch (error) {
       toast.error('Failed to update profile')
     } finally {

@@ -30,7 +30,6 @@ import {
 import { formatDate } from '@/lib/utils'
 import { Match, TravelPlan } from '@/types'
 
-
 export default function DashboardPage() {
   const { user } = useAuth()
   const [upcomingPlans, setUpcomingPlans] = useState<TravelPlan[]>([])
