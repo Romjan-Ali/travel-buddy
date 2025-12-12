@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth-context'
 import { travelPlanAPI, matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {
@@ -39,7 +39,7 @@ import { Match, MatchWithRelations, SingleTravelPlan, TravelPlan } from '@/types
 export default function TravelPlanMatchesPage() {
   const params = useParams()
   const router = useRouter()
-  useProtectedRoute()
+
   const { user } = useAuth()
 
   const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)

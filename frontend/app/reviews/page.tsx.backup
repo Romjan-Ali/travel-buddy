@@ -1,3 +1,4 @@
+// frontend/app/reviews/page.tsx.backup
 // frontend/app/reviews/page.tsx
 'use client'
 
@@ -7,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth-context'
 import { reviewAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { Star, User, Calendar, MapPin, Edit, Trash2, MessageSquare, TrendingUp } from 'lucide-react'
@@ -52,7 +53,7 @@ interface Review {
 }
 
 export default function ReviewsPage() {
-  useProtectedRoute()
+
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('received')
   const [givenReviews, setGivenReviews] = useState<Review[]>([])

@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth-context'
 import { travelPlanAPI, uploadAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {

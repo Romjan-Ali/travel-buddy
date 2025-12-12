@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { MapPin, Calendar, Users, MessageSquare, Check, X } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { Match } from '@/types'
+import Link from 'next/link'
 
 interface MatchRequestProps {
   match: Match
@@ -24,7 +25,7 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
 
   const handleStatusUpdate = async (status: 'ACCEPTED' | 'REJECTED') => {
     if (!otherUser) return
-    
+
     setIsLoading(true)
     try {
       await matchAPI.updateStatus(match.id, status)
@@ -40,11 +41,23 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
   const getStatusBadge = () => {
     switch (match.status) {
       case 'PENDING':
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700">Pending</Badge>
+        return (
+          <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
+            Pending
+          </Badge>
+        )
       case 'ACCEPTED':
-        return <Badge variant="outline" className="bg-green-50 text-green-700">Accepted</Badge>
+        return (
+          <Badge variant="outline" className="bg-green-50 text-green-700">
+            Accepted
+          </Badge>
+        )
       case 'REJECTED':
-        return <Badge variant="outline" className="bg-red-50 text-red-700">Rejected</Badge>
+        return (
+          <Badge variant="outline" className="bg-red-50 text-red-700">
+            Rejected
+          </Badge>
+        )
       default:
         return <Badge variant="outline">{match.status}</Badge>
     }
@@ -57,12 +70,14 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
           {/* User Info */}
           <div className="flex items-start gap-4 flex-1">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={otherUser?.profile?.profileImage ?? undefined} />
+              <AvatarImage
+                src={otherUser?.profile?.profileImage ?? undefined}
+              />
               <AvatarFallback className="text-lg">
                 {otherUser?.profile?.fullName?.charAt(0).toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
-            
+
             <div className="flex-1">
               <div className="flex items-start justify-between mb-2">
                 <div>
@@ -84,13 +99,26 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
                 <div className="space-y-2 mt-4 p-3 bg-muted/30 rounded-lg">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-primary" />
-                    <span className="font-medium">{match.travelPlan.destination}</span>
+                    <span className="font-medium">
+                      {match.travelPlan.destination}
+                    </span>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(match.travelPlan.startDate)} - {formatDate(match.travelPlan.endDate)}
+                      {formatDate(match.travelPlan.startDate)} -{' '}
+                      {formatDate(match.travelPlan.endDate)}
                     </div>
+                  </div>
+
+                  {/* View Travel Plan Link */}
+                  <div className="mt-2">
+                    <Link
+                      href={`/travel-plans/${match.travelPlan.id}`}
+                      className="text-sm text-primary font-medium hover:underline"
+                    >
+                      View Travel Plan
+                    </Link>
                   </div>
                 </div>
               )}
@@ -124,7 +152,7 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
                 </Button>
               </>
             )}
-            
+
             {match.status === 'ACCEPTED' && (
               <Button className="gap-2">
                 <MessageSquare className="h-4 w-4" />
@@ -140,7 +168,9 @@ export function MatchRequest({ match, type, onUpdate }: MatchRequestProps) {
 
             {type === 'sent' && (
               <Button variant="outline" className="gap-2" disabled>
-                {match.status === 'PENDING' ? 'Awaiting Response' : match.status}
+                {match.status === 'PENDING'
+                  ? 'Awaiting Response'
+                  : match.status}
               </Button>
             )}
           </div>

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth-context'
 import { travelPlanAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {
@@ -37,7 +37,7 @@ import { TravelPlan } from '@/types'
 
 export default function TravelPlansPage() {
   const router = useRouter()
-  const { user } = useProtectedRoute()
+  const { user } = useAuth()
   const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([])
   const [isLoading, setIsLoading] = useState(true)
 

@@ -25,7 +25,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { useProtectedRoute } from '@/lib/auth-context'
 import { paymentAPI, travelPlanAPI } from '@/lib/api'
 import type { CreateTravelPlanInput } from '@/types'
 import { toast } from 'sonner'
@@ -51,7 +50,6 @@ type TravelPlanFormData = z.infer<typeof travelPlanSchema>
 
 export default function NewTravelPlanPage() {
   const router = useRouter()
-  useProtectedRoute()
   const [isLoading, setIsLoading] = useState(false)
 
   const {

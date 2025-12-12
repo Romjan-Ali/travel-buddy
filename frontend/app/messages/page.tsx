@@ -1,3 +1,4 @@
+// frontend/app/messages/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -8,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth-context'
 import { messageAPI } from '@/lib/api'
 import { ChatWindow } from '@/components/messages/chat-window'
 import { socketClient } from '@/lib/socket'
@@ -53,7 +54,6 @@ interface ApiResponse {
 }
 
 export default function MessagesPage() {
-  useProtectedRoute()
   const { user } = useAuth()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedConversation, setSelectedConversation] = useState<

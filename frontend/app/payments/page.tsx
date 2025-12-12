@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
 import { paymentAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { SubscriptionPlans } from '@/components/payments/subscription-plans'
@@ -28,7 +27,7 @@ import {
 import { Subscription } from '@/types'
 
 export default function PaymentsPage() {
-  useProtectedRoute()
+
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isCancelling, setIsCancelling] = useState(false)

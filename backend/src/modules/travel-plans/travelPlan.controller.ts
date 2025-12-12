@@ -64,7 +64,7 @@ export const travelPlanController = {
   },
 
   async searchTravelPlans(req: AuthRequest, res: Response) {
-    const { page, limit, ...filtersQuery } = req.query
+    const { page = 1, limit = 9, ...filtersQuery } = req.query
     const interests =
       typeof req.query.interests === 'string'
         ? req.query.interests.split(',')

@@ -11,16 +11,15 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import {  } from '@/lib/auth-context'
 import { matchAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { MatchRequest } from '@/components/matches/match-request'
-import { Users, Inbox, Send, Check, Clock, Compass, NotepadText } from 'lucide-react'
+import { Users, Inbox, Send, Check, Clock, NotepadText } from 'lucide-react'
 import { Match } from '@/types'
 import Link from 'next/link'
 
 export default function MatchesPage() {
-  useProtectedRoute()
   const [activeTab, setActiveTab] = useState('all')
   const [receivedMatches, setReceivedMatches] = useState<Match[]>([])
   const [sentMatches, setSentMatches] = useState<Match[]>([])

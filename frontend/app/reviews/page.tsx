@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { useAuth, useProtectedRoute } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth-context'
 import { reviewAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { ReviewsHeader } from '@/components/reviews/ReviewsHeader'
@@ -17,7 +17,7 @@ import { EditReviewDialog } from '@/components/reviews/edit-review-dialog'
 import type { Review } from '@/types'
 
 export default function ReviewsPage() {
-  useProtectedRoute()
+
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('all')
   const [givenReviews, setGivenReviews] = useState<Review[]>([])

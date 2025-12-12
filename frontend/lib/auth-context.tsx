@@ -257,39 +257,3 @@ export function useAuth() {
   }
   return context
 }
-
-// Protected route hook
-export function useProtectedRoute() {
-  const { user, isLoading } = useAuth()
-  const router = useRouter()
-  const pathname = usePathname()
-
-/*   useEffect(() => {
-    // Auth route protection
-    if (
-      !isLoading &&
-      !user &&
-      pathname !== '/login' &&
-      pathname !== '/register'
-    ) {
-      router.push('/login')
-      console.log('Go to login')
-    }
-  }, [user, isLoading, pathname, router]) */
-
-  return { user, isLoading } 
-}
-
-// Admin route hook
-export function useAdminRoute() {
-  const { user, isLoading } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isLoading && user?.role !== 'ADMIN') {
-      router.push('/dashboard')
-    }
-  }, [user, isLoading, router])
-
-  return { user, isLoading }
-}

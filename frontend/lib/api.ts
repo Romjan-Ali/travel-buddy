@@ -355,7 +355,9 @@ export const adminAPI = {
     page = 1,
     limit = 20,
     filters?: string
-  ): Promise<ApiResponse<GetUserByAdmin[]>> =>
+  ): Promise<
+    ApiResponse<{ users: GetUserByAdmin[]; pagination: Pagination }>
+  > =>
     api.get(
       `/admin/users?page=${page}&limit=${limit}&${new URLSearchParams(
         filters
@@ -372,7 +374,7 @@ export const adminAPI = {
     page = 1,
     limit = 20,
     filters?: string
-  ): Promise<ApiResponse<{ travelPlans: TravelPlanByAdmin[] }>> =>
+  ): Promise<ApiResponse<{ travelPlans: TravelPlanByAdmin[], pagination: Pagination }>> =>
     api.get(
       `/admin/travel-plans?page=${page}&limit=${limit}&${new URLSearchParams(
         filters
@@ -399,10 +401,10 @@ export const messageAPI = {
 
 export const otpAPI = {
   sendOtp: (data: { email: string; name?: string }) =>
-    api.post<ApiResponse<{ message: string }>, { email: string; name?: string }>(
-      '/otp/send',
-      data
-    ),
+    api.post<
+      ApiResponse<{ message: string }>,
+      { email: string; name?: string }
+    >('/otp/send', data),
 
   verifyOtp: (data: { email: string; otp: string }) =>
     api.post<ApiResponse<{ message: string }>, { email: string; otp: string }>(
