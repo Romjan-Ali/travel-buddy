@@ -1,0 +1,44 @@
+#########################################
+# API Configuration
+#########################################
+
+# Base URL of your backend API (Example)
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+
+
+#########################################
+# Stripe Configuration
+#########################################
+
+# Public Stripe key (Safe for frontend exposure)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+
+#########################################
+# Cloudinary Configuration
+#########################################
+
+# Cloud name from Cloudinary dashboard
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+
+# Upload preset (unsigned preset for client-side upload)
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_preset_name
+
+
+#########################################
+# Feature Flags
+#########################################
+
+# Enable or disable payment features (true/false)
+NEXT_PUBLIC_PAYMENT_ENABLED=true
+
+# Enable or disable maps or location features
+NEXT_PUBLIC_MAPS_ENABLED=true
+
+
+#########################################
+# Application
+#########################################
+
+# Frontend site URL (Example)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
