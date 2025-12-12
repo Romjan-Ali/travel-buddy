@@ -1,3 +1,4 @@
+// frontend/lib/auth-context.tsx
 'use client'
 
 import {
@@ -59,51 +60,120 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isMounted, checkAuth])
 
 
-  // Route Protection
-  useEffect(() => {
-    if (!isCheckedAuth) return
+// Route Protection
+useEffect(() => {
+  if (!isCheckedAuth) return
 
-    const publicRoutes = [
-      '/login',
-      '/register',
-      '/',
-      '/about',
-      '/contact',
-      '/api/auth',
-      '/_next',
-    ]
+  const publicRoutes = [
+    '/login',
+    '/register',
+    '/',
+    '/about',
+    '/contact',
+    '/api/auth',
+    '/_next',
+    '/verify-email',
+  ]
 
-    const adminRoutes = ['/admin']
+  const adminRoutes = ['/admin']
 
-    const isPublicRoute = publicRoutes.some((route) =>
-      route === '/' ? pathname === '/' : pathname.startsWith(route)
-    )
-    const isAdminRoute = adminRoutes.some((route) =>
-      route === '/' ? pathname === '/' : pathname.startsWith(route)
-    )
+  const isPublicRoute = publicRoutes.some((route) =>
+    route === '/' ? pathname === '/' : pathname.startsWith(route)
+  )
+  const isAdminRoute = adminRoutes.some((route) =>
+    route === '/' ? pathname === '/' : pathname.startsWith(route)
+  )
 
-    // Load route history from sessionStorage
-    const historyStr = sessionStorage.getItem('routeHistory')
-    const routeHistory: string[] = historyStr ? JSON.parse(historyStr) : []
-    if (routeHistory.length > 10) routeHistory.shift()
+  // Get redirect attempt counter
+  const redirectKey = `${pathname}-${user ? 'authenticated' : 'unauthenticated'}`
+  const lastRedirect = sessionStorage.getItem('lastRedirect')
+  let redirectCount = parseInt(sessionStorage.getItem('redirectCount') || '0')
 
-    // Avoid duplicate consecutive routes
-    if (routeHistory.length === 0 || routeHistory[routeHistory.length - 1] !== pathname) {
-      routeHistory.push(pathname)
-      sessionStorage.setItem('routeHistory', JSON.stringify(routeHistory))
+  // Check for loop detection
+  if (lastRedirect === redirectKey) {
+    redirectCount++
+    sessionStorage.setItem('redirectCount', redirectCount.toString())
+    
+    // Break infinite loop after 2 attempts
+    if (redirectCount > 2) {
+      // console.error('Infinite redirect loop detected. Breaking cycle.')
+      sessionStorage.removeItem('redirectCount')
+      sessionStorage.removeItem('lastRedirect')
+      
+      // Redirect to safe fallback
+      if (user) {
+        router.push('/dashboard')
+      } else {
+        router.push('/login')
+      }
+      return
+    }
+  } else {
+    redirectCount = 1
+    sessionStorage.setItem('redirectCount', '1')
+  }
+
+  // Store current redirect attempt
+  sessionStorage.setItem('lastRedirect', redirectKey)
+
+  // Load route history from sessionStorage
+  const historyStr = sessionStorage.getItem('routeHistory')
+  const routeHistory: string[] = historyStr ? JSON.parse(historyStr) : []
+  if (routeHistory.length > 10) routeHistory.shift()
+
+  // Avoid duplicate consecutive routes
+  if (routeHistory.length === 0 || routeHistory[routeHistory.length - 1] !== pathname) {
+    routeHistory.push(pathname)
+    sessionStorage.setItem('routeHistory', JSON.stringify(routeHistory))
+  }
+
+  // Handle access with loop prevention
+  if (user) {
+    // Email verification check
+        if (!user.isEmailVerified && pathname !== '/verify-email') {
+      // Check if we're already trying to redirect to verify-email
+      if (lastRedirect !== `${pathname}-verify-redirect`) {
+        sessionStorage.setItem('lastRedirect', `${pathname}-verify-redirect`)
+        sessionStorage.setItem('redirectCount', '1')
+        router.push('/verify-email')
+      }
+      return
     }
 
-    // Handle access
-    if (user) {
-      if (isAdminRoute && user.role !== 'ADMIN') {
-        const previous = routeHistory[routeHistory.length - 2] || '/dashboard'
+    // Admin route check
+    if (isAdminRoute && user.role !== 'ADMIN') {
+      // Find a safe route to redirect to (not admin route)
+      const safeRoutes = routeHistory.filter(route => 
+        !adminRoutes.some(adminRoute => route.startsWith(adminRoute))
+      )
+      const previous = safeRoutes[safeRoutes.length - 2] || '/dashboard'
+      
+      // Only redirect if not already on the target route
+      if (previous !== pathname) {
         router.push(previous)
       }
-    } else if (!isPublicRoute) {
-      const previous = routeHistory[routeHistory.length - 2] || '/login'
-      router.push(previous)
+      return
     }
-  }, [user, pathname, isCheckedAuth, router])
+    
+    // If logged in, prevent access to login/register
+    if (pathname === '/login' || pathname === '/register') {
+      router.push('/dashboard')
+      return
+    }
+    
+  } else if (!isPublicRoute) {
+    // For unauthenticated users, redirect to login
+    if (pathname !== '/login') {
+      router.push('/login')
+    }
+  }
+  
+  // Reset redirect count on successful navigation
+  if (!isPublicRoute || (user && pathname !== '/verify-email')) {
+    sessionStorage.removeItem('redirectCount')
+    sessionStorage.removeItem('lastRedirect')
+  }
+}, [user, pathname, isCheckedAuth, router])
 
   const login = async (email: string, password: string) => {
     setIsLoading(true)

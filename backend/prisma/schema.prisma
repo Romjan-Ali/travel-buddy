@@ -27,12 +27,13 @@ enum MatchStatus {
 }
 
 model User {
-  id         String  @id @default(cuid())
-  email      String  @unique
-  password   String
-  role       Role    @default(USER)
-  isVerified Boolean @default(false)
-  isActive   Boolean @default(true)
+  id              String  @id @default(cuid())
+  email           String  @unique
+  password        String
+  role            Role    @default(USER)
+  isVerified      Boolean @default(false)
+  isActive        Boolean @default(true)
+  isEmailVerified Boolean @default(false)
 
   // Profile relation
   profile Profile?
@@ -148,7 +149,7 @@ model Review {
 }
 
 model Match {
-  id     String @id @default(cuid())
+  id     String      @id @default(cuid())
   status MatchStatus @default(PENDING) // PENDING, ACCEPTED, REJECTED
 
   // Relations
@@ -189,13 +190,13 @@ model Subscription {
 }
 
 model Message {
-  id         String  @id @default(cuid())
-  content    String  @db.Text
+  id         String    @id @default(cuid())
+  content    String    @db.Text
   senderId   String
   receiverId String
   matchId    String?
-  read       Boolean @default(false)
-  deleted    Boolean @default(false)
+  read       Boolean   @default(false)
+  deleted    Boolean   @default(false)
   deletedAt  DateTime?
 
   // Relations

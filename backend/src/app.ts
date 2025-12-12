@@ -8,6 +8,11 @@ import dotenv from 'dotenv'
 import morgan from 'morgan'
 import { createServer } from 'http'
 import { socketService } from './modules/messages/socket.service'
+import { connectRedis } from './config/redis'
+
+;(async () => {
+  await connectRedis()
+})()
 
 // Import middleware
 import { errorHandler, notFound } from './middleware/errorHandler'
@@ -21,6 +26,7 @@ import matchRoutes from './modules/matches/match.routes'
 import paymentRoutes from './modules/payments/payment.routes'
 import adminRoutes from './modules/admin/admin.routes'
 import uploadRoutes from './modules/upload/upload.routes'
+import otpRoutes from './modules/otp/otp.routes'
 
 // Load environment variables
 dotenv.config()
@@ -91,6 +97,7 @@ app.use('/api/matches', matchRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
+app.use('/api/otp', otpRoutes)
 
 // 404 handler
 app.use(notFound)

@@ -754,6 +754,7 @@ export interface AuthUser extends BaseEntity {
   role: string
   isVerified: boolean
   isActive: boolean
+  isEmailVerified: boolean
   profile: Profile
 }
 

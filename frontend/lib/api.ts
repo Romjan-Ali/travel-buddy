@@ -383,3 +383,17 @@ export const messageAPI = {
 
   deleteMessage: (messageId: string) => api.delete(`/messages/${messageId}`),
 }
+
+export const otpAPI = {
+  sendOtp: (data: { email: string; name?: string }) =>
+    api.post<ApiResponse<{ message: string }>, { email: string; name?: string }>(
+      '/otp/send',
+      data
+    ),
+
+  verifyOtp: (data: { email: string; otp: string }) =>
+    api.post<ApiResponse<{ message: string }>, { email: string; otp: string }>(
+      '/otp/verify',
+      data
+    ),
+}

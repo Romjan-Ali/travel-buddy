@@ -119,6 +119,7 @@ export const authService = {
         role: true,
         isVerified: true,
         isActive: true,
+        isEmailVerified: true,
         profile: true,
         createdAt: true,
         updatedAt: true,

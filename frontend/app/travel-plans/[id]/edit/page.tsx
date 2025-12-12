@@ -99,11 +99,11 @@ export default function EditTravelPlanPage() {
   const endDate = watch('endDate')
 
   useEffect(() => {
-    if (travelPlanId) {
+    if (travelPlanId && user) {
       fetchTravelPlan()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [travelPlanId])
+  }, [travelPlanId, user])
 
   const fetchTravelPlan = async () => {
     setIsLoading(true)
@@ -118,7 +118,7 @@ export default function EditTravelPlanPage() {
       }
 
       // Check if user owns this travel plan
-      if (user?.id !== plan.userId && user?.role !== 'ADMIN') {
+      if (user && user?.id !== plan.userId && user?.role !== 'ADMIN') {
         toast.error('You do not have permission to edit this travel plan')
         router.push(`/travel-plans/${travelPlanId}`)
         return
