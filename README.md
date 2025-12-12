@@ -17,23 +17,36 @@
 
 ---
 
+## 🔑 User Credentials (Testing Purpose)
+
+| Role  | Email                  | Password   |
+|-------|------------------------|------------|
+| Admin | admin@travelbuddy.com  | admin123   |
+| User  | user.email.2@gmail.com | w3password |
+| User  | user.email.1@gmail.com | w3password |
+
+---
+
 ## 🌍 Project Overview
 
 **Travel Buddy** is a full-stack web application designed to help travelers connect, plan trips, and share experiences. Built with modern TypeScript technologies, it provides a seamless platform for travel enthusiasts to discover destinations, coordinate with fellow travelers, and manage their journeys.
 
 ## ✨ Features
 
--   **User Authentication & Roles**: Secure registration and login with email/password. Role-based access control for Users and Admins.
--   **Profile Management**: Create and manage user profiles with details like name, bio, travel interests, and profile picture.
--   **Travel Plan Management**: Users can create, view, update, and delete their travel plans.
--   **Search & Matching**: Find travel buddies based on destination, date, and interests.
--   **Review & Rating System**: Leave reviews and ratings for fellow travelers after a trip.
--   **Payment Integration**: Subscription plans for premium features. User won't be able to create plan, match with anoter user and view profile without subscription.
--   **Admin Dashboard**: Admins can manage users, travel plans, and other content.
+- **User Authentication & Roles**: Secure registration and login with email/password. Role-based access control for Users and Admins.
+- **Profile Management**: Create and manage user profiles with details like name, bio, travel interests, and profile picture.
+- **Travel Plan Management**: Users can create, view, update, and delete their travel plans.
+- **Search & Matching**: Find travel buddies based on destination, date, and interests.
+- **Review & Rating System**: Leave reviews and ratings for fellow travelers after a trip.
+- **Payment Integration**: Subscription plans for premium features. Users cannot create plans, match with others, or view profiles without an active subscription.
+- **Admin Dashboard**: Admins can manage users, travel plans, and other content.
 
-### Live Demo
+---
 
-🔗 [https://travel-buddy-meetup.onrender.com](https://travel-buddy-meetup.onrender.com)
+## 🔗 Live Demo
+
+- **Frontend**: https://travel-buddy-meetup.onrender.com  
+- **Backend API**: https://travel-buddy-lk56.onrender.com/api
 
 ---
 
