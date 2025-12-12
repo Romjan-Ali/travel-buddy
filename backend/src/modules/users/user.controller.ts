@@ -28,7 +28,11 @@ export const userController = {
 
   async getPublicProfile(req: AuthRequest, res: Response) {
     const { id } = req.params
-    const user = await userService.getPublicProfile(id)
+    const userId = req.user?.id
+    if (!userId) {
+      return sendResponse(res, 401, 'Unauthorized')
+    }
+    const user = await userService.getPublicProfile(userId, id)
     sendResponse(res, 200, 'Public profile retrieved successfully', { user })
   },
 

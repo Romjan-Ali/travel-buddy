@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { useProtectedRoute } from '@/lib/auth-context'
-import { travelPlanAPI } from '@/lib/api'
+import { paymentAPI, travelPlanAPI } from '@/lib/api'
 import type { CreateTravelPlanInput } from '@/types'
 import { toast } from 'sonner'
 import { Calendar, MapPin, DollarSign, Globe, ArrowLeft } from 'lucide-react'
@@ -74,6 +74,13 @@ export default function NewTravelPlanPage() {
 
   const onSubmit = async (data: TravelPlanFormData): Promise<void> => {
     setIsLoading(true)
+    const subscription = await paymentAPI.getSubscription()
+    if (subscription.data.subscription?.status !== 'active') {
+      toast.error('You need an active subscription to send match requests')
+      setIsLoading(false)
+      router.push('/payments')
+      return
+    }
     try {
       const response = await travelPlanAPI.create(data as CreateTravelPlanInput)
       toast.success('Travel plan created successfully!')

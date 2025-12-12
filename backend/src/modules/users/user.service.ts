@@ -1,7 +1,7 @@
 // backend/src/modules/users/user.service.ts
-import { prisma } from '../../lib/prisma';
-import type { ProfileInput } from '../../utils/types';
-import { AppError } from '../../middleware/errorHandler';
+import { prisma } from '../../lib/prisma'
+import type { ProfileInput } from '../../utils/types'
+import { AppError } from '../../middleware/errorHandler'
 
 export const userService = {
   async getUserProfile(userId: string) {
@@ -41,13 +41,13 @@ export const userService = {
           },
         },
       },
-    });
+    })
 
     if (!user) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(404, 'User not found')
     }
 
-    return user;
+    return user
   },
 
   async updateUserProfile(userId: string, profileData: ProfileInput) {
@@ -55,10 +55,10 @@ export const userService = {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { profile: true },
-    });
+    })
 
     if (!user) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(404, 'User not found')
     }
 
     // Update or create profile
@@ -79,31 +79,43 @@ export const userService = {
         profile: true,
         updatedAt: true,
       },
-    });
+    })
 
-    return updatedUser;
+    return updatedUser
   },
 
-  async getPublicProfile(userId: string) {
+  async getPublicProfile(authUserId: string, userId: string) {
+    // Check Subscription Status
+    const userSubscription = await prisma.subscription.findFirst({
+      where: { userId: authUserId, currentPeriodEnd: { gt: new Date() } },
+    })
+
+    if (!userSubscription) {
+      throw new AppError(
+        403,
+        'Active subscription required to get public profiles'
+      )
+    }
+
     const user = await prisma.user.findUnique({
-      where: { 
+      where: {
         id: userId,
-        isActive: true 
+        isActive: true,
       },
       select: {
         id: true,
         profile: true,
         travelPlans: {
-          where: { 
+          where: {
             isPublic: true,
-            startDate: { gte: new Date() }
+            startDate: { gte: new Date() },
           },
           orderBy: { startDate: 'asc' },
           take: 3,
         },
         reviewsReceived: {
           where: {
-            rating: { gte: 4 }
+            rating: { gte: 4 },
           },
           include: {
             author: {
@@ -127,17 +139,17 @@ export const userService = {
           },
         },
       },
-    });
+    })
 
     if (!user) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(404, 'User not found')
     }
 
-    return user;
+    return user
   },
 
   async searchUsers(query: string, page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit
 
     const users = await prisma.user.findMany({
       where: {
@@ -193,7 +205,7 @@ export const userService = {
           fullName: 'asc',
         },
       },
-    });
+    })
 
     const total = await prisma.user.count({
       where: {
@@ -217,7 +229,7 @@ export const userService = {
           },
         ],
       },
-    });
+    })
 
     return {
       users,
@@ -227,6 +239,6 @@ export const userService = {
         total,
         pages: Math.ceil(total / limit),
       },
-    };
+    }
   },
-};
+}

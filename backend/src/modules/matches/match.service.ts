@@ -31,7 +31,7 @@ export const matchService = {
         throw new AppError(404, 'Travel plan not found or not accessible')
       }
 
-      if(travelPlan.endDate < new Date()) {
+      if (travelPlan.endDate < new Date()) {
         throw new AppError(400, 'Cannot match on an expired travel plan')
       }
     }
@@ -47,6 +47,15 @@ export const matchService = {
 
     if (existingMatch) {
       throw new AppError(400, 'Match request already sent')
+    }
+
+    // Check Subscription Status
+    const userSubscription = await prisma.subscription.findFirst({
+      where: { userId, currentPeriodEnd: { gt: new Date() } },
+    })
+
+    if (!userSubscription) {
+      throw new AppError(403, 'Active subscription required to create matches')
     }
 
     const match = await prisma.match.create({

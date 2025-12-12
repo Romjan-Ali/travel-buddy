@@ -14,6 +14,15 @@ export const travelPlanService = {
       isPublic,
     } = planData
 
+    // Check Subscription Status
+    const userSubscription = await prisma.subscription.findFirst({
+      where: { userId, currentPeriodEnd: { gt: new Date() } },
+    })
+
+    if (!userSubscription) {
+      throw new AppError(403, 'Active subscription required to create plans')
+    }
+
     const travelPlan = await prisma.travelPlan.create({
       data: {
         destination,
@@ -245,7 +254,16 @@ export const travelPlanService = {
 
     const where: any = {
       isPublic: true,
-      // startDate: { gte: new Date() }, // Only future plans
+      startDate: { gte: new Date() }, // Only future plans
+    }
+    // require creator to have an active subscription (and not expired)
+    const now = new Date()
+    let userFilter: any = {
+      subscriptions: {
+        some: {
+          currentPeriodEnd: { gte: now },
+        },
+      },
     }
 
     if (filters.destination) {
@@ -269,14 +287,23 @@ export const travelPlanService = {
     }
 
     if (filters.interests?.length) {
-      where.user = {
-        profile: {
-          travelInterests: {
-            hasSome: filters.interests,
+      // combine interests filter with the subscription requirement
+      userFilter = {
+        AND: [
+          userFilter,
+          {
+            profile: {
+              travelInterests: {
+                hasSome: filters.interests,
+              },
+            },
           },
-        },
+        ],
       }
     }
+
+    // attach the combined user filter to the main where clause
+    where.user = userFilter
 
     let orderBy: any = { startDate: 'asc' } // default upcoming
 

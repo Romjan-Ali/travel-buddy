@@ -1,11 +1,11 @@
 // frontend/app/travel-plans/[id]/page.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
-import { travelPlanAPI, matchAPI, reviewAPI } from '@/lib/api'
+import { travelPlanAPI, matchAPI, reviewAPI, paymentAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { ArrowLeft } from 'lucide-react'
 import { TravelPlanHeader } from './components/TravelPlanHeader'
@@ -15,6 +15,7 @@ import { TravelPlanSidebar } from './components/TravelPlanSidebar'
 import { MatchRequestDialog } from './components/MatchRequestDialog'
 import { TravelPlanReviews } from './components/TravelPlanReviews'
 import { Match, Review, TravelPlan } from '@/types'
+import Loading from '@/components/loading'
 
 export default function TravelPlanDetailsPage() {
   const params = useParams()
@@ -23,6 +24,7 @@ export default function TravelPlanDetailsPage() {
   const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [joinRequestLoading, setJoinRequestLoading] = useState(false)
   const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false)
   const [userMatchStatus, setUserMatchStatus] = useState<
     'PENDING' | 'ACCEPTED' | 'REJECTED' | null
@@ -72,15 +74,12 @@ export default function TravelPlanDetailsPage() {
   }
 
   const fetchReviews = async () => {
-    setIsLoading(true)
     try {
       const result = await reviewAPI.getTravelPlanReviews(travelPlanId)
       setReviews(result.data.reviews || [])
     } catch (error) {
       toast.error('Failed to load reviews')
       console.error('Reviews error:', error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -114,6 +113,34 @@ export default function TravelPlanDetailsPage() {
     )
     fetchTravelPlan()
     fetchUserMatchStatus()
+  }
+
+  const handlJoinRequestClick = async () => {
+    setJoinRequestLoading(true)
+    if (!user) {
+      toast.error('Please login to send match requests')
+      setJoinRequestLoading(false)
+      return
+    }
+
+    // Check if user is viewing their own plan
+    if (user.id === travelPlan?.user?.id) {
+      toast.error('You cannot send a match request to your own travel plan')
+      setJoinRequestLoading(false)
+      return
+    }
+
+    const subscription = await paymentAPI.getSubscription()
+    if (subscription.data.subscription?.status !== 'active') {
+      toast.error('You need an active subscription to send match requests')
+      router.push('/payments')
+      setJoinRequestLoading(false)
+      return
+    }
+
+    // setSelectedPlan(plan)
+    setIsMatchDialogOpen(true)
+    setJoinRequestLoading(false)
   }
 
   if (isLoading) {
@@ -168,10 +195,11 @@ export default function TravelPlanDetailsPage() {
         isPlanOwner={isPlanOwner}
         userMatchStatus={userMatchStatus}
         isUpcoming={isUpcoming}
+        joinRequestLoading={joinRequestLoading}
         onEdit={() => router.push(`/travel-plans/${travelPlanId}/edit`)}
         onDelete={handleDelete}
         onShare={handleShare}
-        onRequestToJoin={() => setIsMatchDialogOpen(true)}
+        onRequestToJoin={handlJoinRequestClick}
       />
 
       <TravelPlanStats

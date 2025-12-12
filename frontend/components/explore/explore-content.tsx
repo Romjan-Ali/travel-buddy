@@ -35,7 +35,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/lib/auth-context'
-import { travelPlanAPI, matchAPI } from '@/lib/api'
+import { travelPlanAPI, matchAPI, paymentAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import {
   Search,
@@ -53,10 +53,13 @@ import {
   UserPlus,
   CheckCircle,
   Clock,
-  XCircle, // Added
+  XCircle,
+  LoaderCircle, // Added
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { Match, TravelPlan, TravelPlansResponse } from '@/types'
+import { set } from 'date-fns'
+import { useRouter } from 'next/navigation'
 
 interface MatchRequestDialogProps {
   travelPlan: TravelPlan
@@ -218,8 +221,10 @@ function MatchRequestDialog({
 export default function ExplorePage() {
   const searchParams = useSearchParams()
   const { user } = useAuth()
+  const router = useRouter()
   const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [joinRequestLoading, setJoinRequestLoading] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<TravelPlan | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [filters, setFilters] = useState({
@@ -306,20 +311,32 @@ export default function ExplorePage() {
     setPage(1)
   }
 
-  const handleRequestClick = (plan: TravelPlan) => {
+  const handleRequestClick = async (plan: TravelPlan) => {
+    setJoinRequestLoading(true)
     if (!user) {
       toast.error('Please login to send match requests')
+      setJoinRequestLoading(false)
       return
     }
 
     // Check if user is viewing their own plan
     if (user.id === plan.user?.id) {
       toast.error('You cannot send a match request to your own travel plan')
+      setJoinRequestLoading(false)
+      return
+    }
+
+    const subscription = await paymentAPI.getSubscription()
+    if (subscription.data.subscription?.status !== 'active') {
+      toast.error('You need an active subscription to send match requests')
+      router.push('/payments')
+      setJoinRequestLoading(false)
       return
     }
 
     setSelectedPlan(plan)
     setIsDialogOpen(true)
+    setJoinRequestLoading(false)
   }
 
   const handleMatchSuccess = async () => {
@@ -669,12 +686,17 @@ export default function ExplorePage() {
                             <>
                               <Button
                                 className="flex-1 gap-2"
+                                disabled={joinRequestLoading}
                                 onClick={(e) => {
                                   e.preventDefault()
                                   handleRequestClick(plan)
                                 }}
                               >
-                                <UserPlus className="h-4 w-4" />
+                                {joinRequestLoading ? (
+                                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <UserPlus className="h-4 w-4" />
+                                )}
                                 Request to Join
                               </Button>
                               <Button
