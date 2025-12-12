@@ -28,6 +28,7 @@ import {
 import { otpAPI } from '@/lib/api'
 import { useAuth } from '@/lib/auth-context'
 import { cn } from '@/lib/utils'
+import { AuthUser } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Dot } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -44,7 +45,7 @@ const FormSchema = z.object({
 
 export default function Verify() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const [confirmed, setConfirmed] = useState(false)
   const [timer, setTimer] = useState(300)
 
@@ -84,6 +85,7 @@ export default function Verify() {
       if (res.success) {
         toast.success('OTP Verified', { id: toastId })
         setConfirmed(true)
+        updateUser({ ...user, isEmailVerified: true } as unknown as AuthUser)
         router.push('/')
       }
     } catch (err: any) {
@@ -105,6 +107,12 @@ export default function Verify() {
 
     return () => clearInterval(timerId)
   }, [user?.email, confirmed])
+
+  useEffect(() => {
+    if (user?.isEmailVerified) {
+      router.push('/')
+    }
+  }, [user?.email, router, user?.isEmailVerified])
 
   return (
     <div className="grid place-content-center h-screen">

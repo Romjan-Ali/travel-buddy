@@ -72,7 +72,6 @@ useEffect(() => {
     '/contact',
     '/api/auth',
     '/_next',
-    '/verify-email',
   ]
 
   const adminRoutes = ['/admin']

@@ -1,3 +1,4 @@
+// frontend/app/layout.tsx
 import type React from 'react'
 import type { Metadata } from 'next'
 import { AuthProvider } from '@/lib/auth-context'
@@ -57,7 +58,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
-            <Toaster />
+            <Toaster richColors closeButton />
           </div>
         </AuthProvider>
       </body>

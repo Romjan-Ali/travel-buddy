@@ -41,7 +41,7 @@ export function Navbar() {
     const fetchPendingReviews = async () => {
       if (user) {
         try {
-          const response = await reviewAPI.getMyReviews('received')
+          const response = await reviewAPI.getPendingReviews()
           const reviews = response.data.reviews || []
           setPendingReviews(reviews.length)
         } catch (error) {

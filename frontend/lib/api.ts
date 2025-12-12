@@ -248,6 +248,19 @@ export const reviewAPI = {
       }>
     >(`/reviews/my-reviews?type=${type}&page=${page}&limit=${limit}`),
 
+  getPendingReviews: (page = 1, limit = 10) =>
+    api.get<
+      ApiResponse<{
+        reviews: Review[]
+        pagination: {
+          page: number
+          limit: number
+          total: number
+          pages: number
+        }
+      }>
+    >(`/reviews/pending-reviews?page=${page}&limit=${limit}`),
+
   update: (id: string, data: { rating?: number; comment?: string }) =>
     api.patch<
       ApiResponse<{ review: Review }>,

@@ -35,11 +35,17 @@ export const authenticate = async (
         role: true,
         isActive: true,
         isVerified: true,
+        isEmailVerified: true,
       },
     });
 
     if (!user || !user.isActive) {
       sendResponse(res, 401, 'User not found or inactive');
+      return;
+    }
+
+    if(!user.isEmailVerified) {
+      sendResponse(res, 403, 'Email not verified');
       return;
     }
 
