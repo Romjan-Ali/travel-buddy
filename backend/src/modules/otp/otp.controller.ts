@@ -4,7 +4,7 @@ import type { Request, Response } from 'express'
 import { otpService } from './otp.service'
 import { sendResponse } from '../../utils/helpers'
 
-export const OTPController = {
+export const OtpController = {
   async sendOTP(req: Request, res: Response) {
     const { email, name } = req.body
 

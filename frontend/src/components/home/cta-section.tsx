@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import React from 'react'
 import { Button } from '../ui/button'
 import { Plane, Users } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'

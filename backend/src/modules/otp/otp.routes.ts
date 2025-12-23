@@ -1,10 +1,10 @@
 // backend/src/modules/otp/otp.routes.ts
 import express from 'express'
-import { OTPController } from './otp.controller'
+import { OtpController } from './otp.controller'
 
 const router = express.Router()
 
-router.post('/send', OTPController.sendOTP)
-router.post('/verify', OTPController.verifyOTP)
+router.post('/send', OtpController.sendOTP)
+router.post('/verify', OtpController.verifyOTP)
 
 export default router

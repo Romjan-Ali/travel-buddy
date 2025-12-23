@@ -3,10 +3,9 @@
 
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react'
-import Image from 'next/image'
 
 const testimonials = [
   {
@@ -75,16 +74,17 @@ export function Testimonials() {
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 <div className="shrink-0">
                   <Avatar className="h-20 w-20">
+                    <AvatarImage
+                      src={testimonials[currentIndex].image}
+                      alt={testimonials[currentIndex].name}
+                      width={600}
+                      height={600}
+                    />
                     <AvatarFallback className="text-lg">
-                      <Image
-                        src={testimonials[currentIndex].image}
-                        width={600}
-                        height={600}
-                        alt={testimonials[currentIndex].name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')}
-                      />
+                      {testimonials[currentIndex].name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')}
                     </AvatarFallback>
                   </Avatar>
                 </div>
