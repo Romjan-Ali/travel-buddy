@@ -1,6 +1,7 @@
 // frontend/app/explore/page.tsx
 import { Suspense } from 'react'
 import ExploreContent from '@/components/explore/explore-content'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export const metadata = {
   title: 'Explore - Travel Buddy',
@@ -26,10 +27,10 @@ function ExploreLoadingSkeleton() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="h-64 bg-gray-200 rounded-lg mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          <div key={i}>
+            <Skeleton className="h-64 rounded-lg mb-4" />
+            <Skeleton className="h-4 rounded w-3/4 mb-2" />
+            <Skeleton className="h-3 rounded w-1/2" />
           </div>
         ))}
       </div>

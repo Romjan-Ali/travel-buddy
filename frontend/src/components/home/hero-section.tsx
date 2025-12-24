@@ -11,7 +11,7 @@ export function HeroSection() {
   const { user } = useAuth()
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-20 md:py-32 px-8">
       <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/5" />
       <div className="container relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">

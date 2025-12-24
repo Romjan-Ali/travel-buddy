@@ -55,7 +55,7 @@ export default function DashboardPage() {
         type: 'received',
         status: 'ACCEPTED',
         page: 1,
-        limit: 5
+        limit: 5,
       })
       setRecentMatches(matchesData.data.matches || [])
     } catch (error) {
@@ -76,7 +76,8 @@ export default function DashboardPage() {
           Welcome back, {user.profile?.fullName || 'Traveler'}! 👋
         </h1>
         <p className="text-muted-foreground">
-          Here&apos;s what&apos;s happening with your travel plans and connections
+          Here&apos;s what&apos;s happening with your travel plans and
+          connections
         </p>
       </div>
 
@@ -300,7 +301,7 @@ export default function DashboardPage() {
               <CardDescription>Get things done faster</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/explore">
+              <Link href="/explore" className="block">
                 <Button
                   variant="outline"
                   className="w-full justify-start gap-2"
@@ -309,7 +310,7 @@ export default function DashboardPage() {
                   Find Travel Buddies
                 </Button>
               </Link>
-              <Link href="/travel-plans/new">
+              <Link href="/travel-plans/new" className="block">
                 <Button
                   variant="outline"
                   className="w-full justify-start gap-2"
@@ -318,7 +319,7 @@ export default function DashboardPage() {
                   Create Travel Plan
                 </Button>
               </Link>
-              <Link href="/profile">
+              <Link href="/profile" className="block">
                 <Button
                   variant="outline"
                   className="w-full justify-start gap-2"
@@ -327,7 +328,7 @@ export default function DashboardPage() {
                   Edit Profile
                 </Button>
               </Link>
-              <Link href="/explore?filter=popular">
+              <Link href="/explore?filter=popular" className="block">
                 <Button
                   variant="outline"
                   className="w-full justify-start gap-2"
