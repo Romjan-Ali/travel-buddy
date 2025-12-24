@@ -1,3 +1,4 @@
+// frontend/src/components/home/popular-destination.tsx
 import Link from 'next/link'
 import Image from 'next/image'
 import {

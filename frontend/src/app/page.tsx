@@ -1,4 +1,4 @@
-// frontend/app/page.tsx
+// frontend/src/app/page.tsx
 
 import { HeroSection } from '@/components/home/hero-section'
 import { HowItWorks } from '@/components/home/how-it-works'

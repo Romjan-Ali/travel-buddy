@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { User, Settings, LogOut } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
 import { NavItem } from './NavItems'

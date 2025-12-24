@@ -1,4 +1,4 @@
-// frontend/components/home/how-it-works.tsx
+// frontend/src/components/home/how-it-works.tsx
 import {
   Card,
   CardDescription,
@@ -53,10 +53,12 @@ export function HowItWorks() {
           {steps.map((step, index) => (
             <Card key={index} className="relative card-hover">
               <div className="absolute -top-4 left-6">
-                <div
-                  className={`h-12 w-12 rounded-lg ${step.color} flex items-center justify-center`}
-                >
-                  <step.icon className="h-6 w-6" />
+                <div className="bg-gray-900 rounded-lg">
+                  <div
+                    className={`h-12 w-12 rounded-lg ${step.color} flex items-center justify-center`}
+                  >
+                    <step.icon className="h-6 w-6" />
+                  </div>
                 </div>
               </div>
               <CardHeader className="pt-10">

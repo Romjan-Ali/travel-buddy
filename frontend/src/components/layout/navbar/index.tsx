@@ -15,6 +15,7 @@ import { Notifications } from './Notifications'
 import { UserMenu } from './UserMenu'
 import { getNavItems } from './NavItems'
 import { Menu, X } from 'lucide-react'
+import { ModeToggle } from './ThemeToggler'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -70,6 +71,8 @@ export function Navbar() {
 
         {/* Right Section: Actions & Auth */}
         <div className="flex items-center gap-4">
+        <ModeToggle />
+
           {/* Notifications */}
           {user && <Notifications pendingReviews={pendingReviews} />}
 

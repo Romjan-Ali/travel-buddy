@@ -1,4 +1,4 @@
-// frontend/components/home/hero-section.tsx
+// frontend/src/components/home/hero-section.tsx
 'use client'
 
 import Link from 'next/link'

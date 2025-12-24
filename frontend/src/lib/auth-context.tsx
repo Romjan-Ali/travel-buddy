@@ -1,3 +1,4 @@
+// frontend/src/lib/auth-context.tsx
 // frontend/lib/auth-context.tsx
 'use client'
 
@@ -68,6 +69,7 @@ useEffect(() => {
     '/login',
     '/register',
     '/',
+    '/explore',
     '/about',
     '/contact',
     '/api/auth',

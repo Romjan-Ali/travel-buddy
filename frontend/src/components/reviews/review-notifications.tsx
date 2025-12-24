@@ -10,6 +10,7 @@ import { reviewAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { Bell, Star, Calendar, X } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import Image from 'next/image'
 
 interface ReviewNotification {
   id: string
@@ -48,7 +49,9 @@ export function ReviewNotifications() {
   }
 
   const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id))
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
+    )
   }
 
   if (!isOpen || notifications.length === 0) {
@@ -85,7 +88,7 @@ export function ReviewNotifications() {
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                   {notification.subjectImage ? (
-                    <img
+                    <Image
                       src={notification.subjectImage}
                       alt={notification.subjectName}
                       className="h-10 w-10 rounded-full"

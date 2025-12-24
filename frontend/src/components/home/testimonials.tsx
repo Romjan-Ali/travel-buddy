@@ -1,3 +1,4 @@
+// frontend/src/components/home/testimonials.tsx
 // frontend/components/home/testimonials.tsx
 'use client'
 
@@ -41,6 +42,24 @@ const testimonials = [
     travel: 'Thailand & Vietnam',
   },
 ]
+
+const stats = [
+  {
+    id: 'travelers',
+    value: '10,000+',
+    label: 'Happy Travelers',
+  },
+  {
+    id: 'trips',
+    value: '2,500+',
+    label: 'Successful Trips',
+  },
+  {
+    id: 'rating',
+    value: '4.8/5',
+    label: 'Average Rating',
+  },
+] as const
 
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -153,18 +172,17 @@ export function Testimonials() {
         </div>
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">10,000+</div>
-            <div className="text-muted-foreground">Happy Travelers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">2,500+</div>
-            <div className="text-muted-foreground">Successful Trips</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">4.8/5</div>
-            <div className="text-muted-foreground">Average Rating</div>
-          </div>
+          {stats.map(({ id, value, label }) => (
+            <div key={id} className="text-center">
+              <div
+                className="text-3xl font-bold text-primary mb-2"
+                aria-label={label}
+              >
+                {value}
+              </div>
+              <div className="text-muted-foreground">{label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,3 +1,4 @@
+// frontend/src/app/layout.tsx
 // frontend/app/layout.tsx
 import type React from 'react'
 import type { Metadata } from 'next'
@@ -6,6 +7,7 @@ import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { Toaster } from 'sonner'
 import './globals.css'
+import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata: Metadata = {
   title: 'Travel Buddy & Meetup - Find Your Perfect Travel Companion',
@@ -51,16 +53,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans">
-        <AuthProvider>
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-4">
-              {children}
-            </main>
-            <Footer />
-            <Toaster richColors closeButton />
-          </div>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1 container mx-auto px-4 py-4">
+                {children}
+              </main>
+              <Footer />
+              <Toaster richColors closeButton />
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
