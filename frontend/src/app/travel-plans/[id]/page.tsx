@@ -16,6 +16,7 @@ import { MatchRequestDialog } from '../../../components/travel-plans/MatchReques
 import { TravelPlanReviews } from '../../../components/travel-plans/TravelPlanReviews'
 import { Match, Review, TravelPlan } from '@/types'
 import Loading from '@/components/loading'
+import { set } from 'zod'
 
 export default function TravelPlanDetailsPage() {
   const params = useParams()
@@ -29,6 +30,7 @@ export default function TravelPlanDetailsPage() {
   const [userMatchStatus, setUserMatchStatus] = useState<
     'PENDING' | 'ACCEPTED' | 'REJECTED' | null
   >(null)
+  const [savedPlans, setSavedPlans] = useState<Set<string>>(new Set())
 
   const travelPlanId = params.id as string
 
@@ -45,6 +47,11 @@ export default function TravelPlanDetailsPage() {
     try {
       const result = await travelPlanAPI.getById(travelPlanId)
       setTravelPlan(result.data?.travelPlan || null)
+      setSavedPlans(
+        result.data?.travelPlan?.savedByMe
+          ? new Set([travelPlanId])
+          : new Set()
+      )
     } catch (error) {
       toast.error('Failed to load travel plan details')
       console.error('Travel plan details error:', error)
@@ -220,6 +227,8 @@ export default function TravelPlanDetailsPage() {
           onRequestToJoin={() => setIsMatchDialogOpen(true)}
           reviews={reviews}
           fetchReviews={fetchReviews}
+          savedPlans={savedPlans}
+          setSavedPlans={setSavedPlans}
         />
 
         <TravelPlanSidebar

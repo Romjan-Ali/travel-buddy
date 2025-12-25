@@ -387,7 +387,7 @@ export const ModelName = {
   User: 'User',
   Profile: 'Profile',
   TravelPlan: 'TravelPlan',
-  TravelPlanLike: 'TravelPlanLike',
+  SavedTravelPlan: 'SavedTravelPlan',
   TripPhoto: 'TripPhoto',
   Review: 'Review',
   Match: 'Match',
@@ -408,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "profile" | "travelPlan" | "travelPlanLike" | "tripPhoto" | "review" | "match" | "subscription" | "message"
+    modelProps: "user" | "profile" | "travelPlan" | "savedTravelPlan" | "tripPhoto" | "review" | "match" | "subscription" | "message"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -634,77 +634,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    TravelPlanLike: {
-      payload: Prisma.$TravelPlanLikePayload<ExtArgs>
-      fields: Prisma.TravelPlanLikeFieldRefs
+    SavedTravelPlan: {
+      payload: Prisma.$SavedTravelPlanPayload<ExtArgs>
+      fields: Prisma.SavedTravelPlanFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.TravelPlanLikeFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload> | null
+          args: Prisma.SavedTravelPlanFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.TravelPlanLikeFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>
+          args: Prisma.SavedTravelPlanFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>
         }
         findFirst: {
-          args: Prisma.TravelPlanLikeFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload> | null
+          args: Prisma.SavedTravelPlanFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.TravelPlanLikeFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>
+          args: Prisma.SavedTravelPlanFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>
         }
         findMany: {
-          args: Prisma.TravelPlanLikeFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>[]
+          args: Prisma.SavedTravelPlanFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>[]
         }
         create: {
-          args: Prisma.TravelPlanLikeCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>
+          args: Prisma.SavedTravelPlanCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>
         }
         createMany: {
-          args: Prisma.TravelPlanLikeCreateManyArgs<ExtArgs>
+          args: Prisma.SavedTravelPlanCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.TravelPlanLikeCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>[]
+          args: Prisma.SavedTravelPlanCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>[]
         }
         delete: {
-          args: Prisma.TravelPlanLikeDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>
+          args: Prisma.SavedTravelPlanDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>
         }
         update: {
-          args: Prisma.TravelPlanLikeUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>
+          args: Prisma.SavedTravelPlanUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>
         }
         deleteMany: {
-          args: Prisma.TravelPlanLikeDeleteManyArgs<ExtArgs>
+          args: Prisma.SavedTravelPlanDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.TravelPlanLikeUpdateManyArgs<ExtArgs>
+          args: Prisma.SavedTravelPlanUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.TravelPlanLikeUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>[]
+          args: Prisma.SavedTravelPlanUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>[]
         }
         upsert: {
-          args: Prisma.TravelPlanLikeUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelPlanLikePayload>
+          args: Prisma.SavedTravelPlanUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavedTravelPlanPayload>
         }
         aggregate: {
-          args: Prisma.TravelPlanLikeAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateTravelPlanLike>
+          args: Prisma.SavedTravelPlanAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSavedTravelPlan>
         }
         groupBy: {
-          args: Prisma.TravelPlanLikeGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TravelPlanLikeGroupByOutputType>[]
+          args: Prisma.SavedTravelPlanGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SavedTravelPlanGroupByOutputType>[]
         }
         count: {
-          args: Prisma.TravelPlanLikeCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TravelPlanLikeCountAggregateOutputType> | number
+          args: Prisma.SavedTravelPlanCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SavedTravelPlanCountAggregateOutputType> | number
         }
       }
     }
@@ -1168,14 +1168,14 @@ export const TravelPlanScalarFieldEnum = {
 export type TravelPlanScalarFieldEnum = (typeof TravelPlanScalarFieldEnum)[keyof typeof TravelPlanScalarFieldEnum]
 
 
-export const TravelPlanLikeScalarFieldEnum = {
+export const SavedTravelPlanScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   travelPlanId: 'travelPlanId',
   createdAt: 'createdAt'
 } as const
 
-export type TravelPlanLikeScalarFieldEnum = (typeof TravelPlanLikeScalarFieldEnum)[keyof typeof TravelPlanLikeScalarFieldEnum]
+export type SavedTravelPlanScalarFieldEnum = (typeof SavedTravelPlanScalarFieldEnum)[keyof typeof SavedTravelPlanScalarFieldEnum]
 
 
 export const TripPhotoScalarFieldEnum = {
@@ -1466,7 +1466,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   profile?: Prisma.ProfileOmit
   travelPlan?: Prisma.TravelPlanOmit
-  travelPlanLike?: Prisma.TravelPlanLikeOmit
+  savedTravelPlan?: Prisma.SavedTravelPlanOmit
   tripPhoto?: Prisma.TripPhotoOmit
   review?: Prisma.ReviewOmit
   match?: Prisma.MatchOmit

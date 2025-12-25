@@ -69,7 +69,7 @@ export default function ExplorePage() {
     new Set()
   )
   const [sentMatchRequests, setSentMatchRequests] = useState<Match[]>([])
-  const [likedPlans, setLikedPlans] = useState<Set<string>>(new Set())
+  const [savedPlans, setSavedPlans] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchTravelPlans()
@@ -112,8 +112,8 @@ export default function ExplorePage() {
       setTravelPlans(result.data?.plans || [])
       setTotalPages(result.data?.pagination?.pages || 1)
       result.data?.plans.forEach((plan) => {
-        if (plan.likedByMe) {
-          setLikedPlans((prev) => new Set(prev).add(plan.id))
+        if (plan.savedByMe) {
+          setSavedPlans((prev) => new Set(prev).add(plan.id))
         }
       })
     } catch (error) {
@@ -174,23 +174,23 @@ export default function ExplorePage() {
     setJoinRequestLoading(false)
   }
 
-  const handleLikeBtnClick = async (planId: string) => {
-    if (likedPlans.has(planId)) {
-      setLikedPlans((prev) => {
+  const handleSaveBtnClick = async (planId: string) => {
+    if (savedPlans.has(planId)) {
+      setSavedPlans((prev) => {
         const newSet = new Set(prev)
         newSet.delete(planId)
         return newSet
       })
     } else {
-      setLikedPlans((prev) => new Set(prev).add(planId))
+      setSavedPlans((prev) => new Set(prev).add(planId))
     }
     
     try {
       const response = await travelPlanAPI.likeTravelPlan(planId)
-      if (response.data.isLiked) {
-        setLikedPlans((prev) => new Set(prev).add(planId))
+      if (response.data.isSaved) {
+        setSavedPlans((prev) => new Set(prev).add(planId))
       } else {
-        setLikedPlans((prev) => {
+        setSavedPlans((prev) => {
           const newSet = new Set(prev)
           newSet.delete(planId)
           return newSet
@@ -567,10 +567,10 @@ export default function ExplorePage() {
                                 className="px-3"
                                 onClick={(e) => {
                                   e.preventDefault()
-                                  handleLikeBtnClick(plan.id)
+                                  handleSaveBtnClick(plan.id)
                                 }}
                               >
-                                {likedPlans.has(plan.id) ? (
+                                {savedPlans.has(plan.id) ? (
                                   <Heart className="h-4 w-4 fill-red-600 text-red-600 scale-105 overflow-hidden" />
                                 ) : (
                                   <Heart className="h-4 w-4" />

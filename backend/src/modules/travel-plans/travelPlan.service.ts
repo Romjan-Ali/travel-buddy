@@ -101,7 +101,7 @@ export const travelPlanService = {
     }
   },
 
-  async getTravelPlanById(planId: string) {
+  async getTravelPlanById(planId: string, userId?: string) {
     const travelPlan = await prisma.travelPlan.findUnique({
       where: { id: planId },
       include: {
@@ -166,7 +166,13 @@ export const travelPlanService = {
       throw new AppError(404, 'Travel plan not found')
     }
 
-    return travelPlan
+    const savedTravelPlans = await prisma.savedTravelPlan.findMany({
+      where: { travelPlanId: planId },
+    })
+
+    const savedByMe = userId ? savedTravelPlans.length > 0 : false
+
+    return { ...travelPlan, savedByMe }
   },
 
   async updateTravelPlan(
@@ -219,8 +225,8 @@ export const travelPlanService = {
     return travelPlan
   },
 
-  async likeTravelPlan(userId: string, travelPlanId: string) {
-    const existingLike = await prisma.travelPlanLike.findUnique({
+  async toggleSaveTravelPlan(userId: string, travelPlanId: string) {
+    const existingSavedTravelPlan = await prisma.savedTravelPlan.findUnique({
       where: {
         userId_travelPlanId: {
           userId,
@@ -229,8 +235,8 @@ export const travelPlanService = {
       },
     })
 
-    if (existingLike) {
-      await prisma.travelPlanLike.delete({
+    if (existingSavedTravelPlan) {
+      await prisma.savedTravelPlan.delete({
         where: {
           userId_travelPlanId: {
             userId,
@@ -239,14 +245,14 @@ export const travelPlanService = {
         },
       })
     } else {
-      await prisma.travelPlanLike.create({
+      await prisma.savedTravelPlan.create({
         data: {
           userId,
           travelPlanId,
         },
       })
     }
-    return !existingLike // return true if liked, false if unliked
+    return !existingSavedTravelPlan // return true if liked, false if unliked
   },
 
   async deleteTravelPlan(planId: string, userId: string) {
@@ -365,13 +371,13 @@ export const travelPlanService = {
       _count: {
         select: {
           matches: true,
-          travelPlanLikes: true,
+          savedTravelPlans: true,
         },
       },
     }
 
     if (userId) {
-      include.travelPlanLikes = { where: { userId }, select: { id: true } }
+      include.savedTravelPlans = { where: { userId }, select: { id: true } }
     }
 
     const [plans, total] = await Promise.all([
@@ -397,11 +403,11 @@ export const travelPlanService = {
 
       const { reviewsReceived, ...userWithoutReviews } = plan.user
 
-      const likedByMe = userId ? plan.travelPlanLikes.length > 0 : false
+      const savedByMe = userId ? plan.savedTravelPlans.length > 0 : false
 
       return {
         ...plan,
-        likedByMe,
+        savedByMe,
         user: {
           ...userWithoutReviews,
           averageRating: Math.round(averageRating * 10) / 10,

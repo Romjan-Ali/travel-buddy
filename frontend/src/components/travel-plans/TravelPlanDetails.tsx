@@ -19,6 +19,10 @@ import {
 } from 'lucide-react'
 import { formatDate, calculateDaysBetween } from '@/lib/utils'
 import { Review, TravelPlan } from '@/types'
+import Image from 'next/image'
+import { travelPlanAPI } from '@/lib/api'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 interface TravelPlanDetailsProps {
   travelPlan: TravelPlan
@@ -27,6 +31,8 @@ interface TravelPlanDetailsProps {
   isUpcoming: boolean
   travelPlanId: string
   onRequestToJoin: () => void
+  savedPlans: Set<string>
+  setSavedPlans: React.Dispatch<React.SetStateAction<Set<string>>>
 }
 
 export function TravelPlanDetails({
@@ -36,11 +42,40 @@ export function TravelPlanDetails({
   isUpcoming,
   travelPlanId,
   onRequestToJoin,
+  savedPlans,
+  setSavedPlans,
 }: TravelPlanDetailsProps) {
   const daysBetween = calculateDaysBetween(
     new Date(travelPlan.startDate),
     new Date(travelPlan.endDate)
   )
+
+  const handleSaveBtnClick = async (planId: string) => {
+    if (savedPlans.has(planId)) {
+      setSavedPlans((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(planId)
+        return newSet
+      })
+    } else {
+      setSavedPlans((prev) => new Set(prev).add(planId))
+    }
+
+    try {
+      const response = await travelPlanAPI.likeTravelPlan(planId)
+      if (response.data.isSaved) {
+        setSavedPlans((prev) => new Set(prev).add(planId))
+      } else {
+        setSavedPlans((prev) => {
+          const newSet = new Set(prev)
+          newSet.delete(planId)
+          return newSet
+        })
+      }
+    } catch (error) {
+      toast.error('Failed to like plan')
+    }
+  }
 
   return (
     <>
@@ -160,8 +195,19 @@ export function TravelPlanDetails({
                   <MessageSquare className="h-4 w-4" />
                   Message Organizer
                 </Button>
-                <Button variant="outline" className="gap-2">
-                  <Heart className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="px-3"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleSaveBtnClick(travelPlan.id)
+                  }}
+                >
+                  {savedPlans.has(travelPlan.id) ? (
+                    <Heart className="h-4 w-4 fill-red-600 text-red-600 scale-105 overflow-hidden" />
+                  ) : (
+                    <Heart className="h-4 w-4" />
+                  )}{' '}
                   Save Plan
                 </Button>
               </>
@@ -177,7 +223,7 @@ export function TravelPlanDetails({
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {travelPlan.tripPhotos.map((photo, index) => (
-              <img
+              <Image
                 key={index}
                 src={photo.url}
                 alt={`Trip Photo ${index + 1}`}

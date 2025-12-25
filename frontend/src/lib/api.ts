@@ -219,8 +219,8 @@ export const travelPlanAPI = {
 
     return api.get(`/travel-plans/search?${params.toString()}`)
   },
-  likeTravelPlan: (id: string): Promise<ApiResponse<{ isLiked: boolean }>> =>
-    api.post(`/travel-plans/${id}/like`),
+  likeTravelPlan: (id: string): Promise<ApiResponse<{ isSaved: boolean }>> =>
+    api.post(`/travel-plans/${id}/save`),
 }
 
 export interface ReviewInput {

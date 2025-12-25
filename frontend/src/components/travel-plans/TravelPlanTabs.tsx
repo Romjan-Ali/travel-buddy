@@ -17,6 +17,8 @@ interface TravelPlanTabsProps {
   onRequestToJoin: () => void
   reviews: Review[]
   fetchReviews: () => void
+  savedPlans: Set<string>
+  setSavedPlans: React.Dispatch<React.SetStateAction<Set<string>>>
 }
 
 export function TravelPlanTabs({
@@ -28,6 +30,8 @@ export function TravelPlanTabs({
   onRequestToJoin,
   reviews,
   fetchReviews,
+  savedPlans,
+  setSavedPlans,
 }: TravelPlanTabsProps) {
   return (
     <div className="lg:col-span-2">
@@ -51,6 +55,8 @@ export function TravelPlanTabs({
             isUpcoming={isUpcoming}
             travelPlanId={travelPlanId}
             onRequestToJoin={onRequestToJoin}
+            savedPlans={savedPlans}
+            setSavedPlans={setSavedPlans}
           />
         </TabsContent>
 

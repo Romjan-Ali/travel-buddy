@@ -33,8 +33,9 @@ export const travelPlanController = {
   },
 
   async getTravelPlan(req: AuthRequest, res: Response) {
+    const userId = req.user?.id
     const { id } = req.params
-    const travelPlan = await travelPlanService.getTravelPlanById(id)
+    const travelPlan = await travelPlanService.getTravelPlanById(id, userId)
     sendResponse(res, 200, 'Travel plan retrieved successfully', { travelPlan })
   },
 
@@ -53,21 +54,21 @@ export const travelPlanController = {
     sendResponse(res, 200, 'Travel plan updated successfully', { travelPlan })
   },
 
-  async likeTravelPlan(req: AuthRequest, res: Response) {
+  async toggleSaveTravelPlan(req: AuthRequest, res: Response) {
     const { id } = req.params
     const userId = req.user?.id
     if (!userId) {
       return sendResponse(res, 401, 'Unauthorized')
     }
-    const isLiked = await travelPlanService.likeTravelPlan(
+    const isSaved = await travelPlanService.toggleSaveTravelPlan(
       userId,
       id,
     )
     sendResponse(
       res,
       200,
-      'Travel plan like toggled successfully',
-      { isLiked }
+      'Travel plan saved toggled successfully',
+      { isSaved }
     )
   },
 

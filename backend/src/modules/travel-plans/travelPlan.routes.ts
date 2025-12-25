@@ -14,14 +14,14 @@ router.post(
 )
 router.get('/my-plans', authenticate, travelPlanController.getUserTravelPlans)
 router.get('/search', optionalAuthenticate, travelPlanController.searchTravelPlans)
-router.get('/:id', travelPlanController.getTravelPlan)
+router.get('/:id', optionalAuthenticate, travelPlanController.getTravelPlan)
 router.patch(
   '/:id',
   authenticate,
   validate(travelPlanUpdateSchema),
   travelPlanController.updateTravelPlan
 )
-router.post('/:id/like', authenticate, travelPlanController.likeTravelPlan)
+router.post('/:id/save', authenticate, travelPlanController.toggleSaveTravelPlan)
 router.delete('/:id', authenticate, travelPlanController.deleteTravelPlan)
 
 export default router

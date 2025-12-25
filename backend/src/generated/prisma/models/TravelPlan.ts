@@ -234,7 +234,7 @@ export type TravelPlanWhereInput = {
   matches?: Prisma.MatchListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   tripPhotos?: Prisma.TripPhotoListRelationFilter
-  travelPlanLikes?: Prisma.TravelPlanLikeListRelationFilter
+  savedTravelPlans?: Prisma.SavedTravelPlanListRelationFilter
 }
 
 export type TravelPlanOrderByWithRelationInput = {
@@ -253,7 +253,7 @@ export type TravelPlanOrderByWithRelationInput = {
   matches?: Prisma.MatchOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
   tripPhotos?: Prisma.TripPhotoOrderByRelationAggregateInput
-  travelPlanLikes?: Prisma.TravelPlanLikeOrderByRelationAggregateInput
+  savedTravelPlans?: Prisma.SavedTravelPlanOrderByRelationAggregateInput
 }
 
 export type TravelPlanWhereUniqueInput = Prisma.AtLeast<{
@@ -275,7 +275,7 @@ export type TravelPlanWhereUniqueInput = Prisma.AtLeast<{
   matches?: Prisma.MatchListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   tripPhotos?: Prisma.TripPhotoListRelationFilter
-  travelPlanLikes?: Prisma.TravelPlanLikeListRelationFilter
+  savedTravelPlans?: Prisma.SavedTravelPlanListRelationFilter
 }, "id">
 
 export type TravelPlanOrderByWithAggregationInput = {
@@ -327,7 +327,7 @@ export type TravelPlanCreateInput = {
   matches?: Prisma.MatchCreateNestedManyWithoutTravelPlanInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanUncheckedCreateInput = {
@@ -345,7 +345,7 @@ export type TravelPlanUncheckedCreateInput = {
   matches?: Prisma.MatchUncheckedCreateNestedManyWithoutTravelPlanInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanUpdateInput = {
@@ -363,7 +363,7 @@ export type TravelPlanUpdateInput = {
   matches?: Prisma.MatchUpdateManyWithoutTravelPlanNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanUncheckedUpdateInput = {
@@ -381,7 +381,7 @@ export type TravelPlanUncheckedUpdateInput = {
   matches?: Prisma.MatchUncheckedUpdateManyWithoutTravelPlanNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanCreateManyInput = {
@@ -533,18 +533,18 @@ export type EnumTravelTypeFieldUpdateOperationsInput = {
   set?: $Enums.TravelType
 }
 
-export type TravelPlanCreateNestedOneWithoutTravelPlanLikesInput = {
-  create?: Prisma.XOR<Prisma.TravelPlanCreateWithoutTravelPlanLikesInput, Prisma.TravelPlanUncheckedCreateWithoutTravelPlanLikesInput>
-  connectOrCreate?: Prisma.TravelPlanCreateOrConnectWithoutTravelPlanLikesInput
+export type TravelPlanCreateNestedOneWithoutSavedTravelPlansInput = {
+  create?: Prisma.XOR<Prisma.TravelPlanCreateWithoutSavedTravelPlansInput, Prisma.TravelPlanUncheckedCreateWithoutSavedTravelPlansInput>
+  connectOrCreate?: Prisma.TravelPlanCreateOrConnectWithoutSavedTravelPlansInput
   connect?: Prisma.TravelPlanWhereUniqueInput
 }
 
-export type TravelPlanUpdateOneRequiredWithoutTravelPlanLikesNestedInput = {
-  create?: Prisma.XOR<Prisma.TravelPlanCreateWithoutTravelPlanLikesInput, Prisma.TravelPlanUncheckedCreateWithoutTravelPlanLikesInput>
-  connectOrCreate?: Prisma.TravelPlanCreateOrConnectWithoutTravelPlanLikesInput
-  upsert?: Prisma.TravelPlanUpsertWithoutTravelPlanLikesInput
+export type TravelPlanUpdateOneRequiredWithoutSavedTravelPlansNestedInput = {
+  create?: Prisma.XOR<Prisma.TravelPlanCreateWithoutSavedTravelPlansInput, Prisma.TravelPlanUncheckedCreateWithoutSavedTravelPlansInput>
+  connectOrCreate?: Prisma.TravelPlanCreateOrConnectWithoutSavedTravelPlansInput
+  upsert?: Prisma.TravelPlanUpsertWithoutSavedTravelPlansInput
   connect?: Prisma.TravelPlanWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TravelPlanUpdateToOneWithWhereWithoutTravelPlanLikesInput, Prisma.TravelPlanUpdateWithoutTravelPlanLikesInput>, Prisma.TravelPlanUncheckedUpdateWithoutTravelPlanLikesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TravelPlanUpdateToOneWithWhereWithoutSavedTravelPlansInput, Prisma.TravelPlanUpdateWithoutSavedTravelPlansInput>, Prisma.TravelPlanUncheckedUpdateWithoutSavedTravelPlansInput>
 }
 
 export type TravelPlanCreateNestedOneWithoutTripPhotosInput = {
@@ -607,7 +607,7 @@ export type TravelPlanCreateWithoutUserInput = {
   matches?: Prisma.MatchCreateNestedManyWithoutTravelPlanInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanUncheckedCreateWithoutUserInput = {
@@ -624,7 +624,7 @@ export type TravelPlanUncheckedCreateWithoutUserInput = {
   matches?: Prisma.MatchUncheckedCreateNestedManyWithoutTravelPlanInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanCreateOrConnectWithoutUserInput = {
@@ -670,7 +670,7 @@ export type TravelPlanScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"TravelPlan"> | Date | string
 }
 
-export type TravelPlanCreateWithoutTravelPlanLikesInput = {
+export type TravelPlanCreateWithoutSavedTravelPlansInput = {
   id?: string
   destination: string
   startDate: Date | string
@@ -687,7 +687,7 @@ export type TravelPlanCreateWithoutTravelPlanLikesInput = {
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutTravelPlanInput
 }
 
-export type TravelPlanUncheckedCreateWithoutTravelPlanLikesInput = {
+export type TravelPlanUncheckedCreateWithoutSavedTravelPlansInput = {
   id?: string
   destination: string
   startDate: Date | string
@@ -704,23 +704,23 @@ export type TravelPlanUncheckedCreateWithoutTravelPlanLikesInput = {
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutTravelPlanInput
 }
 
-export type TravelPlanCreateOrConnectWithoutTravelPlanLikesInput = {
+export type TravelPlanCreateOrConnectWithoutSavedTravelPlansInput = {
   where: Prisma.TravelPlanWhereUniqueInput
-  create: Prisma.XOR<Prisma.TravelPlanCreateWithoutTravelPlanLikesInput, Prisma.TravelPlanUncheckedCreateWithoutTravelPlanLikesInput>
+  create: Prisma.XOR<Prisma.TravelPlanCreateWithoutSavedTravelPlansInput, Prisma.TravelPlanUncheckedCreateWithoutSavedTravelPlansInput>
 }
 
-export type TravelPlanUpsertWithoutTravelPlanLikesInput = {
-  update: Prisma.XOR<Prisma.TravelPlanUpdateWithoutTravelPlanLikesInput, Prisma.TravelPlanUncheckedUpdateWithoutTravelPlanLikesInput>
-  create: Prisma.XOR<Prisma.TravelPlanCreateWithoutTravelPlanLikesInput, Prisma.TravelPlanUncheckedCreateWithoutTravelPlanLikesInput>
+export type TravelPlanUpsertWithoutSavedTravelPlansInput = {
+  update: Prisma.XOR<Prisma.TravelPlanUpdateWithoutSavedTravelPlansInput, Prisma.TravelPlanUncheckedUpdateWithoutSavedTravelPlansInput>
+  create: Prisma.XOR<Prisma.TravelPlanCreateWithoutSavedTravelPlansInput, Prisma.TravelPlanUncheckedCreateWithoutSavedTravelPlansInput>
   where?: Prisma.TravelPlanWhereInput
 }
 
-export type TravelPlanUpdateToOneWithWhereWithoutTravelPlanLikesInput = {
+export type TravelPlanUpdateToOneWithWhereWithoutSavedTravelPlansInput = {
   where?: Prisma.TravelPlanWhereInput
-  data: Prisma.XOR<Prisma.TravelPlanUpdateWithoutTravelPlanLikesInput, Prisma.TravelPlanUncheckedUpdateWithoutTravelPlanLikesInput>
+  data: Prisma.XOR<Prisma.TravelPlanUpdateWithoutSavedTravelPlansInput, Prisma.TravelPlanUncheckedUpdateWithoutSavedTravelPlansInput>
 }
 
-export type TravelPlanUpdateWithoutTravelPlanLikesInput = {
+export type TravelPlanUpdateWithoutSavedTravelPlansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   destination?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -737,7 +737,7 @@ export type TravelPlanUpdateWithoutTravelPlanLikesInput = {
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutTravelPlanNestedInput
 }
 
-export type TravelPlanUncheckedUpdateWithoutTravelPlanLikesInput = {
+export type TravelPlanUncheckedUpdateWithoutSavedTravelPlansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   destination?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -768,7 +768,7 @@ export type TravelPlanCreateWithoutTripPhotosInput = {
   user: Prisma.UserCreateNestedOneWithoutTravelPlansInput
   matches?: Prisma.MatchCreateNestedManyWithoutTravelPlanInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanUncheckedCreateWithoutTripPhotosInput = {
@@ -785,7 +785,7 @@ export type TravelPlanUncheckedCreateWithoutTripPhotosInput = {
   updatedAt?: Date | string
   matches?: Prisma.MatchUncheckedCreateNestedManyWithoutTravelPlanInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanCreateOrConnectWithoutTripPhotosInput = {
@@ -818,7 +818,7 @@ export type TravelPlanUpdateWithoutTripPhotosInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutTravelPlansNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTravelPlanNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanUncheckedUpdateWithoutTripPhotosInput = {
@@ -835,7 +835,7 @@ export type TravelPlanUncheckedUpdateWithoutTripPhotosInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matches?: Prisma.MatchUncheckedUpdateManyWithoutTravelPlanNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanCreateWithoutReviewsInput = {
@@ -852,7 +852,7 @@ export type TravelPlanCreateWithoutReviewsInput = {
   user: Prisma.UserCreateNestedOneWithoutTravelPlansInput
   matches?: Prisma.MatchCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanUncheckedCreateWithoutReviewsInput = {
@@ -869,7 +869,7 @@ export type TravelPlanUncheckedCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   matches?: Prisma.MatchUncheckedCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanCreateOrConnectWithoutReviewsInput = {
@@ -902,7 +902,7 @@ export type TravelPlanUpdateWithoutReviewsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutTravelPlansNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanUncheckedUpdateWithoutReviewsInput = {
@@ -919,7 +919,7 @@ export type TravelPlanUncheckedUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matches?: Prisma.MatchUncheckedUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanCreateWithoutMatchesInput = {
@@ -936,7 +936,7 @@ export type TravelPlanCreateWithoutMatchesInput = {
   user: Prisma.UserCreateNestedOneWithoutTravelPlansInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanUncheckedCreateWithoutMatchesInput = {
@@ -953,7 +953,7 @@ export type TravelPlanUncheckedCreateWithoutMatchesInput = {
   updatedAt?: Date | string
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutTravelPlanInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutTravelPlanInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutTravelPlanInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedCreateNestedManyWithoutTravelPlanInput
 }
 
 export type TravelPlanCreateOrConnectWithoutMatchesInput = {
@@ -986,7 +986,7 @@ export type TravelPlanUpdateWithoutMatchesInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutTravelPlansNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanUncheckedUpdateWithoutMatchesInput = {
@@ -1003,7 +1003,7 @@ export type TravelPlanUncheckedUpdateWithoutMatchesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanCreateManyUserInput = {
@@ -1033,7 +1033,7 @@ export type TravelPlanUpdateWithoutUserInput = {
   matches?: Prisma.MatchUpdateManyWithoutTravelPlanNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanUncheckedUpdateWithoutUserInput = {
@@ -1050,7 +1050,7 @@ export type TravelPlanUncheckedUpdateWithoutUserInput = {
   matches?: Prisma.MatchUncheckedUpdateManyWithoutTravelPlanNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutTravelPlanNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutTravelPlanNestedInput
-  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutTravelPlanNestedInput
+  savedTravelPlans?: Prisma.SavedTravelPlanUncheckedUpdateManyWithoutTravelPlanNestedInput
 }
 
 export type TravelPlanUncheckedUpdateManyWithoutUserInput = {
@@ -1075,14 +1075,14 @@ export type TravelPlanCountOutputType = {
   matches: number
   reviews: number
   tripPhotos: number
-  travelPlanLikes: number
+  savedTravelPlans: number
 }
 
 export type TravelPlanCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   matches?: boolean | TravelPlanCountOutputTypeCountMatchesArgs
   reviews?: boolean | TravelPlanCountOutputTypeCountReviewsArgs
   tripPhotos?: boolean | TravelPlanCountOutputTypeCountTripPhotosArgs
-  travelPlanLikes?: boolean | TravelPlanCountOutputTypeCountTravelPlanLikesArgs
+  savedTravelPlans?: boolean | TravelPlanCountOutputTypeCountSavedTravelPlansArgs
 }
 
 /**
@@ -1119,8 +1119,8 @@ export type TravelPlanCountOutputTypeCountTripPhotosArgs<ExtArgs extends runtime
 /**
  * TravelPlanCountOutputType without action
  */
-export type TravelPlanCountOutputTypeCountTravelPlanLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TravelPlanLikeWhereInput
+export type TravelPlanCountOutputTypeCountSavedTravelPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SavedTravelPlanWhereInput
 }
 
 
@@ -1140,7 +1140,7 @@ export type TravelPlanSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   matches?: boolean | Prisma.TravelPlan$matchesArgs<ExtArgs>
   reviews?: boolean | Prisma.TravelPlan$reviewsArgs<ExtArgs>
   tripPhotos?: boolean | Prisma.TravelPlan$tripPhotosArgs<ExtArgs>
-  travelPlanLikes?: boolean | Prisma.TravelPlan$travelPlanLikesArgs<ExtArgs>
+  savedTravelPlans?: boolean | Prisma.TravelPlan$savedTravelPlansArgs<ExtArgs>
   _count?: boolean | Prisma.TravelPlanCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["travelPlan"]>
 
@@ -1194,7 +1194,7 @@ export type TravelPlanInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   matches?: boolean | Prisma.TravelPlan$matchesArgs<ExtArgs>
   reviews?: boolean | Prisma.TravelPlan$reviewsArgs<ExtArgs>
   tripPhotos?: boolean | Prisma.TravelPlan$tripPhotosArgs<ExtArgs>
-  travelPlanLikes?: boolean | Prisma.TravelPlan$travelPlanLikesArgs<ExtArgs>
+  savedTravelPlans?: boolean | Prisma.TravelPlan$savedTravelPlansArgs<ExtArgs>
   _count?: boolean | Prisma.TravelPlanCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TravelPlanIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1211,7 +1211,7 @@ export type $TravelPlanPayload<ExtArgs extends runtime.Types.Extensions.Internal
     matches: Prisma.$MatchPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
     tripPhotos: Prisma.$TripPhotoPayload<ExtArgs>[]
-    travelPlanLikes: Prisma.$TravelPlanLikePayload<ExtArgs>[]
+    savedTravelPlans: Prisma.$SavedTravelPlanPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1623,7 +1623,7 @@ export interface Prisma__TravelPlanClient<T, Null = never, ExtArgs extends runti
   matches<T extends Prisma.TravelPlan$matchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TravelPlan$matchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.TravelPlan$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TravelPlan$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tripPhotos<T extends Prisma.TravelPlan$tripPhotosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TravelPlan$tripPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  travelPlanLikes<T extends Prisma.TravelPlan$travelPlanLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TravelPlan$travelPlanLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelPlanLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  savedTravelPlans<T extends Prisma.TravelPlan$savedTravelPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TravelPlan$savedTravelPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedTravelPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2132,27 +2132,27 @@ export type TravelPlan$tripPhotosArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * TravelPlan.travelPlanLikes
+ * TravelPlan.savedTravelPlans
  */
-export type TravelPlan$travelPlanLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TravelPlan$savedTravelPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the TravelPlanLike
+   * Select specific fields to fetch from the SavedTravelPlan
    */
-  select?: Prisma.TravelPlanLikeSelect<ExtArgs> | null
+  select?: Prisma.SavedTravelPlanSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the TravelPlanLike
+   * Omit specific fields from the SavedTravelPlan
    */
-  omit?: Prisma.TravelPlanLikeOmit<ExtArgs> | null
+  omit?: Prisma.SavedTravelPlanOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.TravelPlanLikeInclude<ExtArgs> | null
-  where?: Prisma.TravelPlanLikeWhereInput
-  orderBy?: Prisma.TravelPlanLikeOrderByWithRelationInput | Prisma.TravelPlanLikeOrderByWithRelationInput[]
-  cursor?: Prisma.TravelPlanLikeWhereUniqueInput
+  include?: Prisma.SavedTravelPlanInclude<ExtArgs> | null
+  where?: Prisma.SavedTravelPlanWhereInput
+  orderBy?: Prisma.SavedTravelPlanOrderByWithRelationInput | Prisma.SavedTravelPlanOrderByWithRelationInput[]
+  cursor?: Prisma.SavedTravelPlanWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.TravelPlanLikeScalarFieldEnum | Prisma.TravelPlanLikeScalarFieldEnum[]
+  distinct?: Prisma.SavedTravelPlanScalarFieldEnum | Prisma.SavedTravelPlanScalarFieldEnum[]
 }
 
 /**

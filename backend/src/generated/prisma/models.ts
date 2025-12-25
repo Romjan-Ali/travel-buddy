@@ -11,7 +11,7 @@
 export type * from './models/User.ts'
 export type * from './models/Profile.ts'
 export type * from './models/TravelPlan.ts'
-export type * from './models/TravelPlanLike.ts'
+export type * from './models/SavedTravelPlan.ts'
 export type * from './models/TripPhoto.ts'
 export type * from './models/Review.ts'
 export type * from './models/Match.ts'
