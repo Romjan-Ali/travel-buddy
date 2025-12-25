@@ -51,9 +51,10 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
 
   // Timestamps
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  tripPhotos TripPhoto[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  tripPhotos      TripPhoto[]
+  travelPlanLikes TravelPlanLike[]
 
   @@map("users")
 }
@@ -96,13 +97,30 @@ model TravelPlan {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Timestamps
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  matches    Match[]
-  reviews    Review[]
-  tripPhotos TripPhoto[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  matches         Match[]
+  reviews         Review[]
+  tripPhotos      TripPhoto[]
+  travelPlanLikes TravelPlanLike[]
 
   @@map("travel_plans")
+}
+
+model TravelPlanLike {
+  id String @id @default(cuid())
+
+  // Relations
+  userId       String
+  travelPlanId String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  travelPlan   TravelPlan @relation(fields: [travelPlanId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@unique([userId, travelPlanId])
+  @@map("travel_plan_likes")
 }
 
 model TripPhoto {

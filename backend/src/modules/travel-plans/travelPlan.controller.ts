@@ -53,6 +53,24 @@ export const travelPlanController = {
     sendResponse(res, 200, 'Travel plan updated successfully', { travelPlan })
   },
 
+  async likeTravelPlan(req: AuthRequest, res: Response) {
+    const { id } = req.params
+    const userId = req.user?.id
+    if (!userId) {
+      return sendResponse(res, 401, 'Unauthorized')
+    }
+    const isLiked = await travelPlanService.likeTravelPlan(
+      userId,
+      id,
+    )
+    sendResponse(
+      res,
+      200,
+      'Travel plan like toggled successfully',
+      { isLiked }
+    )
+  },
+
   async deleteTravelPlan(req: AuthRequest, res: Response) {
     const { id } = req.params
     const userId = req.user?.id
@@ -64,6 +82,7 @@ export const travelPlanController = {
   },
 
   async searchTravelPlans(req: AuthRequest, res: Response) {
+    const user = req.user
     const { page = 1, limit = 9, ...filtersQuery } = req.query
     const interests =
       typeof req.query.interests === 'string'
@@ -75,7 +94,8 @@ export const travelPlanController = {
     const result = await travelPlanService.searchTravelPlans(
       filters as any,
       parseInt(page as string),
-      parseInt(limit as string)
+      parseInt(limit as string),
+      user?.id
     )
 
     sendResponse(res, 200, 'Travel plans retrieved successfully', result)

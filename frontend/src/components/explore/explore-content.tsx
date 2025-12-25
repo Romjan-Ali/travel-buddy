@@ -69,6 +69,7 @@ export default function ExplorePage() {
     new Set()
   )
   const [sentMatchRequests, setSentMatchRequests] = useState<Match[]>([])
+  const [likedPlans, setLikedPlans] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchTravelPlans()
@@ -110,6 +111,11 @@ export default function ExplorePage() {
       const result = await travelPlanAPI.search(activeFilters, page, 9)
       setTravelPlans(result.data?.plans || [])
       setTotalPages(result.data?.pagination?.pages || 1)
+      result.data?.plans.forEach((plan) => {
+        if (plan.likedByMe) {
+          setLikedPlans((prev) => new Set(prev).add(plan.id))
+        }
+      })
     } catch (error) {
       toast.error('Failed to load travel plans')
       console.error('Explore error:', error)
@@ -166,6 +172,33 @@ export default function ExplorePage() {
     setSelectedPlan(plan)
     setIsDialogOpen(true)
     setJoinRequestLoading(false)
+  }
+
+  const handleLikeBtnClick = async (planId: string) => {
+    if (likedPlans.has(planId)) {
+      setLikedPlans((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(planId)
+        return newSet
+      })
+    } else {
+      setLikedPlans((prev) => new Set(prev).add(planId))
+    }
+    
+    try {
+      const response = await travelPlanAPI.likeTravelPlan(planId)
+      if (response.data.isLiked) {
+        setLikedPlans((prev) => new Set(prev).add(planId))
+      } else {
+        setLikedPlans((prev) => {
+          const newSet = new Set(prev)
+          newSet.delete(planId)
+          return newSet
+        })
+      }
+    } catch (error) {
+      toast.error('Failed to like plan')
+    }
   }
 
   const handleMatchSuccess = async () => {
@@ -510,7 +543,7 @@ export default function ExplorePage() {
                             >
                               <XCircle className="h-4 w-4" />
                               Declined
-                            </Button>
+                            </Button>                          
                           ) : (
                             <>
                               <Button
@@ -532,9 +565,16 @@ export default function ExplorePage() {
                                 variant="outline"
                                 size="sm"
                                 className="px-3"
-                                onClick={(e) => e.preventDefault()}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleLikeBtnClick(plan.id)
+                                }}
                               >
-                                <Heart className="h-4 w-4" />
+                                {likedPlans.has(plan.id) ? (
+                                  <Heart className="h-4 w-4 fill-red-600 text-red-600 scale-105 overflow-hidden" />
+                                ) : (
+                                  <Heart className="h-4 w-4" />
+                                )}
                               </Button>
                             </>
                           )}

@@ -366,6 +366,7 @@ export interface TravelPlan extends BaseEntity {
   description: string
   isPublic: boolean
   userId: string
+  likedByMe?: boolean
   createdAt: Date | string
   updatedAt: Date | string
   user: {

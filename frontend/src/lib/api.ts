@@ -219,6 +219,8 @@ export const travelPlanAPI = {
 
     return api.get(`/travel-plans/search?${params.toString()}`)
   },
+  likeTravelPlan: (id: string): Promise<ApiResponse<{ isLiked: boolean }>> =>
+    api.post(`/travel-plans/${id}/like`),
 }
 
 export interface ReviewInput {
@@ -374,7 +376,9 @@ export const adminAPI = {
     page = 1,
     limit = 20,
     filters?: string
-  ): Promise<ApiResponse<{ travelPlans: TravelPlanByAdmin[], pagination: Pagination }>> =>
+  ): Promise<
+    ApiResponse<{ travelPlans: TravelPlanByAdmin[]; pagination: Pagination }>
+  > =>
     api.get(
       `/admin/travel-plans?page=${page}&limit=${limit}&${new URLSearchParams(
         filters

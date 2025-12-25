@@ -224,6 +224,7 @@ export type UserWhereInput = {
   sentMessages?: Prisma.MessageListRelationFilter
   receivedMessages?: Prisma.MessageListRelationFilter
   tripPhotos?: Prisma.TripPhotoListRelationFilter
+  travelPlanLikes?: Prisma.TravelPlanLikeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -246,6 +247,7 @@ export type UserOrderByWithRelationInput = {
   sentMessages?: Prisma.MessageOrderByRelationAggregateInput
   receivedMessages?: Prisma.MessageOrderByRelationAggregateInput
   tripPhotos?: Prisma.TripPhotoOrderByRelationAggregateInput
+  travelPlanLikes?: Prisma.TravelPlanLikeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -271,6 +273,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   sentMessages?: Prisma.MessageListRelationFilter
   receivedMessages?: Prisma.MessageListRelationFilter
   tripPhotos?: Prisma.TripPhotoListRelationFilter
+  travelPlanLikes?: Prisma.TravelPlanLikeListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -323,6 +326,7 @@ export type UserCreateInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -345,6 +349,7 @@ export type UserUncheckedCreateInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -367,6 +372,7 @@ export type UserUpdateInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -389,6 +395,7 @@ export type UserUncheckedUpdateInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -515,6 +522,20 @@ export type UserUpdateOneRequiredWithoutTravelPlansNestedInput = {
   upsert?: Prisma.UserUpsertWithoutTravelPlansInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelPlansInput, Prisma.UserUpdateWithoutTravelPlansInput>, Prisma.UserUncheckedUpdateWithoutTravelPlansInput>
+}
+
+export type UserCreateNestedOneWithoutTravelPlanLikesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelPlanLikesInput, Prisma.UserUncheckedCreateWithoutTravelPlanLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelPlanLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTravelPlanLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelPlanLikesInput, Prisma.UserUncheckedCreateWithoutTravelPlanLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelPlanLikesInput
+  upsert?: Prisma.UserUpsertWithoutTravelPlanLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelPlanLikesInput, Prisma.UserUpdateWithoutTravelPlanLikesInput>, Prisma.UserUncheckedUpdateWithoutTravelPlanLikesInput>
 }
 
 export type UserCreateNestedOneWithoutTripPhotosInput = {
@@ -650,6 +671,7 @@ export type UserCreateWithoutProfileInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -671,6 +693,7 @@ export type UserUncheckedCreateWithoutProfileInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -708,6 +731,7 @@ export type UserUpdateWithoutProfileInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -729,6 +753,7 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTravelPlansInput = {
@@ -750,6 +775,7 @@ export type UserCreateWithoutTravelPlansInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTravelPlansInput = {
@@ -771,6 +797,7 @@ export type UserUncheckedCreateWithoutTravelPlansInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTravelPlansInput = {
@@ -808,6 +835,7 @@ export type UserUpdateWithoutTravelPlansInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTravelPlansInput = {
@@ -821,6 +849,111 @@ export type UserUncheckedUpdateWithoutTravelPlansInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  matchesInitiated?: Prisma.MatchUncheckedUpdateManyWithoutInitiatorNestedInput
+  matchesReceived?: Prisma.MatchUncheckedUpdateManyWithoutReceiverNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
+  tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTravelPlanLikesInput = {
+  id?: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isVerified?: boolean
+  isActive?: boolean
+  isEmailVerified?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  travelPlans?: Prisma.TravelPlanCreateNestedManyWithoutUserInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutSubjectInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  matchesInitiated?: Prisma.MatchCreateNestedManyWithoutInitiatorInput
+  matchesReceived?: Prisma.MatchCreateNestedManyWithoutReceiverInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
+  tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+}
+
+export type UserUncheckedCreateWithoutTravelPlanLikesInput = {
+  id?: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isVerified?: boolean
+  isActive?: boolean
+  isEmailVerified?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  travelPlans?: Prisma.TravelPlanUncheckedCreateNestedManyWithoutUserInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutSubjectInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  matchesInitiated?: Prisma.MatchUncheckedCreateNestedManyWithoutInitiatorInput
+  matchesReceived?: Prisma.MatchUncheckedCreateNestedManyWithoutReceiverInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
+  tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+}
+
+export type UserCreateOrConnectWithoutTravelPlanLikesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelPlanLikesInput, Prisma.UserUncheckedCreateWithoutTravelPlanLikesInput>
+}
+
+export type UserUpsertWithoutTravelPlanLikesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTravelPlanLikesInput, Prisma.UserUncheckedUpdateWithoutTravelPlanLikesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelPlanLikesInput, Prisma.UserUncheckedCreateWithoutTravelPlanLikesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTravelPlanLikesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTravelPlanLikesInput, Prisma.UserUncheckedUpdateWithoutTravelPlanLikesInput>
+}
+
+export type UserUpdateWithoutTravelPlanLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  travelPlans?: Prisma.TravelPlanUpdateManyWithoutUserNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutSubjectNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  matchesInitiated?: Prisma.MatchUpdateManyWithoutInitiatorNestedInput
+  matchesReceived?: Prisma.MatchUpdateManyWithoutReceiverNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
+  tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTravelPlanLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  travelPlans?: Prisma.TravelPlanUncheckedUpdateManyWithoutUserNestedInput
   reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
   reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
@@ -850,6 +983,7 @@ export type UserCreateWithoutTripPhotosInput = {
   matchesReceived?: Prisma.MatchCreateNestedManyWithoutReceiverInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTripPhotosInput = {
@@ -871,6 +1005,7 @@ export type UserUncheckedCreateWithoutTripPhotosInput = {
   matchesReceived?: Prisma.MatchUncheckedCreateNestedManyWithoutReceiverInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTripPhotosInput = {
@@ -908,6 +1043,7 @@ export type UserUpdateWithoutTripPhotosInput = {
   matchesReceived?: Prisma.MatchUpdateManyWithoutReceiverNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTripPhotosInput = {
@@ -929,6 +1065,7 @@ export type UserUncheckedUpdateWithoutTripPhotosInput = {
   matchesReceived?: Prisma.MatchUncheckedUpdateManyWithoutReceiverNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsGivenInput = {
@@ -950,6 +1087,7 @@ export type UserCreateWithoutReviewsGivenInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsGivenInput = {
@@ -971,6 +1109,7 @@ export type UserUncheckedCreateWithoutReviewsGivenInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsGivenInput = {
@@ -997,6 +1136,7 @@ export type UserCreateWithoutReviewsReceivedInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsReceivedInput = {
@@ -1018,6 +1158,7 @@ export type UserUncheckedCreateWithoutReviewsReceivedInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsReceivedInput = {
@@ -1055,6 +1196,7 @@ export type UserUpdateWithoutReviewsGivenInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsGivenInput = {
@@ -1076,6 +1218,7 @@ export type UserUncheckedUpdateWithoutReviewsGivenInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReviewsReceivedInput = {
@@ -1108,6 +1251,7 @@ export type UserUpdateWithoutReviewsReceivedInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsReceivedInput = {
@@ -1129,6 +1273,7 @@ export type UserUncheckedUpdateWithoutReviewsReceivedInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMatchesInitiatedInput = {
@@ -1150,6 +1295,7 @@ export type UserCreateWithoutMatchesInitiatedInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMatchesInitiatedInput = {
@@ -1171,6 +1317,7 @@ export type UserUncheckedCreateWithoutMatchesInitiatedInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMatchesInitiatedInput = {
@@ -1197,6 +1344,7 @@ export type UserCreateWithoutMatchesReceivedInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMatchesReceivedInput = {
@@ -1218,6 +1366,7 @@ export type UserUncheckedCreateWithoutMatchesReceivedInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMatchesReceivedInput = {
@@ -1255,6 +1404,7 @@ export type UserUpdateWithoutMatchesInitiatedInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMatchesInitiatedInput = {
@@ -1276,6 +1426,7 @@ export type UserUncheckedUpdateWithoutMatchesInitiatedInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutMatchesReceivedInput = {
@@ -1308,6 +1459,7 @@ export type UserUpdateWithoutMatchesReceivedInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMatchesReceivedInput = {
@@ -1329,6 +1481,7 @@ export type UserUncheckedUpdateWithoutMatchesReceivedInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -1350,6 +1503,7 @@ export type UserCreateWithoutSubscriptionsInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -1371,6 +1525,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -1408,6 +1563,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -1429,6 +1585,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSentMessagesInput = {
@@ -1450,6 +1607,7 @@ export type UserCreateWithoutSentMessagesInput = {
   matchesReceived?: Prisma.MatchCreateNestedManyWithoutReceiverInput
   receivedMessages?: Prisma.MessageCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSentMessagesInput = {
@@ -1471,6 +1629,7 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   matchesReceived?: Prisma.MatchUncheckedCreateNestedManyWithoutReceiverInput
   receivedMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutReceiverInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSentMessagesInput = {
@@ -1497,6 +1656,7 @@ export type UserCreateWithoutReceivedMessagesInput = {
   matchesReceived?: Prisma.MatchCreateNestedManyWithoutReceiverInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   tripPhotos?: Prisma.TripPhotoCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReceivedMessagesInput = {
@@ -1518,6 +1678,7 @@ export type UserUncheckedCreateWithoutReceivedMessagesInput = {
   matchesReceived?: Prisma.MatchUncheckedCreateNestedManyWithoutReceiverInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   tripPhotos?: Prisma.TripPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReceivedMessagesInput = {
@@ -1555,6 +1716,7 @@ export type UserUpdateWithoutSentMessagesInput = {
   matchesReceived?: Prisma.MatchUpdateManyWithoutReceiverNestedInput
   receivedMessages?: Prisma.MessageUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSentMessagesInput = {
@@ -1576,6 +1738,7 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   matchesReceived?: Prisma.MatchUncheckedUpdateManyWithoutReceiverNestedInput
   receivedMessages?: Prisma.MessageUncheckedUpdateManyWithoutReceiverNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReceivedMessagesInput = {
@@ -1608,6 +1771,7 @@ export type UserUpdateWithoutReceivedMessagesInput = {
   matchesReceived?: Prisma.MatchUpdateManyWithoutReceiverNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   tripPhotos?: Prisma.TripPhotoUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReceivedMessagesInput = {
@@ -1629,6 +1793,7 @@ export type UserUncheckedUpdateWithoutReceivedMessagesInput = {
   matchesReceived?: Prisma.MatchUncheckedUpdateManyWithoutReceiverNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   tripPhotos?: Prisma.TripPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  travelPlanLikes?: Prisma.TravelPlanLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1646,6 +1811,7 @@ export type UserCountOutputType = {
   sentMessages: number
   receivedMessages: number
   tripPhotos: number
+  travelPlanLikes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1658,6 +1824,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sentMessages?: boolean | UserCountOutputTypeCountSentMessagesArgs
   receivedMessages?: boolean | UserCountOutputTypeCountReceivedMessagesArgs
   tripPhotos?: boolean | UserCountOutputTypeCountTripPhotosArgs
+  travelPlanLikes?: boolean | UserCountOutputTypeCountTravelPlanLikesArgs
 }
 
 /**
@@ -1733,6 +1900,13 @@ export type UserCountOutputTypeCountTripPhotosArgs<ExtArgs extends runtime.Types
   where?: Prisma.TripPhotoWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTravelPlanLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelPlanLikeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1754,6 +1928,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
   receivedMessages?: boolean | Prisma.User$receivedMessagesArgs<ExtArgs>
   tripPhotos?: boolean | Prisma.User$tripPhotosArgs<ExtArgs>
+  travelPlanLikes?: boolean | Prisma.User$travelPlanLikesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1805,6 +1980,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
   receivedMessages?: boolean | Prisma.User$receivedMessagesArgs<ExtArgs>
   tripPhotos?: boolean | Prisma.User$tripPhotosArgs<ExtArgs>
+  travelPlanLikes?: boolean | Prisma.User$travelPlanLikesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1823,6 +1999,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sentMessages: Prisma.$MessagePayload<ExtArgs>[]
     receivedMessages: Prisma.$MessagePayload<ExtArgs>[]
     tripPhotos: Prisma.$TripPhotoPayload<ExtArgs>[]
+    travelPlanLikes: Prisma.$TravelPlanLikePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2238,6 +2415,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sentMessages<T extends Prisma.User$sentMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   receivedMessages<T extends Prisma.User$receivedMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$receivedMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tripPhotos<T extends Prisma.User$tripPhotosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tripPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  travelPlanLikes<T extends Prisma.User$travelPlanLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$travelPlanLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelPlanLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2896,6 +3074,30 @@ export type User$tripPhotosArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.TripPhotoScalarFieldEnum | Prisma.TripPhotoScalarFieldEnum[]
+}
+
+/**
+ * User.travelPlanLikes
+ */
+export type User$travelPlanLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelPlanLike
+   */
+  select?: Prisma.TravelPlanLikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelPlanLike
+   */
+  omit?: Prisma.TravelPlanLikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelPlanLikeInclude<ExtArgs> | null
+  where?: Prisma.TravelPlanLikeWhereInput
+  orderBy?: Prisma.TravelPlanLikeOrderByWithRelationInput | Prisma.TravelPlanLikeOrderByWithRelationInput[]
+  cursor?: Prisma.TravelPlanLikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelPlanLikeScalarFieldEnum | Prisma.TravelPlanLikeScalarFieldEnum[]
 }
 
 /**

@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Profile: 'Profile',
   TravelPlan: 'TravelPlan',
+  TravelPlanLike: 'TravelPlanLike',
   TripPhoto: 'TripPhoto',
   Review: 'Review',
   Match: 'Match',
@@ -126,6 +127,16 @@ export const TravelPlanScalarFieldEnum = {
 } as const
 
 export type TravelPlanScalarFieldEnum = (typeof TravelPlanScalarFieldEnum)[keyof typeof TravelPlanScalarFieldEnum]
+
+
+export const TravelPlanLikeScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  travelPlanId: 'travelPlanId',
+  createdAt: 'createdAt'
+} as const
+
+export type TravelPlanLikeScalarFieldEnum = (typeof TravelPlanLikeScalarFieldEnum)[keyof typeof TravelPlanLikeScalarFieldEnum]
 
 
 export const TripPhotoScalarFieldEnum = {

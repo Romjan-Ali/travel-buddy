@@ -1,6 +1,7 @@
 import { prisma } from '../../lib/prisma'
 import type { TravelPlanInput } from '../../utils/types'
 import { AppError } from '../../middleware/errorHandler'
+import type { Prisma } from '../../generated/prisma/client'
 
 export const travelPlanService = {
   async createTravelPlan(userId: string, planData: TravelPlanInput) {
@@ -218,6 +219,36 @@ export const travelPlanService = {
     return travelPlan
   },
 
+  async likeTravelPlan(userId: string, travelPlanId: string) {
+    const existingLike = await prisma.travelPlanLike.findUnique({
+      where: {
+        userId_travelPlanId: {
+          userId,
+          travelPlanId,
+        },
+      },
+    })
+
+    if (existingLike) {
+      await prisma.travelPlanLike.delete({
+        where: {
+          userId_travelPlanId: {
+            userId,
+            travelPlanId,
+          },
+        },
+      })
+    } else {
+      await prisma.travelPlanLike.create({
+        data: {
+          userId,
+          travelPlanId,
+        },
+      })
+    }
+    return !existingLike // return true if liked, false if unliked
+  },
+
   async deleteTravelPlan(planId: string, userId: string) {
     // Check if plan exists and user owns it
     const existingPlan = await prisma.travelPlan.findFirst({
@@ -248,7 +279,8 @@ export const travelPlanService = {
       sort?: 'upcoming' | 'most_recent'
     },
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    userId?: string
   ) {
     const skip = (page - 1) * limit
 
@@ -311,34 +343,41 @@ export const travelPlanService = {
       orderBy = { createdAt: 'desc' }
     }
 
-    const [plans, total] = await Promise.all([
-      prisma.travelPlan.findMany({
-        where,
-        include: {
-          user: {
+    const include: any = {
+      user: {
+        select: {
+          id: true,
+          profile: {
             select: {
-              id: true,
-              profile: {
-                select: {
-                  fullName: true,
-                  profileImage: true,
-                  currentLocation: true,
-                  travelInterests: true,
-                },
-              },
-              reviewsReceived: {
-                select: {
-                  rating: true,
-                },
-              },
+              fullName: true,
+              profileImage: true,
+              currentLocation: true,
+              travelInterests: true,
             },
           },
-          _count: {
+          reviewsReceived: {
             select: {
-              matches: true,
+              rating: true,
             },
           },
         },
+      },
+      _count: {
+        select: {
+          matches: true,
+          travelPlanLikes: true,
+        },
+      },
+    }
+
+    if (userId) {
+      include.travelPlanLikes = { where: { userId }, select: { id: true } }
+    }
+
+    const [plans, total] = await Promise.all([
+      prisma.travelPlan.findMany({
+        where,
+        include,
         orderBy,
         skip,
         take: limit,
@@ -346,18 +385,23 @@ export const travelPlanService = {
       prisma.travelPlan.count({ where }),
     ])
 
-    // Calculate average ratings
-    const plansWithRatings = plans.map((plan) => {
-      const ratings = plan.user.reviewsReceived.map((r) => r.rating)
+    // Calculate average ratings with safer access
+    const plansWithRatings = plans.map((plan: any) => {
+      const reviews = plan.user?.reviewsReceived || []
+      const ratings = reviews.map((r: any) => r.rating)
       const averageRating =
         ratings.length > 0
-          ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+          ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) /
+            ratings.length
           : 0
 
       const { reviewsReceived, ...userWithoutReviews } = plan.user
 
+      const likedByMe = userId ? plan.travelPlanLikes.length > 0 : false
+
       return {
         ...plan,
+        likedByMe,
         user: {
           ...userWithoutReviews,
           averageRating: Math.round(averageRating * 10) / 10,
