@@ -65,6 +65,7 @@ export default function TravelPlanMatchesPage() {
       // Fetch matches for this travel plan
       // Note: You might need to adjust your backend to support this filter
       const matchesResult = await matchAPI.getMyMatches({
+        travelPlanId,
         type: 'received',
         page: 1,
         limit: 50,
@@ -412,7 +413,7 @@ export default function TravelPlanMatchesPage() {
                               )}
 
                               {match.status === 'ACCEPTED' && (
-                                /*                                 <Button className="gap-2">
+                                                                /*<Button className="gap-2">
                                   <MessageSquare className="h-4 w-4" />
                                   Send Message
                                 </Button> */
@@ -423,6 +424,7 @@ export default function TravelPlanMatchesPage() {
                                   size="sm"
                                   triggerText="Message"
                                 />
+                                
                               )}
 
                               {!isPlanOwner && (

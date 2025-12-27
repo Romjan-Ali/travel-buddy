@@ -43,10 +43,9 @@ interface ChatWindowProps {
     }
   }
   matchId?: string
-  onClose?: () => void
 }
 
-export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
+export function ChatWindow({ otherUser, matchId }: ChatWindowProps) {
   console.log("Rendering ChatWindow with otherUser:", otherUser)
   const { user } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
@@ -119,6 +118,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
   }
 
   const sendMessage = async () => {
+    console.log({newMessage, user, socket})
     if (!newMessage.trim() || !user || !socket) return
 
     const messageContent = newMessage.trim()
@@ -252,11 +252,7 @@ export function ChatWindow({ otherUser, matchId, onClose }: ChatWindowProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          {onClose && (
-            <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+
           <Button variant="ghost" size="icon">
             <MoreVertical className="h-4 w-4" />
           </Button>

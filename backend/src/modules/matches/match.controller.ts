@@ -20,13 +20,14 @@ export const matchController = {
   },
 
   async getUserMatches(req: AuthRequest, res: Response) {
-    const { type = 'received', status, page = 1, limit = 10 } = req.query
+    const { type = 'received', travelPlanId, status, page = 1, limit = 10 } = req.query
     const userId = req.user?.id
     if (!userId) {
       return sendResponse(res, 401, 'Unauthorized')
     }
     const result = await matchService.getUserMatches(
       userId,
+      travelPlanId,
       type as 'sent' | 'received',
       status as string,
       parseInt(page as string),

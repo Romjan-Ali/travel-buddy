@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { ChatWindow } from './chat-window'
 import { MessageSquare, X } from 'lucide-react'
+import { DialogClose } from '@radix-ui/react-dialog'
 
 interface QuickChatProps {
   otherUser: {
@@ -21,12 +22,12 @@ interface QuickChatProps {
   size?: 'default' | 'sm' | 'lg' | 'icon'
 }
 
-export function QuickChat({ 
-  otherUser, 
-  matchId, 
+export function QuickChat({
+  otherUser,
+  matchId,
   triggerText = 'Message',
   variant = 'default',
-  size = 'default'
+  size = 'default',
 }: QuickChatProps) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -40,18 +41,9 @@ export function QuickChat({
       </DialogTrigger>
       <DialogContent className="max-w-4xl h-[80vh] p-0">
         <div className="relative h-full">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 z-50"
-            onClick={() => setIsOpen(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          <ChatWindow 
-            otherUser={otherUser} 
+          <ChatWindow
+            otherUser={otherUser}
             matchId={matchId}
-            onClose={() => setIsOpen(false)}
           />
         </div>
       </DialogContent>

@@ -286,6 +286,7 @@ export const matchAPI = {
   create: (data: CreateMatchInput) => api.post('/matches', data),
   getMyMatches: (query: {
     type: 'sent' | 'received'
+    travelPlanId?: string
     status?: string
     page?: number
     limit?: number

@@ -102,6 +102,7 @@ export const matchService = {
 
   async getUserMatches(
     userId: string,
+    travelPlanId?: string,
     type: 'sent' | 'received' = 'received',
     status?: string,
     page: number = 1,
@@ -110,6 +111,11 @@ export const matchService = {
     const skip = (page - 1) * limit
 
     const where: any = {}
+
+    if(travelPlanId){
+      where.travelPlanId = travelPlanId
+    }
+
     if (type === 'sent') where.initiatorId = userId
     else where.receiverId = userId
 

@@ -27,6 +27,7 @@ import paymentRoutes from './modules/payments/payment.routes'
 import adminRoutes from './modules/admin/admin.routes'
 import uploadRoutes from './modules/upload/upload.routes'
 import otpRoutes from './modules/otp/otp.routes'
+import messageRoutes from './modules/messages/message.routes'
 
 // Load environment variables
 dotenv.config()
@@ -98,6 +99,7 @@ app.use('/api/payments', paymentRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/otp', otpRoutes)
+app.use('/api/messages', messageRoutes)
 
 // 404 handler
 app.use(notFound)
