@@ -228,6 +228,8 @@ export function TravelPlanDetails({
                 src={photo.url}
                 alt={`Trip Photo ${index + 1}`}
                 className="w-full h-40 object-cover rounded-lg"
+                width={1200}
+                height={800}
               />
             ))}
           </CardContent>

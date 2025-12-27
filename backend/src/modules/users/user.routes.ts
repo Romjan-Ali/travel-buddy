@@ -7,9 +7,10 @@ import { profileSchema } from '../../utils/types';
 
 const router = Router();
 
+router.get('/', userController.searchUsers);
+router.get('/top-rated-travelers', userController.topRatedTravelers)
 router.get('/profile', authenticate, userController.getProfile); // Get own profile
 router.patch('/profile', authenticate, validate(profileSchema), userController.updateProfile);
 router.get('/:id', authenticate, userController.getPublicProfile);
-router.get('/', userController.searchUsers);
 
 export default router;

@@ -48,7 +48,7 @@ export function TravelPlanSidebar({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="gap-2">
+            {/* <Button variant="outline" className="gap-2">
               <span className="text-blue-500">f</span>
               Facebook
             </Button>
@@ -59,7 +59,7 @@ export function TravelPlanSidebar({
             <Button variant="outline" className="gap-2">
               <span className="text-red-500">in</span>
               LinkedIn
-            </Button>
+            </Button> */}
             <Button variant="outline" onClick={onShare} className="gap-2">
               <Share2 className="h-4 w-4" />
               Copy Link

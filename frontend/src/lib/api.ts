@@ -164,6 +164,18 @@ export const authAPI = {
 export const userAPI = {
   getProfile: (): Promise<ApiResponse<{ user: ProfileUser }>> =>
     api.get('/users/profile'),
+  getTopRatedTravelers: (): Promise<
+    ApiResponse<
+      {
+        id: string
+        name: string
+        location: string
+        rating: number
+        trips: number
+        image: string
+      }[]
+    >
+  > => api.get('/users/top-rated-travelers'),
   updateProfile: (
     data: UpdateProfileInput
   ): Promise<ApiResponse<{ user: ProfileUser }>> =>

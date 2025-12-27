@@ -27,6 +27,7 @@ import { adminAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
 import { GetUserByAdmin } from '@/types'
+import Image from 'next/image'
 
 interface AdminUser {
   id: string
@@ -215,10 +216,10 @@ export default function AdminUsersPage() {
                 </TabsList>
               </Tabs>
 
-              <Button variant="outline" onClick={handleExport} className="gap-2">
+              {/* <Button variant="outline" onClick={handleExport} className="gap-2">
                 <Download className="h-4 w-4" />
                 Export
-              </Button>
+              </Button> */}
             </div>
           </div>
         </CardContent>
@@ -259,10 +260,12 @@ export default function AdminUsersPage() {
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
                             {user.profile?.profileImage ? (
-                              <img 
+                              <Image 
                                 src={user.profile.profileImage} 
                                 alt={user.profile.fullName}
-                                className="h-10 w-10 rounded-full"
+                                className="h-10 w-10 rounded-full object-cover"
+                                width={40}
+                                height={40}
                               />
                             ) : (
                               <Users className="h-5 w-5 text-muted-foreground" />

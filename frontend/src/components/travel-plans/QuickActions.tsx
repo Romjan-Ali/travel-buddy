@@ -26,7 +26,7 @@ export function QuickActions({
       <CardHeader>
         <CardTitle>Quick Actions</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="flex flex-col space-y-3">
         {isPlanOwner ? (
           <>
             <Link href={`/travel-plans/${travelPlanId}/matches`}>

@@ -25,7 +25,6 @@ export default function HomePage() {
       {/* Top-Rated Travelers Section */}
       <TopRatedTravelers />
 
-
       {/* Why Choose Us Section */}
       <WcuSection />
 

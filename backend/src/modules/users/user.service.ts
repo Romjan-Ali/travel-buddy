@@ -241,4 +241,74 @@ export const userService = {
       },
     }
   },
+
+  async topRatedTravelers(limit: number = 4) {
+    const now = new Date()
+
+    // 1. Top users by average rating
+    const ratings = await prisma.review.groupBy({
+      by: ['subjectId'],
+      _avg: { rating: true },
+      orderBy: {
+        _avg: { rating: 'desc' },
+      },
+      take: limit,
+    })
+
+    // 2. Fetch users with completed trip count
+    const users = await prisma.user.findMany({
+      where: {
+        id: { in: ratings.map((r) => r.subjectId) },
+        isActive: true,
+      },
+      select: {
+        id: true,
+        profile: {
+          select: {
+            fullName: true,
+            profileImage: true,
+            currentLocation: true,
+          },
+        },
+        matchesInitiated: {
+          where: {
+            status: 'ACCEPTED',
+            travelPlan: {
+              endDate: { lt: now },
+            },
+          },
+          select: { id: true },
+        },
+        matchesReceived: {
+          where: {
+            status: 'ACCEPTED',
+            travelPlan: {
+              endDate: { lt: now },
+            },
+          },
+          select: { id: true },
+        },
+      },
+    })
+
+    // 3. Shape response
+    return ratings.map((r) => {
+      const user = users.find((u) => u.id === r.subjectId)
+
+      const completedTrips =
+        (user?.matchesInitiated.length ?? 0) +
+        (user?.matchesReceived.length ?? 0)
+
+      return {
+        id: user?.id,
+        name: user?.profile?.fullName ?? 'Unknown',
+        location: user?.profile?.currentLocation ?? 'Unknown',
+        rating: Number(r._avg.rating?.toFixed(1)) ?? 0,
+        trips: completedTrips,
+        image:
+          user?.profile?.profileImage ??
+          'https://ui-avatars.com/api/?name=User',
+      }
+    })
+  },
 }

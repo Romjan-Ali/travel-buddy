@@ -51,4 +51,16 @@ export const userController = {
 
     sendResponse(res, 200, 'Users retrieved successfully', result)
   },
+
+  async topRatedTravelers(req: AuthRequest, res: Response) {
+    const {limit = 4} = req.query
+
+    console.log('hellow')
+
+    const result = await userService.topRatedTravelers(limit)
+
+    console.log('top rated', result)
+
+    sendResponse(res, 200, 'Top rated travelers retrieved successfully', result)
+  }
 }

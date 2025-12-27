@@ -25,6 +25,7 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { DashboardStats } from '@/types'
+import Link from 'next/link'
 
 export default function AdminDashboardPage() {
   const { user } = useAuth()
@@ -179,7 +180,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Additional Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="card-hover">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -231,7 +232,7 @@ export default function AdminDashboardPage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
 
           {/* Recent Signups & Quick Actions */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -287,18 +288,24 @@ export default function AdminDashboardPage() {
                   <Button
                     variant="outline"
                     className="h-auto py-4 flex-col gap-2"
+                    asChild
                   >
-                    <Users className="h-6 w-6" />
-                    <span>Manage Users</span>
+                    <Link href="/admin/users">
+                      <Users className="h-6 w-6" />
+                      <span>Manage Users</span>
+                    </Link>
                   </Button>
                   <Button
                     variant="outline"
                     className="h-auto py-4 flex-col gap-2"
+                    asChild
                   >
-                    <Calendar className="h-6 w-6" />
-                    <span>Travel Plans</span>
+                    <Link href="/admin/travel-plans">
+                      <Calendar className="h-6 w-6" />
+                      <span>Travel Plans</span>
+                    </Link>
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     className="h-auto py-4 flex-col gap-2"
                   >
@@ -325,14 +332,14 @@ export default function AdminDashboardPage() {
                   >
                     <Globe className="h-6 w-6" />
                     <span>Analytics</span>
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
           </div>
 
           {/* System Status */}
-          <Card className="mt-8">
+          {/* <Card className="mt-8">
             <CardHeader>
               <CardTitle>System Status</CardTitle>
               <CardDescription>Platform health and performance</CardDescription>
@@ -369,7 +376,7 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </>
       ) : null}
     </div>
