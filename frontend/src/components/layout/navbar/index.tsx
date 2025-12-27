@@ -71,7 +71,7 @@ export function Navbar() {
 
         {/* Right Section: Actions & Auth */}
         <div className="flex items-center gap-4">
-        <ModeToggle />
+          <ModeToggle />
 
           {/* Notifications */}
           {user && <Notifications pendingReviews={pendingReviews} />}

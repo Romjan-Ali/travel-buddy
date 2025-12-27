@@ -76,7 +76,7 @@ export function Notifications({ pendingReviews }: NotificationsProps) {
           )}
 
           {/* Quick Links */}
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             className="flex items-center gap-2 py-3 cursor-pointer"
             onClick={() => router.push('/messages')}
           >
@@ -87,7 +87,7 @@ export function Notifications({ pendingReviews }: NotificationsProps) {
                 Check your conversations
               </p>
             </div>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuItem
             className="flex items-center gap-2 py-3 cursor-pointer"
@@ -114,13 +114,13 @@ export function Notifications({ pendingReviews }: NotificationsProps) {
           </DropdownMenuItem>
         </div>
 
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-center justify-center py-2"
           onClick={() => router.push('/notifications')}
         >
           View All Notifications
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )

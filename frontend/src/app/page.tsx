@@ -8,6 +8,7 @@ import CtaSection from '@/components/home/cta-section'
 import PopularDestination from '@/components/home/popular-destination'
 import WcuSection from '@/components/home/wcu-section'
 import TopRatedTravelers from '@/components/home/top-rated-travelers'
+import SafetyTipsSection from '@/components/home/safety-tips-section'
 
 export default function HomePage() {
   return (
@@ -24,8 +25,12 @@ export default function HomePage() {
       {/* Top-Rated Travelers Section */}
       <TopRatedTravelers />
 
+
       {/* Why Choose Us Section */}
-      <WcuSection />      
+      <WcuSection />
+
+      {/* Safety Tips Section */}
+      <SafetyTipsSection />
 
       {/* Testimonials Section */}
       <Testimonials />

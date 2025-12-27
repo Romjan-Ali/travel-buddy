@@ -412,20 +412,15 @@ export default function TravelPlanMatchesPage() {
                                 </>
                               )}
 
-                              {match.status === 'ACCEPTED' && (
-                                                                /*<Button className="gap-2">
-                                  <MessageSquare className="h-4 w-4" />
-                                  Send Message
-                                </Button> */
+                              {/* match.status === 'ACCEPTED' && (                                                                
                                 <QuickChat
                                   otherUser={otherUser}
                                   matchId={match.id}
                                   variant="outline"
                                   size="sm"
                                   triggerText="Message"
-                                />
-                                
-                              )}
+                                />                                
+                              ) */}
 
                               {!isPlanOwner && (
                                 <Button

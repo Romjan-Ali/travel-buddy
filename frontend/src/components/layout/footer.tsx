@@ -19,19 +19,19 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <Link
-                href="#"
+                href="https://www.facebook.com"
                 className="text-muted-foreground hover:text-primary"
               >
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link
-                href="#"
+                href="https://x.com"
                 className="text-muted-foreground hover:text-primary"
               >
                 <Twitter className="h-5 w-5" />
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com"
                 className="text-muted-foreground hover:text-primary"
               >
                 <Instagram className="h-5 w-5" />
@@ -82,14 +82,14 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
-              <li>
+{/*               <li>
                 <Link
                   href="/blog"
                   className="text-muted-foreground hover:text-primary"
                 >
                   Travel Blog
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   href="/safety"
