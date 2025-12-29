@@ -1,10 +1,11 @@
 // backend/src/config/cloudinary.ts
 import { v2 as cloudinary } from 'cloudinary'
+import { env } from './env'
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET,
 })
 
 export const uploadToCloudinary = async (
@@ -17,7 +18,7 @@ export const uploadToCloudinary = async (
         {
           resource_type: 'image',
           folder,
-          // upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET,
+          // upload_preset: env.CLOUDINARY_UPLOAD_PRESET,
           transformation: [
             { width: 500, height: 500, crop: 'limit' },
             { quality: 'auto' },

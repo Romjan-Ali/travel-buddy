@@ -25,6 +25,7 @@
         "socket.io": "^4.8.1",
         "stripe": "^20.0.0",
         "zod": "^4.1.13",
+        "zod-env": "^0.1.0",
       },
       "devDependencies": {
         "@types/bcryptjs": "^3.0.0",
@@ -769,6 +770,8 @@
     "zeptomatch": ["zeptomatch@2.0.2", "", { "dependencies": { "grammex": "^3.1.10" } }, "sha512-H33jtSKf8Ijtb5BW6wua3G5DhnFjbFML36eFu+VdOoVY4HD9e7ggjqdM6639B+L87rjnR6Y+XeRzBXZdy52B/g=="],
 
     "zod": ["zod@4.1.13", "", {}, "sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig=="],
+
+    "zod-env": ["zod-env@0.1.0", "", { "peerDependencies": { "zod": "^3.20.2" } }, "sha512-0H/J7tENIApJOzwsxqtm9TsPfMN/TNhffkQOcCpeejdLzGVIpTLU3AAwFMDvKBJ4rN8NbGsvR5Wfrh3OTqk+wg=="],
 
     "@aws-crypto/sha256-browser/@smithy/util-utf8": ["@smithy/util-utf8@2.3.0", "", { "dependencies": { "@smithy/util-buffer-from": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-R8Rdn8Hy72KKcebgLiv8jQcQkXoLMOGGv5uI1/k0l+snqkOzQ1R0ChUBCxWMlBsFMekWjq0wRudIweFs7sKT5A=="],
 

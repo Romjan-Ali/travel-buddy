@@ -1,4 +1,5 @@
 // backend/src/modules/payments/payment.service.ts
+import { env } from '../../config/env'
 import { stripe } from '../../config/stripe'
 import { prisma } from '../../lib/prisma'
 import { AppError } from '../../middleware/errorHandler'
@@ -39,8 +40,8 @@ export const paymentService = {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
+      success_url: `${env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.CLIENT_URL}/payment/cancel`,
       metadata: {
         userId,
       },
@@ -82,8 +83,8 @@ export const paymentService = {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
+      success_url: `${env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.CLIENT_URL}/payment/cancel`,
       metadata: {
         userId,
         type: 'one_time',

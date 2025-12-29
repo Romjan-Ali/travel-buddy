@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import { type AuthRequest } from '../utils/types';
 import { sendResponse } from '../utils/helpers';
+import { env } from '../config/env';
 
 export const authenticate = async (
   req: AuthRequest,
@@ -20,7 +21,7 @@ export const authenticate = async (
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+    const decoded = jwt.verify(token, env.JWT_SECRET!) as {
       id: string;
       email: string;
       role: string;
@@ -70,7 +71,7 @@ export const optionalAuthenticate = async (
     const token = req.cookies?.token;
 
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      const decoded = jwt.verify(token, env.JWT_SECRET!) as {
         id: string;
         email: string;
         role: string;

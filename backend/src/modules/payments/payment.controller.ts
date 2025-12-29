@@ -4,6 +4,7 @@ import type { AuthRequest } from '../../utils/types'
 import { paymentService } from './payment.service'
 import { sendResponse } from '../../utils/helpers'
 import { stripe } from '../../config/stripe'
+import { env } from '../../config/env'
 
 export const paymentController = {
   async createSubscription(req: AuthRequest, res: Response) {
@@ -47,7 +48,7 @@ export const paymentController = {
     const event = stripe.webhooks.constructEvent(
       req.body,
       sig as string,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      env.STRIPE_WEBHOOK_SECRET!
     ) 
  
     console.log('Received Stripe webhook event:', event)

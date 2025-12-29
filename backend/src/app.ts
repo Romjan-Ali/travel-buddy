@@ -28,6 +28,7 @@ import adminRoutes from './modules/admin/admin.routes'
 import uploadRoutes from './modules/upload/upload.routes'
 import otpRoutes from './modules/otp/otp.routes'
 import messageRoutes from './modules/messages/message.routes'
+import { env } from './config/env'
 
 // Load environment variables
 dotenv.config()
@@ -49,13 +50,13 @@ app.use(morgan('combined'))
 app.set('trust proxy', 1)
 
 // CORS configuration
-const allowedOrigins = (process.env.CLIENT_URL || '')
+const allowedOrigins = (env.CLIENT_URL || '')
   .split(',')
   .map(origin => origin.trim())
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: env.CLIENT_URL,
     /* (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true)
@@ -107,12 +108,12 @@ app.use(notFound)
 // Error handler
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 5000
+const PORT = env.PORT || 5000
 
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`)
-  console.log(`🔗 Client URL: ${process.env.CLIENT_URL}`)
+  console.log(`📊 Environment: ${env.NODE_ENV}`)
+  console.log(`🔗 Client URL: ${env.CLIENT_URL}`)
   console.log(`🔌 WebSocket enabled`)
 })
 

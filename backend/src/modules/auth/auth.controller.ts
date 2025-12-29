@@ -3,6 +3,7 @@ import type { Response } from 'express'
 import type { AuthRequest } from '../../utils/types'
 import { authService } from './auth.service'
 import { sendResponse } from '../../utils/helpers'
+import { env } from '../../config/env'
 
 export const authController = {
   async register(req: AuthRequest, res: Response) {
@@ -12,8 +13,8 @@ export const authController = {
     res.cookie('token', result.token, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      partitioned: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      partitioned: env.NODE_ENV === 'production' ? true : false,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
 
@@ -29,8 +30,8 @@ export const authController = {
     res.cookie('token', result.token, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      partitioned: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      partitioned: env.NODE_ENV === 'production' ? true : false,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
 
@@ -52,8 +53,8 @@ export const authController = {
     res.clearCookie('token', {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      partitioned: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      partitioned: env.NODE_ENV === 'production' ? true : false,
     })
 
     await authService.logout()

@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken'
 import { prisma } from '../../lib/prisma'
 import type { RegisterInput, LoginInput } from '../../utils/types'
 import { AppError } from '../../middleware/errorHandler'
+import { comparePassword, hashPassword } from '../../utils/helpers'
+import { env } from '../../config/env'
 
 export const authService = {
   async register(userData: RegisterInput) {
@@ -19,7 +21,7 @@ export const authService = {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
+    const hashedPassword = await hashPassword(password)
 
     // Create user with profile
     const user = await prisma.user.create({
@@ -45,8 +47,8 @@ export const authService = {
     })
 
     // Validate environment variables
-    const jwtSecret = process.env.JWT_SECRET
-    const jwtExpiresIn = process.env.JWT_EXPIRES_IN
+    const jwtSecret = env.JWT_SECRET
+    const jwtExpiresIn = env.JWT_EXPIRES_IN
 
     if (!jwtSecret) {
       throw new AppError(500, 'JWT_SECRET is not defined')
@@ -80,14 +82,14 @@ export const authService = {
     }
 
     // Check password
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await comparePassword(password, user.password)
     if (!isPasswordValid) {
       throw new AppError(401, 'Invalid email or password')
     }
 
     // Validate environment variables
-    const jwtSecret = process.env.JWT_SECRET
-    const jwtExpiresIn = process.env.JWT_EXPIRES_IN
+    const jwtSecret = env.JWT_SECRET
+    const jwtExpiresIn = env.JWT_EXPIRES_IN
 
     if (!jwtSecret) {
       throw new AppError(500, 'JWT_SECRET is not defined')

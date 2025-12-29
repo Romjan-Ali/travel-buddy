@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
 import { messageService } from './message.service'
+import { env } from '../../config/env'
 
 interface SocketUser {
   userId: string
@@ -13,7 +14,7 @@ class SocketService {
   initialize(server: any) {
     this.io = new Server(server, {
       cors: {
-        origin: process.env.CLIENT_URL || 'http://localhost:3000',
+        origin: env.CLIENT_URL || 'http://localhost:3000',
         credentials: true,
       },
     })

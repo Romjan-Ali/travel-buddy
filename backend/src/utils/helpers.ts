@@ -1,5 +1,7 @@
 // backend/src/utils/helpers.ts
 import { type Response } from 'express';
+import bcrypt from 'bcryptjs';
+import { env } from '../config/env';
 
 export const sendResponse = <T>(
   res: Response,
@@ -22,10 +24,11 @@ export const generateToken = (payload: object): string => {
 };
 
 export const hashPassword = async (password: string): Promise<string> => {
-  // This will be implemented with bcrypt
-  return `hashed-${password}`;
+  const SALT_ROUNDS = env.BCRYPT_SALT_ROUNDS!
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+  return hashedPassword;
 };
 
 export const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
-  return password === hashedPassword.replace('hashed-', '');
+  return await bcrypt.compare(password, hashedPassword);
 };

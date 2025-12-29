@@ -1,15 +1,16 @@
 // backend/src/utils/sendOtpViaEmail.ts
 import nodemailer from 'nodemailer'
 import { AppError } from '../middleware/errorHandler'
+import { env } from '../config/env'
 
 const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASS,
   },
-  port: Number(process.env.SMTP_PORT),
-  host: process.env.SMTP_HOST,
+  port: Number(env.SMTP_PORT),
+  host: env.SMTP_HOST,
 })
 
 interface SendEmailOptions {
@@ -66,7 +67,7 @@ export const sendEmail = async ({
     const html = generateOtpTemplate(otp)
 
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: env.SMTP_FROM,
       to,
       subject: 'Your OTP Code',
       html,

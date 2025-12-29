@@ -1,6 +1,7 @@
 // backend/src/config/imgbb.ts
 import axios from 'axios'
 import FormData from 'form-data'
+import { env } from './env'
 
 export const uploadToImgBB = async (file: Buffer): Promise<string> => {
   
@@ -15,7 +16,7 @@ export const uploadToImgBB = async (file: Buffer): Promise<string> => {
     formData.append('image', base64Image)
 
     const response = await axios.post(
-      `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
+      `https://api.imgbb.com/1/upload?key=${env.IMGBB_API_KEY}`,
       formData,
       {
         headers: {
