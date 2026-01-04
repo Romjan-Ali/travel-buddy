@@ -38,21 +38,6 @@ export const getNavItems = (pendingReviews: number = 0) => ({
       label: 'Find Buddy',
       href: '/matches',
       icon: <Users className="h-4 w-4" />,
-    },
-    {
-      label: 'About',
-      href: '/about',
-      icon: <Info />
-    },
-    {
-      label: 'Contact',
-      href: '/contact',
-      icon: <Contact />
-    },
-    {
-      label: 'FAQ',
-      href: '/faq',
-      icon: <HelpCircle />
     }
   ],
 
